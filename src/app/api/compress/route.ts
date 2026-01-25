@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
     const compressionLevel = (formData.get('level') as string) || 'mid'; // 'best' | 'mid' | 'low' | 'lossless'
     const targetSizeMsg = formData.get('targetSize');
     const targetSize = targetSizeMsg ? parseInt(targetSizeMsg as string) : null;
+    const speed = formData.get('speed') as string || 'normal'; // 'fast' | 'normal'
 
     // Parse resize options
     const widthRaw = formData.get('width');
@@ -61,7 +62,7 @@ export async function POST(req: NextRequest) {
         
         switch (targetFormat) {
             case 'jpeg':
-                if (compressionLevel === 'lossless') {
+                if (compressionLevel === 'lossless' || speed === 'fast') {
                     pipe.jpeg({ quality: 100, mozjpeg: false, chromaSubsampling: '4:4:4' });
                 } else {
                     pipe.jpeg({
@@ -76,25 +77,36 @@ export async function POST(req: NextRequest) {
                 }
                 break;
             case 'png':
-                if (quality === 100 || compressionLevel === 'lossless') {
-                     pipe.png({ quality: 100, palette: false, compressionLevel: 9, adaptiveFiltering: true });
+                if (quality === 100 || compressionLevel === 'lossless' || speed === 'fast') {
+                     pipe.png({ 
+                         quality: 100, 
+                         palette: false, 
+                         compressionLevel: speed === 'fast' ? 0 : 9, 
+                         adaptiveFiltering: true 
+                     });
                 } else {
                     const colors = Math.max(2, Math.floor((quality / 100) * 256));
-                     pipe.png({ quality: quality, palette: true, colors: colors, compressionLevel: 9, adaptiveFiltering: false });
+                     pipe.png({ 
+                         quality: quality, 
+                         palette: true, 
+                         colors: colors, 
+                         compressionLevel: speed === 'fast' ? 0 : 9, 
+                         adaptiveFiltering: false 
+                     });
                 }
                 break;
             case 'webp':
                 if (compressionLevel === 'lossless') {
-                    pipe.webp({ lossless: true, quality: 100, effort: 6 });
+                    pipe.webp({ lossless: true, quality: 100, effort: speed === 'fast' ? 0 : 6 });
                 } else {
-                    pipe.webp({ quality: quality, effort: 6, smartSubsample: true, lossless: false });
+                    pipe.webp({ quality: quality, effort: speed === 'fast' ? 0 : 6, smartSubsample: true, lossless: false });
                 }
                 break;
             case 'avif':
-                 pipe.avif({ quality: Math.min(quality, 85), effort: 5, chromaSubsampling: '4:2:0' });
+                 pipe.avif({ quality: Math.min(quality, 85), effort: speed === 'fast' ? 0 : 5, chromaSubsampling: '4:2:0' });
                 break;
             default:
-                pipe.toFormat('webp', { quality: quality });
+                pipe.toFormat('webp', { quality: quality, effort: speed === 'fast' ? 0 : 6 });
                 break;
         }
         return await pipe.toBuffer();

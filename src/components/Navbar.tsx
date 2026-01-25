@@ -29,16 +29,26 @@ export default function Navbar() {
         >
             Compress
         </Link>
-        {/* <Link 
-            href="/resize" 
+        <Link 
+            href="/convert" 
             className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
-                pathname === '/resize' 
+                pathname === '/convert' 
                     ? 'bg-primary text-white shadow-lg shadow-primary/20' 
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
         >
-            Resize
-        </Link> */}
+            Convert
+        </Link>
+        <Link 
+            href="/favicon" 
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                pathname === '/favicon' 
+                    ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+            }`}
+        >
+            Favicon
+        </Link>
       </div>
 
     </nav>
