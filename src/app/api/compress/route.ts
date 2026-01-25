@@ -26,22 +26,24 @@ export async function POST(req: NextRequest) {
     if (metadata.format === 'jpeg' || metadata.format === 'jpg') {
       processedBuffer = await pipeline
         .jpeg({
-          quality: 80,
-          mozjpeg: true, // Better compression
+          quality: 75, // Reduced to 75 for better compression
+          mozjpeg: true,
           chromaSubsampling: '4:2:0',
           trellisQuantisation: true, 
           overshootDeringing: true,
           optimizeScans: true,
+          quantisationTable: 3, // ImageMagick compatible
         })
         .toBuffer();
       contentType = 'image/jpeg';
     } else if (metadata.format === 'png') {
       processedBuffer = await pipeline
         .png({
-          quality: 80, 
-          compressionLevel: 9, // Max compression level
-          palette: true, // Use quantization (crucial for TinyPNG-like results)
-          effort: 10, // Max CPU effort
+          quality: 75, // Reduced to 75
+          compressionLevel: 9,
+          palette: true, 
+          colors: 128, // Explicitly limit palette size for TinyPNG-like results
+          effort: 10,
           adaptiveFiltering: true,
         })
         .toBuffer();
@@ -49,8 +51,8 @@ export async function POST(req: NextRequest) {
     } else if (metadata.format === 'webp') {
       processedBuffer = await pipeline
         .webp({
-          quality: 80,
-          effort: 6, // High effort
+          quality: 75, // Reduced to 75
+          effort: 6,
           smartSubsample: true,
         })
         .toBuffer();
@@ -62,9 +64,10 @@ export async function POST(req: NextRequest) {
       if (requestedFormat === 'png') {
         processedBuffer = await pipeline
           .png({
-            quality: 80,
+            quality: 75,
             compressionLevel: 9,
             palette: true,
+            colors: 128,
             effort: 10,
             adaptiveFiltering: true,
           })
@@ -73,19 +76,20 @@ export async function POST(req: NextRequest) {
       } else if (requestedFormat === 'jpeg' || requestedFormat === 'jpg') {
         processedBuffer = await pipeline
           .jpeg({
-            quality: 80,
+            quality: 75,
             mozjpeg: true,
             chromaSubsampling: '4:2:0',
             trellisQuantisation: true,
             overshootDeringing: true,
             optimizeScans: true,
+            quantisationTable: 3,
           })
           .toBuffer();
         contentType = 'image/jpeg';
       } else if (requestedFormat === 'webp') {
         processedBuffer = await pipeline
           .webp({
-            quality: 80,
+            quality: 75,
             effort: 6,
             smartSubsample: true,
           })
@@ -98,9 +102,10 @@ export async function POST(req: NextRequest) {
         if (format === 'png') {
           processedBuffer = await pipeline
             .png({
-              quality: 80,
+              quality: 75,
               compressionLevel: 9,
               palette: true,
+              colors: 128,
               effort: 10,
               adaptiveFiltering: true,
             })
@@ -110,19 +115,20 @@ export async function POST(req: NextRequest) {
         } else if (format === 'jpeg' || format === 'jpg') {
           processedBuffer = await pipeline
             .jpeg({
-              quality: 80,
+              quality: 75,
               mozjpeg: true,
               chromaSubsampling: '4:2:0',
               trellisQuantisation: true,
               overshootDeringing: true,
               optimizeScans: true,
+              quantisationTable: 3,
             })
             .toBuffer();
            contentType = 'image/jpeg';
         } else if (format === 'webp') {
           processedBuffer = await pipeline
             .webp({
-              quality: 80,
+              quality: 75,
               effort: 6,
               smartSubsample: true,
             })
@@ -132,7 +138,7 @@ export async function POST(req: NextRequest) {
           // Fallback to WebP if format is unknown/unsupported for direct pass-through optimization
           processedBuffer = await pipeline
             .webp({
-              quality: 80,
+              quality: 75,
               effort: 6,
               smartSubsample: true,
             })
