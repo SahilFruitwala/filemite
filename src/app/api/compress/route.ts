@@ -57,12 +57,13 @@ export async function POST(req: NextRequest) {
     const contentType = `image/${targetFormat === 'avif' ? 'avif' : targetFormat}`;
 
     // 4. Compress helper
-    const compressBuffer = async (quality: number) => {
+    const compressBuffer = async (quality: number, isFast: boolean = false) => {
         const pipe = pipeline.clone(); 
+        const currentSpeed = isFast ? 'fast' : speed;
         
         switch (targetFormat) {
             case 'jpeg':
-                if (compressionLevel === 'lossless' || speed === 'fast') {
+                if (compressionLevel === 'lossless' || currentSpeed === 'fast') {
                     pipe.jpeg({ quality: 100, mozjpeg: false, chromaSubsampling: '4:4:4' });
                 } else {
                     pipe.jpeg({
@@ -77,11 +78,11 @@ export async function POST(req: NextRequest) {
                 }
                 break;
             case 'png':
-                if (quality === 100 || compressionLevel === 'lossless' || speed === 'fast') {
+                if (quality === 100 || compressionLevel === 'lossless' || currentSpeed === 'fast') {
                      pipe.png({ 
                          quality: 100, 
                          palette: false, 
-                         compressionLevel: speed === 'fast' ? 0 : 9, 
+                         compressionLevel: currentSpeed === 'fast' ? 0 : 9, 
                          adaptiveFiltering: true 
                      });
                 } else {
@@ -90,23 +91,23 @@ export async function POST(req: NextRequest) {
                          quality: quality, 
                          palette: true, 
                          colors: colors, 
-                         compressionLevel: speed === 'fast' ? 0 : 9, 
+                         compressionLevel: currentSpeed === 'fast' ? 0 : 9, 
                          adaptiveFiltering: false 
                      });
                 }
                 break;
             case 'webp':
                 if (compressionLevel === 'lossless') {
-                    pipe.webp({ lossless: true, quality: 100, effort: speed === 'fast' ? 0 : 6 });
+                    pipe.webp({ lossless: true, quality: 100, effort: currentSpeed === 'fast' ? 0 : 6 });
                 } else {
-                    pipe.webp({ quality: quality, effort: speed === 'fast' ? 0 : 6, smartSubsample: true, lossless: false });
+                    pipe.webp({ quality: quality, effort: currentSpeed === 'fast' ? 0 : 6, smartSubsample: true, lossless: false });
                 }
                 break;
             case 'avif':
-                 pipe.avif({ quality: Math.min(quality, 85), effort: speed === 'fast' ? 0 : 5, chromaSubsampling: '4:2:0' });
+                 pipe.avif({ quality: Math.min(quality, 85), effort: currentSpeed === 'fast' ? 0 : 5, chromaSubsampling: '4:2:0' });
                 break;
             default:
-                pipe.toFormat('webp', { quality: quality, effort: speed === 'fast' ? 0 : 6 });
+                pipe.toFormat('webp', { quality: quality, effort: currentSpeed === 'fast' ? 0 : 6 });
                 break;
         }
         return await pipe.toBuffer();
@@ -118,28 +119,32 @@ export async function POST(req: NextRequest) {
         // --- Target Size Mode (Binary Search) ---
         let minQ = 1;
         let maxQ = 100;
-        let bestBuffer: Buffer | null = null;
-        let minSizeBuffer: Buffer | null = null;
+        let bestQ = 0;
+        let minSizeQ = 1;
         let minSizeVal = Infinity;
 
         while (minQ <= maxQ) {
             const midQ = Math.floor((minQ + maxQ) / 2);
-            const buf = await compressBuffer(midQ);
+            // Use Fast mode for search
+            const buf = await compressBuffer(midQ, true);
             const size = buf.length;
 
             if (size < minSizeVal) {
                 minSizeVal = size;
-                minSizeBuffer = buf;
+                minSizeQ = midQ;
             }
 
             if (size <= targetSize) {
-                bestBuffer = buf;
+                bestQ = midQ;
                 minQ = midQ + 1;
             } else {
                 maxQ = midQ - 1;
             }
         }
-        processedBuffer = bestBuffer || minSizeBuffer!; 
+        
+        // Final High Quality Pass
+        const finalQ = bestQ || minSizeQ;
+        processedBuffer = await compressBuffer(finalQ, false);
 
     } else {
         // --- Standard Mode ---
