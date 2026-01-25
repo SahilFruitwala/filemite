@@ -34,7 +34,7 @@ export default function ImageCompare({ original, compressed }: ImageCompareProps
             <img 
                 src={compressed} 
                 alt="Compressed" 
-                className="absolute inset-0 w-full h-full object-contain"
+                className="absolute inset-0 w-full h-full object-scale-down"
                 draggable={false}
             />
 
@@ -46,7 +46,7 @@ export default function ImageCompare({ original, compressed }: ImageCompareProps
                 <img 
                     src={original} 
                     alt="Original" 
-                    className="absolute inset-0 w-full h-full object-contain"
+                    className="absolute inset-0 w-full h-full object-scale-down"
                     draggable={false}
                 />
             </div>

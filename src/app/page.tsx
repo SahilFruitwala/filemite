@@ -5,19 +5,7 @@ import Navbar from '@/components/Navbar';
 
 import Dropzone from '@/components/Dropzone';
 import ImageCompare from '@/components/ImageCompare';
-
-interface CompressedFile {
-    id: string;
-    originalName: string;
-    originalSize: number;
-    originalBlobUrl?: string;
-    compressedSize: number;
-    blobUrl: string;
-    status: 'pending' | 'processing' | 'done' | 'error';
-    error?: string;
-}
-
-type CompressionLevel = 'best' | 'mid' | 'low';
+import { CompressedFile, CompressionLevel } from '@/types';
 
 export default function Home() {
   const [files, setFiles] = useState<CompressedFile[]>([]);
@@ -36,8 +24,6 @@ export default function Home() {
   };
 
   const handleFilesSelect = async (selectedFiles: File[]) => {
-    setIsProcessing(true);
-    
     // Initialize file states
     const newFiles: CompressedFile[] = selectedFiles.map(file => ({
         id: Math.random().toString(36).substr(2, 9),
@@ -46,52 +32,59 @@ export default function Home() {
         originalBlobUrl: URL.createObjectURL(file),
         compressedSize: 0,
         blobUrl: '',
-        status: 'pending'
+        status: 'pending',
+        fileRaw: file // Store reference
     }));
 
     setFiles(prev => [...prev, ...newFiles]);
 
     // Process each file
-    for (const [index, file] of selectedFiles.entries()) {
-        const fileId = newFiles[index].id;
-        
-        // Update status to processing
-        setFiles(prev => prev.map(f => f.id === fileId ? { ...f, status: 'processing' } : f));
+    const processFiles = async (filesToProcess: CompressedFile[], sourceFiles: File[]) => {
+        for (const [index, file] of sourceFiles.entries()) {
+            const fileId = filesToProcess[index].id;
+            
+            // Update status to processing
+            setFiles(prev => prev.map(f => f.id === fileId ? { ...f, status: 'processing' } : f));
 
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('level', compressionLevel);
-        if (useTargetSize && targetSize) {
-           formData.append('targetSize', (parseFloat(targetSize) * 1024).toString()); // Convert KB to Bytes
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('level', compressionLevel);
+            
+            if (useTargetSize && targetSize) {
+            formData.append('targetSize', (parseFloat(targetSize) * 1024).toString()); // Convert KB to Bytes
+            }
+
+            try {
+                const response = await fetch('/api/compress', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) throw new Error('Compression failed');
+
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+
+                setFiles(prev => prev.map(f => f.id === fileId ? { 
+                    ...f, 
+                    status: 'done',
+                    compressedSize: blob.size,
+                    blobUrl: url
+                } : f));
+
+            } catch (error) {
+                console.error(error);
+                 setFiles(prev => prev.map(f => f.id === fileId ? { 
+                    ...f, 
+                    status: 'error',
+                    error: 'Failed'
+                } : f));
+            }
         }
+    };
 
-        try {
-            const response = await fetch('/api/compress', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) throw new Error('Compression failed');
-
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-
-            setFiles(prev => prev.map(f => f.id === fileId ? { 
-                ...f, 
-                status: 'done',
-                compressedSize: blob.size,
-                blobUrl: url
-            } : f));
-
-        } catch (error) {
-            console.error(error);
-             setFiles(prev => prev.map(f => f.id === fileId ? { 
-                ...f, 
-                status: 'error',
-                error: 'Failed'
-            } : f));
-        }
-    }
+    setIsProcessing(true);
+    await processFiles(newFiles, selectedFiles);
     setIsProcessing(false);
   };
 
@@ -112,90 +105,86 @@ export default function Home() {
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-white">
-            Compress images without <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">losing a pixel.</span>
+            Compress images without <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">losing a pixel.</span>
           </h1>
 
-            {/* Compression Settings Panel */}
+             {/* Compression Settings Panel */}
             <div className="max-w-xl mx-auto mb-16">
-                 <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 relative overflow-hidden group">
-                     {/* Gradient border effect */}
-                     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                     <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 relative overflow-hidden group animate-[fadeIn_0.3s_ease-out]">
+                         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
 
-                     <div className="relative z-10 flex flex-col gap-6">
-                        {/* Header */}
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-white font-medium flex items-center gap-2">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-                                Compression Settings
-                            </h3>
-                            <button 
-                                onClick={() => {
-                                    setUseTargetSize(!useTargetSize);
-                                    if (!useTargetSize) setTargetSize('');
-                                }}
-                                className={`text-xs px-3 py-1 rounded-full border transition-all ${useTargetSize ? 'bg-primary/20 border-primary text-primary' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}
-                            >
-                                {useTargetSize ? 'Mode: Target Size' : 'Mode: Manual Quality'}
-                            </button>
-                        </div>
+                         <div className="relative z-10 flex flex-col gap-6">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-white font-medium flex items-center gap-2">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                                    Compression Settings
+                                </h3>
+                                <button 
+                                    onClick={() => {
+                                        setUseTargetSize(!useTargetSize);
+                                        if (!useTargetSize) setTargetSize('');
+                                    }}
+                                    className={`text-xs px-3 py-1 rounded-full border transition-all ${useTargetSize ? 'bg-primary/20 border-primary text-primary' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}
+                                >
+                                    {useTargetSize ? 'Mode: Target Size' : 'Mode: Manual Quality'}
+                                </button>
+                            </div>
 
-                         {/* Controls Container */}
-                         <div className="relative">
-                             {/* Manual Quality Controls */}
-                             <div className={`transition-all duration-300 ${useTargetSize ? 'opacity-20 blur-sm pointer-events-none scale-95' : 'opacity-100 scale-100'}`}>
-                                <label className="text-sm text-gray-400 mb-3 block">Quality Preset</label>
-                                <div className="grid grid-cols-3 gap-2">
-                                    {(['best', 'mid', 'low'] as const).map((level) => (
-                                        <button
-                                            key={level}
-                                            onClick={() => !useTargetSize && setCompressionLevel(level)}
-                                            disabled={useTargetSize}
-                                            className={`py-3 px-2 rounded-xl text-sm font-medium transition-all duration-200 border ${
-                                                compressionLevel === level 
-                                                    ? 'bg-primary text-white border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]' 
-                                                    : 'bg-white/5 text-gray-400 border-transparent hover:bg-white/10 hover:text-white'
-                                            }`}
-                                        >
-                                            {level === 'best' && 'Best'}
-                                            {level === 'mid' && 'Balanced'}
-                                            {level === 'low' && 'Small'}
-                                        </button>
-                                    ))}
-                                </div>
-                             </div>
+                             <div className="relative">
+                                 {/* Manual Quality Controls */}
+                                 <div className={`transition-all duration-300 ${useTargetSize ? 'opacity-20 blur-sm pointer-events-none scale-95' : 'opacity-100 scale-100'}`}>
+                                    <label className="text-sm text-gray-400 mb-3 block">Quality Preset</label>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {(['best', 'mid', 'low'] as const).map((level) => (
+                                            <button
+                                                key={level}
+                                                onClick={() => !useTargetSize && setCompressionLevel(level)}
+                                                disabled={useTargetSize}
+                                                className={`py-3 px-2 rounded-xl text-sm font-medium transition-all duration-200 border ${
+                                                    compressionLevel === level 
+                                                        ? 'bg-primary text-white border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]' 
+                                                        : 'bg-white/5 text-gray-400 border-transparent hover:bg-white/10 hover:text-white'
+                                                }`}
+                                            >
+                                                {level === 'best' && 'Best'}
+                                                {level === 'mid' && 'Balanced'}
+                                                {level === 'low' && 'Small'}
+                                            </button>
+                                        ))}
+                                    </div>
+                                 </div>
 
-                             {/* Target Size Overlay/Section */}
-                             <div className={`mt-6 pt-6 border-t border-white/10 transition-all duration-300 ${!useTargetSize ? 'opacity-50' : 'opacity-100'}`}>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-10 h-6 rounded-full p-1 transition-colors duration-300 cursor-pointer ${useTargetSize ? 'bg-primary' : 'bg-white/10'}`}
-                                             onClick={() => setUseTargetSize(!useTargetSize)}>
-                                            <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 ${useTargetSize ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                                 {/* Target Size Overlay/Section */}
+                                 <div className={`mt-6 pt-6 border-t border-white/10 transition-all duration-300 ${!useTargetSize ? 'opacity-50' : 'opacity-100'}`}>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-10 h-6 rounded-full p-1 transition-colors duration-300 cursor-pointer ${useTargetSize ? 'bg-primary' : 'bg-white/10'}`}
+                                                 onClick={() => setUseTargetSize(!useTargetSize)}>
+                                                <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 ${useTargetSize ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                                            </div>
+                                            <div>
+                                                <span className={`block text-sm font-medium transition-colors ${useTargetSize ? 'text-white' : 'text-gray-400'}`}>Specify Target Size</span>
+                                                <span className="text-xs text-gray-500">Compress to a specific size (e.g. 100KB)</span>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <span className={`block text-sm font-medium transition-colors ${useTargetSize ? 'text-white' : 'text-gray-400'}`}>Specify Target Size</span>
-                                            <span className="text-xs text-gray-500">Compress to a specific size (e.g. 100KB)</span>
+                                        
+                                        <div className={`relative transition-all duration-300 ${useTargetSize ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0 pointer-events-none'}`}>
+                                            <input
+                                                type="number"
+                                                value={targetSize}
+                                                onChange={(e) => setTargetSize(e.target.value)}
+                                                placeholder="100"
+                                                min="1"
+                                                className="w-28 bg-black/40 border border-white/20 rounded-xl pl-4 pr-10 py-2 text-right text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                            />
+                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 pointer-events-none">KB</span>
                                         </div>
                                     </div>
-                                    
-                                    <div className={`relative transition-all duration-300 ${useTargetSize ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0 pointer-events-none'}`}>
-                                        <input
-                                            type="number"
-                                            value={targetSize}
-                                            onChange={(e) => setTargetSize(e.target.value)}
-                                            placeholder="100"
-                                            min="1"
-                                            className="w-28 bg-black/40 border border-white/20 rounded-xl pl-4 pr-10 py-2 text-right text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                        />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 pointer-events-none">KB</span>
-                                    </div>
-                                </div>
-                             </div>
+                                 </div>
 
+                             </div>
                          </div>
                      </div>
-                 </div>
             </div>
 
         </div>
@@ -243,7 +232,7 @@ export default function Home() {
                                                     <span className="block w-2 h-2 rounded-full bg-primary animate-pulse"></span>
                                                     Compressing...
                                                 </span>
-                                            ) : file.status === 'error' ? (
+                                             ) : file.status === 'error' ? (
                                                 <span className="text-error">Error</span>
                                             ) : (
                                                  <span className="text-gray-500">Pending...</span>
@@ -342,9 +331,6 @@ export default function Home() {
                 </div>
             </div>
         )}
-
-        {/* Features Section */}
-
 
       </main>
       

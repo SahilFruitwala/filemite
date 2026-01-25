@@ -9,9 +9,21 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const requestedFormat = formData.get('format') as string;
-    const compressionLevel = (formData.get('level') as string) || 'mid'; // 'best' | 'mid' | 'low'
+    const compressionLevel = (formData.get('level') as string) || 'mid'; // 'best' | 'mid' | 'low' | 'lossless'
     const targetSizeMsg = formData.get('targetSize');
     const targetSize = targetSizeMsg ? parseInt(targetSizeMsg as string) : null;
+
+    // Parse resize options
+    const widthRaw = formData.get('width');
+    const heightRaw = formData.get('height');
+    const resizeFit = (formData.get('fit') as keyof sharp.FitEnum) || 'cover';
+    
+    // Only parse if values are provided and valid numbers
+    const finalWidth = widthRaw ? parseInt(widthRaw as string) : undefined;
+    const finalHeight = heightRaw ? parseInt(heightRaw as string) : undefined;
+    
+    // Check if we have valid resize dimensions
+    const shouldResize = (finalWidth && !isNaN(finalWidth)) || (finalHeight && !isNaN(finalHeight));
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
@@ -36,55 +48,91 @@ export async function POST(req: NextRequest) {
     // .rotate() uses EXIF data to orient the image correctly before we strip metadata
     pipeline.rotate(); 
 
-    // Only resize if the image is wider than our limit to save massive file size
-    if (metadata.width && metadata.width > MAX_WIDTH) {
+    // Apply explicit resize if requested, otherwise check default max limits
+    if (shouldResize) {
+        pipeline.resize({
+            width: finalWidth,
+            height: finalHeight,
+            fit: resizeFit,
+            withoutEnlargement: false // Allow enlargement if user explicitly requests dimensions
+        });
+    } else if (metadata.width && metadata.width > MAX_WIDTH) {
+      // Only default resize if no explicit dimensions provided
       pipeline.resize({ width: MAX_WIDTH, withoutEnlargement: true, fit: 'inside' });
     }
 
     const contentType = `image/${targetFormat === 'avif' ? 'avif' : targetFormat}`;
 
     // 4. Compress
+    // 4. Compress
     // Define a helper to compress with specific quality
     const compressBuffer = async (quality: number) => {
-        const pipe = pipeline.clone(); // Clone to reuse base pipeline (resize/rotate)
+        // Clone the pipeline to ensure base operations (rotate/resize) are preserved
+        // Note: sharp instances are mutable for some operations but .clone() is safer for branching
+        const pipe = pipeline.clone(); 
         
         switch (targetFormat) {
             case 'jpeg':
-                pipe.jpeg({
-                  quality: quality,
-                  mozjpeg: true,
-                  chromaSubsampling: '4:2:0',
-                  trellisQuantisation: true,
-                  overshootDeringing: true,
-                  optimizeScans: true,
-                  quantisationTable: 3,
-                });
+                if (compressionLevel === 'lossless') {
+                    // High fidelity JPEG settings
+                    pipe.jpeg({
+                        quality: 100,
+                        mozjpeg: false, // Standard JPEG engine for speed/compatibility in resize mode
+                        chromaSubsampling: '4:4:4', // No color subsampling
+                    });
+                } else {
+                    // Standard compression settings
+                    pipe.jpeg({
+                        quality: quality,
+                        mozjpeg: true,
+                        chromaSubsampling: '4:2:0',
+                        trellisQuantisation: true,
+                        overshootDeringing: true,
+                        optimizeScans: true,
+                        quantisationTable: 3,
+                    });
+                }
                 break;
             case 'png':
-                // Map 0-100 quality to PNG settings
-                // PNG quality in sharp is different. We'll map it.
-                // low quality -> low colors
-                const colors = Math.max(2, Math.floor((quality / 100) * 256));
-                 pipe.png({
-                    quality: quality,
-                    palette: true,
-                    colors: colors,
-                    compressionLevel: 9,
-                    effort: 10,
-                    adaptiveFiltering: false,
-                });
+                if (quality === 100 || compressionLevel === 'lossless') {
+                     // True Lossless PNG
+                     pipe.png({
+                        quality: 100,
+                        palette: false,
+                        compressionLevel: 9,
+                        adaptiveFiltering: true,
+                    });
+                } else {
+                    // Lossy/Optimized PNG
+                    const colors = Math.max(2, Math.floor((quality / 100) * 256));
+                     pipe.png({
+                        quality: quality,
+                        palette: true,
+                        colors: colors,
+                        compressionLevel: 9,
+                        adaptiveFiltering: false,
+                    });
+                }
                 break;
             case 'webp':
-                pipe.webp({
-                    quality: quality,
-                    effort: 6,
-                    smartSubsample: true,
-                    lossless: false,
-                });
+                if (compressionLevel === 'lossless') {
+                    pipe.webp({
+                        lossless: true,
+                        quality: 100,
+                        effort: 6
+                    });
+                } else {
+                    pipe.webp({
+                         quality: quality,
+                         effort: 6,
+                         smartSubsample: true,
+                         lossless: false,
+                    });
+                }
                 break;
             case 'avif':
                  pipe.avif({
-                    quality: Math.min(quality, 85), // AVIF at 100 is overkill
+                    quality: Math.min(quality, 85),
                     effort: 5,
                     chromaSubsampling: '4:2:0',
                 });
@@ -136,6 +184,15 @@ export async function POST(req: NextRequest) {
         let quality = 75; // Default (mid)
         if (compressionLevel === 'best') quality = 90;
         if (compressionLevel === 'low') quality = 40; // slightly lower for low
+        
+        // Handle lossless/resize-only mode
+        if (compressionLevel === 'lossless') {
+            quality = 100;
+            // For PNG/WebP we could use proper lossless settings, but for simple implementation quality=100 is often close enough or use specific flags
+            // However, our compressBuffer function applies format specifics:
+            // PNG: palette=true by default in current code -> this forces lossy color reduction!
+            // We need to adjust compressBuffer to support lossless if needed.
+        }
         
         // For standard mode, just run once
         processedBuffer = await compressBuffer(quality);
