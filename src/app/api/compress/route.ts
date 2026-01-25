@@ -3,13 +3,13 @@ import sharp from 'sharp';
 
 // Configuration: Adjust these limits as needed
 const MAX_WIDTH = 1920; // Downscale images larger than 1080p/4K to save massive space
-const COMPRESSION_EFFORT = 6; // Balance between CPU usage and file size (0-9)
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const requestedFormat = formData.get('format') as string;
+    const compressionLevel = (formData.get('level') as string) || 'mid'; // 'best' | 'mid' | 'low'
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
@@ -39,13 +39,17 @@ export async function POST(req: NextRequest) {
       pipeline.resize({ width: MAX_WIDTH, withoutEnlargement: true, fit: 'inside' });
     }
 
-    // 4. Apply Format-Specific Aggressive Compression
+    // 4. Apply Format-Specific Compression based on Level
     let contentType = `image/${targetFormat}`;
     
     switch (targetFormat) {
       case 'jpeg':
+        let jpegQuality = 75;
+        if (compressionLevel === 'best') jpegQuality = 90;
+        if (compressionLevel === 'low') jpegQuality = 50;
+
         pipeline.jpeg({
-          quality: 75,
+          quality: jpegQuality,
           mozjpeg: true, // Best standard JPEG compressor
           chromaSubsampling: '4:2:0',
           trellisQuantisation: true,
@@ -56,19 +60,35 @@ export async function POST(req: NextRequest) {
         break;
 
       case 'png':
+        let pngQuality = 60;
+        let pngColors = 128;
+        
+        if (compressionLevel === 'best') {
+             pngQuality = 85;
+             pngColors = 256;
+        }
+        if (compressionLevel === 'low') {
+            pngQuality = 40;
+            pngColors = 64;
+        }
+
         pipeline.png({
-          quality: 50, // Requires palette: true to work effectively
+          quality: pngQuality, // Requires palette: true to work effectively
           compressionLevel: 9, // Max compression (slower)
           palette: true, // Quantize colors (TinyPNG style)
-          colors: 128, // Reduce color space
+          colors: pngColors, // Reduce color space
           effort: 10, // Max CPU effort for smallest size
           adaptiveFiltering: false,
         });
         break;
 
       case 'webp':
+        let webpQuality = 75;
+        if (compressionLevel === 'best') webpQuality = 90;
+        if (compressionLevel === 'low') webpQuality = 50;
+        
         pipeline.webp({
-          quality: 70, // Slightly lower than 75 often yields huge savings with little difference
+          quality: webpQuality,
           effort: 6,
           smartSubsample: true,
           lossless: false,
@@ -76,9 +96,12 @@ export async function POST(req: NextRequest) {
         break;
 
       case 'avif':
-        // AVIF: The King of Compression
+        let avifQuality = 50;
+        if (compressionLevel === 'best') avifQuality = 70;
+        if (compressionLevel === 'low') avifQuality = 30;
+
         pipeline.avif({
-          quality: 50, // AVIF looks great even at low quality settings
+          quality: avifQuality, 
           effort: 5, // 9 is too slow for real-time APIs, 4-6 is the sweet spot
           chromaSubsampling: '4:2:0',
         });
@@ -87,10 +110,9 @@ export async function POST(req: NextRequest) {
 
       default:
         // Fallback for formats Sharp can handle but we didn't explicitly optimize
-        // Or force convert weird formats to WebP
-        pipeline.toFormat('webp', { quality: 75 });
-        contentType = 'image/webp';
-        targetFormat = 'webp';
+         pipeline.toFormat('webp', { quality: 75 });
+         contentType = 'image/webp';
+         targetFormat = 'webp';
         break;
     }
 
