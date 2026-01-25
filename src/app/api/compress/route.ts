@@ -10,6 +10,8 @@ export async function POST(req: NextRequest) {
     const file = formData.get('file') as File;
     const requestedFormat = formData.get('format') as string;
     const compressionLevel = (formData.get('level') as string) || 'mid'; // 'best' | 'mid' | 'low'
+    const targetSizeMsg = formData.get('targetSize');
+    const targetSize = targetSizeMsg ? parseInt(targetSizeMsg as string) : null;
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
@@ -39,84 +41,105 @@ export async function POST(req: NextRequest) {
       pipeline.resize({ width: MAX_WIDTH, withoutEnlargement: true, fit: 'inside' });
     }
 
-    // 4. Apply Format-Specific Compression based on Level
-    let contentType = `image/${targetFormat}`;
-    
-    switch (targetFormat) {
-      case 'jpeg':
-        let jpegQuality = 75;
-        if (compressionLevel === 'best') jpegQuality = 90;
-        if (compressionLevel === 'low') jpegQuality = 50;
+    const contentType = `image/${targetFormat === 'avif' ? 'avif' : targetFormat}`;
 
-        pipeline.jpeg({
-          quality: jpegQuality,
-          mozjpeg: true, // Best standard JPEG compressor
-          chromaSubsampling: '4:2:0',
-          trellisQuantisation: true,
-          overshootDeringing: true,
-          optimizeScans: true,
-          quantisationTable: 3,
-        });
-        break;
-
-      case 'png':
-        let pngQuality = 60;
-        let pngColors = 128;
+    // 4. Compress
+    // Define a helper to compress with specific quality
+    const compressBuffer = async (quality: number) => {
+        const pipe = pipeline.clone(); // Clone to reuse base pipeline (resize/rotate)
         
-        if (compressionLevel === 'best') {
-             pngQuality = 85;
-             pngColors = 256;
+        switch (targetFormat) {
+            case 'jpeg':
+                pipe.jpeg({
+                  quality: quality,
+                  mozjpeg: true,
+                  chromaSubsampling: '4:2:0',
+                  trellisQuantisation: true,
+                  overshootDeringing: true,
+                  optimizeScans: true,
+                  quantisationTable: 3,
+                });
+                break;
+            case 'png':
+                // Map 0-100 quality to PNG settings
+                // PNG quality in sharp is different. We'll map it.
+                // low quality -> low colors
+                const colors = Math.max(2, Math.floor((quality / 100) * 256));
+                 pipe.png({
+                    quality: quality,
+                    palette: true,
+                    colors: colors,
+                    compressionLevel: 9,
+                    effort: 10,
+                    adaptiveFiltering: false,
+                });
+                break;
+            case 'webp':
+                pipe.webp({
+                    quality: quality,
+                    effort: 6,
+                    smartSubsample: true,
+                    lossless: false,
+                });
+                break;
+            case 'avif':
+                 pipe.avif({
+                    quality: Math.min(quality, 85), // AVIF at 100 is overkill
+                    effort: 5,
+                    chromaSubsampling: '4:2:0',
+                });
+                break;
+            default:
+                pipe.toFormat('webp', { quality: quality });
+                break;
         }
-        if (compressionLevel === 'low') {
-            pngQuality = 40;
-            pngColors = 64;
+        return await pipe.toBuffer();
+    };
+
+    let processedBuffer: Buffer;
+
+    if (targetSize) {
+        // --- Target Size Mode (Binary Search) ---
+        let minQ = 1;
+        let maxQ = 100;
+        let bestBuffer: Buffer | null = null;
+        let minSizeBuffer: Buffer | null = null;
+        let minSizeVal = Infinity;
+
+        // Start with a reasonable guess or strictly binary search
+        while (minQ <= maxQ) {
+            const midQ = Math.floor((minQ + maxQ) / 2);
+            const buf = await compressBuffer(midQ);
+            const size = buf.length;
+
+            if (size < minSizeVal) {
+                minSizeVal = size;
+                minSizeBuffer = buf;
+            }
+
+            if (size <= targetSize) {
+                // Fits! Try to push quality higher
+                bestBuffer = buf;
+                minQ = midQ + 1;
+            } else {
+                // Too big, lower quality
+                maxQ = midQ - 1;
+            }
         }
 
-        pipeline.png({
-          quality: pngQuality, // Requires palette: true to work effectively
-          compressionLevel: 9, // Max compression (slower)
-          palette: true, // Quantize colors (TinyPNG style)
-          colors: pngColors, // Reduce color space
-          effort: 10, // Max CPU effort for smallest size
-          adaptiveFiltering: false,
-        });
-        break;
+        // If we found a fit, use it. Otherwise use the smallest we found.
+        processedBuffer = bestBuffer || minSizeBuffer!; 
 
-      case 'webp':
-        let webpQuality = 75;
-        if (compressionLevel === 'best') webpQuality = 90;
-        if (compressionLevel === 'low') webpQuality = 50;
+    } else {
+        // --- Standard Mode (Level Based) ---
+        // Determine quality based on level
+        let quality = 75; // Default (mid)
+        if (compressionLevel === 'best') quality = 90;
+        if (compressionLevel === 'low') quality = 40; // slightly lower for low
         
-        pipeline.webp({
-          quality: webpQuality,
-          effort: 6,
-          smartSubsample: true,
-          lossless: false,
-        });
-        break;
-
-      case 'avif':
-        let avifQuality = 50;
-        if (compressionLevel === 'best') avifQuality = 70;
-        if (compressionLevel === 'low') avifQuality = 30;
-
-        pipeline.avif({
-          quality: avifQuality, 
-          effort: 5, // 9 is too slow for real-time APIs, 4-6 is the sweet spot
-          chromaSubsampling: '4:2:0',
-        });
-        contentType = 'image/avif';
-        break;
-
-      default:
-        // Fallback for formats Sharp can handle but we didn't explicitly optimize
-         pipeline.toFormat('webp', { quality: 75 });
-         contentType = 'image/webp';
-         targetFormat = 'webp';
-        break;
+        // For standard mode, just run once
+        processedBuffer = await compressBuffer(quality);
     }
-
-    const processedBuffer = await pipeline.toBuffer();
 
     // 5. Return Response
     return new NextResponse(processedBuffer as BodyInit, {

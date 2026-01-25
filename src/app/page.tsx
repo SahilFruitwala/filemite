@@ -24,6 +24,8 @@ export default function Home() {
   const [isProcesssing, setIsProcessing] = useState(false);
   const [compressionLevel, setCompressionLevel] = useState<CompressionLevel>('mid');
   const [comparingFileId, setComparingFileId] = useState<string | null>(null);
+  const [targetSize, setTargetSize] = useState<string>(''); // in KB
+  const [useTargetSize, setUseTargetSize] = useState(false);
 
   const formatSize = (bytes: number) => {
     if (bytes === 0) return '0 B';
@@ -59,6 +61,9 @@ export default function Home() {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('level', compressionLevel);
+        if (useTargetSize && targetSize) {
+           formData.append('targetSize', (parseFloat(targetSize) * 1024).toString()); // Convert KB to Bytes
+        }
 
         try {
             const response = await fetch('/api/compress', {
@@ -111,13 +116,43 @@ export default function Home() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">losing a pixel.</span>
           </h1>
 
+            {/* Target Size Input */}
+            <div className="flex justify-center mb-6">
+                 <div className="flex items-center gap-4 bg-secondary/30 p-2 rounded-2xl border border-white/5 backdrop-blur-sm">
+                    <label className="flex items-center gap-2 cursor-pointer relative group">
+                        <input 
+                            type="checkbox" 
+                            checked={useTargetSize}
+                            onChange={(e) => setUseTargetSize(e.target.checked)}
+                            className="w-5 h-5 rounded border-gray-600 bg-transparent checked:bg-primary focus:ring-primary transition-colors cursor-pointer"
+                        />
+                         <span className={`text-sm font-medium transition-colors ${useTargetSize ? 'text-white' : 'text-gray-400 group-hover:text-gray-300'}`}>
+                             Target Size
+                         </span>
+                    </label>
+
+                    <div className={`flex items-center gap-2 transition-all duration-300 ${useTargetSize ? 'opacity-100 max-w-[200px]' : 'opacity-40 max-w-[200px] pointer-events-none'}`}>
+                        <input
+                            type="number"
+                            value={targetSize}
+                            onChange={(e) => setTargetSize(e.target.value)}
+                            placeholder="100"
+                            min="1"
+                            className="w-24 bg-black/40 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-primary transition-colors"
+                        />
+                        <span className="text-sm text-gray-500">KB</span>
+                    </div>
+                 </div>
+            </div>
+
             {/* Compression Level Selector */}
-            <div className="flex justify-center mb-8">
+            <div className={`flex justify-center mb-8 transition-opacity duration-300 ${useTargetSize ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
                 <div className="inline-flex bg-secondary/50 p-1 rounded-xl border border-white/10 backdrop-blur-sm">
                     {(['best', 'mid', 'low'] as const).map((level) => (
                         <button
                             key={level}
-                            onClick={() => setCompressionLevel(level)}
+                            onClick={() => !useTargetSize && setCompressionLevel(level)}
+                            disabled={useTargetSize}
                             className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                                 compressionLevel === level 
                                     ? 'bg-primary text-white shadow-lg' 
