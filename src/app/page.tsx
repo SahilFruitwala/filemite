@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 
 import Dropzone from '@/components/Dropzone';
+import ImageCompare from '@/components/ImageCompare';
 
 interface CompressedFile {
     id: string;
     originalName: string;
     originalSize: number;
+    originalBlobUrl?: string;
     compressedSize: number;
     blobUrl: string;
     status: 'pending' | 'processing' | 'done' | 'error';
@@ -21,6 +23,7 @@ export default function Home() {
   const [files, setFiles] = useState<CompressedFile[]>([]);
   const [isProcesssing, setIsProcessing] = useState(false);
   const [compressionLevel, setCompressionLevel] = useState<CompressionLevel>('mid');
+  const [comparingFileId, setComparingFileId] = useState<string | null>(null);
 
   const formatSize = (bytes: number) => {
     if (bytes === 0) return '0 B';
@@ -38,6 +41,7 @@ export default function Home() {
         id: Math.random().toString(36).substr(2, 9),
         originalName: file.name,
         originalSize: file.size,
+        originalBlobUrl: URL.createObjectURL(file),
         compressedSize: 0,
         blobUrl: '',
         status: 'pending'
@@ -89,6 +93,8 @@ export default function Home() {
   const handleReset = () => {
       setFiles([]);
   };
+
+  const comparingFile = files.find(f => f.id === comparingFileId);
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-center">
@@ -179,21 +185,29 @@ export default function Home() {
                                         </div>
                                     </div>
                                 </div>
-                                <div>
-                                    {file.status === 'done' ? (
-                                        <a 
-                                            href={file.blobUrl} 
-                                            download={`min-${file.originalName}`}
-                                            className="bg-primary/10 hover:bg-primary hover:text-white text-primary px-4 py-2 rounded-lg font-medium transition-colors text-sm flex items-center gap-2"
-                                        >
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                            <span className="hidden sm:inline">Save</span>
-                                        </a>
-                                    ) : (
+                                <div className="flex items-center gap-2">
+                                    {file.status === 'done' && (
+                                        <>
+                                            <button
+                                                onClick={() => setComparingFileId(file.id)}
+                                                className="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm flex items-center gap-2 border border-white/5"
+                                            >
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                <span className="hidden sm:inline">Compare</span>
+                                            </button>
+                                            <a 
+                                                href={file.blobUrl} 
+                                                download={`min-${file.originalName}`}
+                                                className="bg-primary/10 hover:bg-primary hover:text-white text-primary px-4 py-2 rounded-lg font-medium transition-colors text-sm flex items-center gap-2"
+                                            >
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                                <span className="hidden sm:inline">Save</span>
+                                            </a>
+                                        </>
+                                    )}
+                                    {file.status === 'processing' && (
                                         <div className="w-8 h-8 flex items-center justify-center">
-                                            {file.status === 'processing' && (
-                                                <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                                            )}
+                                            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
                                         </div>
                                     )}
                                 </div>
@@ -206,6 +220,62 @@ export default function Home() {
                 </div>
             )}
         </div>
+
+        {/* Comparison Modal */}
+        {comparingFile && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 animate-[fadeIn_0.2s_ease-out]">
+                <div 
+                    className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                    onClick={() => setComparingFileId(null)}
+                ></div>
+                <div className="relative bg-[#0A0A0A] border border-white/10 rounded-3xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col max-h-full">
+                    {/* Modal Header */}
+                    <div className="flex items-center justify-between p-6 border-b border-white/5">
+                        <div className="min-w-0">
+                            <h2 className="text-xl font-bold text-white truncate">{comparingFile.originalName}</h2>
+                            <p className="text-gray-400 text-sm mt-0.5">
+                                {formatSize(comparingFile.originalSize)} → {formatSize(comparingFile.compressedSize)} 
+                                <span className="text-success ml-2">-{Math.round(((comparingFile.originalSize - comparingFile.compressedSize) / comparingFile.originalSize) * 100)}% saved</span>
+                            </p>
+                        </div>
+                        <button 
+                            onClick={() => setComparingFileId(null)}
+                            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
+                        >
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+
+                    {/* Modal Content */}
+                    <div className="flex-1 overflow-auto p-6 flex items-center justify-center bg-black/40">
+                        {comparingFile.originalBlobUrl && (
+                            <ImageCompare 
+                                original={comparingFile.originalBlobUrl} 
+                                compressed={comparingFile.blobUrl} 
+                            />
+                        )}
+                    </div>
+
+                    {/* Modal Footer */}
+                    <div className="p-6 border-t border-white/5 flex justify-end gap-3">
+                        <button 
+                            onClick={() => setComparingFileId(null)}
+                            className="px-6 py-2.5 rounded-xl font-medium text-gray-400 hover:text-white transition-colors"
+                        >
+                            Close
+                        </button>
+                        <a 
+                            href={comparingFile.blobUrl} 
+                            download={`min-${comparingFile.originalName}`}
+                            className="bg-primary hover:bg-primary/90 text-white px-8 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center gap-2"
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Download Optimized
+                        </a>
+                    </div>
+                </div>
+            </div>
+        )}
 
         {/* Features Section */}
 
