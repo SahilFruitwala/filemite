@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
-import FeatureCard from '@/components/FeatureCard';
+
 import Dropzone from '@/components/Dropzone';
 
 interface CompressedFile {
@@ -157,7 +157,6 @@ export default function Home() {
                                         </div>
                                     </div>
                                 </div>
-
                                 <div>
                                     {file.status === 'done' ? (
                                         <a 
@@ -187,28 +186,7 @@ export default function Home() {
         </div>
 
         {/* Features Section */}
-        <div className="mb-20">
-            <h2 className="text-3xl font-bold mb-4 text-white">Why use ImageCompress?</h2>
-            <p className="text-gray-400 mb-12 max-w-xl">Optimizing your images has never been this simple, fast, and secure. Built for modern web workflows.</p>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-                 <FeatureCard 
-                    icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>}
-                    title="Lossless Compression"
-                    description="Maintain perfect visual quality while reducing file size by up to 90% using our intelligent algorithms."
-                 />
-                  <FeatureCard 
-                    icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>}
-                    title="Bulk Processing"
-                    description="Upload and optimize hundreds of images at once with our multi-threaded high-speed processing engine."
-                 />
-                  <FeatureCard 
-                    icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>}
-                    title="Privacy First"
-                    description="Your files never leave your browser for longer than necessary. We process everything securely and delete immediately."
-                 />
-            </div>
-        </div>
+
 
       </main>
       

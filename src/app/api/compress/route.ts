@@ -39,12 +39,12 @@ export async function POST(req: NextRequest) {
     } else if (metadata.format === 'png') {
       processedBuffer = await pipeline
         .png({
-          quality: 75, // Reduced to 75
+          quality: 50, // Reduced to 50 based on benchmark
           compressionLevel: 9,
           palette: true, 
-          colors: 128, // Explicitly limit palette size for TinyPNG-like results
+          colors: 128, 
           effort: 10,
-          adaptiveFiltering: true,
+          adaptiveFiltering: false, // Disabled for better compression
         })
         .toBuffer();
       contentType = 'image/png';
@@ -64,12 +64,12 @@ export async function POST(req: NextRequest) {
       if (requestedFormat === 'png') {
         processedBuffer = await pipeline
           .png({
-            quality: 75,
+            quality: 50,
             compressionLevel: 9,
             palette: true,
             colors: 128,
             effort: 10,
-            adaptiveFiltering: true,
+            adaptiveFiltering: false,
           })
           .toBuffer();
         contentType = 'image/png';
@@ -102,12 +102,12 @@ export async function POST(req: NextRequest) {
         if (format === 'png') {
           processedBuffer = await pipeline
             .png({
-              quality: 75,
+              quality: 50,
               compressionLevel: 9,
               palette: true,
               colors: 128,
               effort: 10,
-              adaptiveFiltering: true,
+              adaptiveFiltering: false,
             })
             .toBuffer();
           // contentType already set potentially, but ensure it matches

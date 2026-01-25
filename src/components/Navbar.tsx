@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import React from 'react';
-
 export default function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 flex items-center justify-between px-6 py-4 bg-[#0a0e14]/80 backdrop-blur-md border-b border-white/10">
@@ -15,18 +14,9 @@ export default function Navbar() {
         <span className="text-xl font-bold tracking-tight text-white">ImageCompress</span>
       </div>
 
-      <div className="hidden md:flex items-center gap-8 text-sm text-gray-300 font-medium">
-        <Link href="#" className="hover:text-white transition-colors">How it works</Link>
-        <Link href="#" className="hover:text-white transition-colors">Pricing</Link>
-        <Link href="#" className="hover:text-white transition-colors">API</Link>
-      </div>
 
-      <div className="flex items-center gap-4 text-sm font-medium">
-        <Link href="#" className="text-gray-300 hover:text-white transition-colors">Login</Link>
-        <button className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-hover transition-colors shadow-[0_0_15px_rgba(47,172,242,0.3)] cursor-pointer">
-          Sign Up
-        </button>
-      </div>
+
+
     </nav>
   );
 }
