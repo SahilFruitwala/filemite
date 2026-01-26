@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     // Generate .ico from PNG buffers
     const icoBuffer = await pngToIco(buffers);
 
-    return new NextResponse(icoBuffer, {
+    return new NextResponse(icoBuffer as unknown as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': 'image/x-icon',
