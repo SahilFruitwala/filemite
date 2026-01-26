@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import GlassCard from './ui/GlassCard';
 
 type WatermarkType = 'text' | 'image' | null;
 type WatermarkPosition = 'center' | 'southeast' | 'southwest' | 'northeast' | 'northwest' | 'tile';
@@ -54,7 +55,7 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
     ];
 
     return (
-        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mt-6 animate-[fadeIn_0.3s_ease-out]">
+        <GlassCard className="mt-6">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-white font-medium flex items-center gap-2">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
@@ -178,6 +179,6 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                     </div>
                 </div>
             )}
-        </div>
+        </GlassCard>
     );
 }

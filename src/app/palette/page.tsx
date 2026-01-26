@@ -4,6 +4,9 @@ import React, { useState, useRef, useEffect } from "react";
 import Dropzone from "@/components/Dropzone";
 import Navbar from "@/components/Navbar";
 import ColorThief from "colorthief";
+import BackgroundGlow from "@/components/ui/BackgroundGlow";
+import PageHeader from "@/components/ui/PageHeader";
+import GlassCard from "@/components/ui/GlassCard";
 
 export default function PalettePage() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -67,18 +70,16 @@ export default function PalettePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0e14] text-white selection:bg-primary/30">
+    <div className="min-h-screen relative overflow-hidden bg-center selection:bg-primary/30">
+      <BackgroundGlow color="blue" />
       <Navbar />
       
       <main className="container mx-auto px-6 pt-32 pb-20">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-            Extract Color Palette
-          </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Upload an image to instantly generate a color palette based on its dominant colors. Perfect for designers.
-          </p>
-        </div>
+        <PageHeader 
+            title={<>Extract Color Palette</>}
+            description="Upload an image to instantly generate a color palette based on its dominant colors. Perfect for designers."
+            className="md:!mb-16"
+        />
 
         {!uploadedImage ? (
           <Dropzone onFileSelect={handleFileSelect} isCompressing={false} />
@@ -88,7 +89,7 @@ export default function PalettePage() {
              <div className="grid md:grid-cols-2 gap-12 items-start">
                 
                 {/* Image Preview */}
-                <div className="relative group rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#1a202c]">
+                <GlassCard className="p-0 border-white/10 shadow-2xl bg-transparent">
                    <img 
                       ref={imgRef}
                       src={uploadedImage} 
@@ -110,7 +111,7 @@ export default function PalettePage() {
                         <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                      </svg>
                    </button>
-                </div>
+                </GlassCard>
 
                 {/* Palette Display */}
                 <div>

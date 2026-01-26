@@ -4,6 +4,9 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Dropzone from '@/components/Dropzone';
+import BackgroundGlow from '@/components/ui/BackgroundGlow';
+import PageHeader from '@/components/ui/PageHeader';
+import GlassCard from '@/components/ui/GlassCard';
 
 interface ExifData {
     [key: string]: any;
@@ -103,19 +106,16 @@ export default function ScrubPage() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-[#0A0E14] text-white">
       {/* Background Glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-emerald-500 opacity-[0.05] blur-[120px] rounded-full pointer-events-none z-[-1]"></div>
+
+      <BackgroundGlow color="emerald" />
       
       <Navbar />
 
       <main className="container mx-auto px-6 pt-32 pb-20">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight">
-            Privacy First. <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">Scrub Metadata.</span>
-          </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            View hidden data in your photos (GPS, Model, Settings) and strip it clean before sharing.
-          </p>
-        </div>
+        <PageHeader 
+            title={<>Privacy First. <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">Scrub Metadata.</span></>}
+            description="View hidden data in your photos (GPS, Model, Settings) and strip it clean before sharing."
+        />
 
         {!file ? (
              <div className="max-w-3xl mx-auto">
@@ -125,7 +125,7 @@ export default function ScrubPage() {
             <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left Column: Image & Status */}
                 <div className="space-y-6">
-                    <div className="bg-[#131720] border border-white/10 rounded-2xl p-4">
+                    <GlassCard className="p-4">
                         <div className="relative aspect-square md:aspect-video rounded-xl overflow-hidden bg-black/50 mb-4">
                              <img src={file.previewUrl} alt="Preview" className="w-full h-full object-contain" />
                         </div>
@@ -138,7 +138,7 @@ export default function ScrubPage() {
                                  Remove
                              </button>
                         </div>
-                    </div>
+                    </GlassCard>
 
                     {file.status === 'done' && file.scrubbedUrl && (
                         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6 text-center animate-in fade-in slide-in-from-bottom-4">
@@ -159,7 +159,7 @@ export default function ScrubPage() {
                 </div>
 
                 {/* Right Column: Metadata & Actions */}
-                <div className="bg-[#131720] border border-white/10 rounded-2xl p-6 h-fit max-h-[800px] overflow-hidden flex flex-col">
+                <GlassCard className="h-fit max-h-[800px] overflow-hidden flex flex-col p-6">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-xl font-bold flex items-center gap-2">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-400"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -201,7 +201,7 @@ export default function ScrubPage() {
                              </button>
                         </div>
                     )}
-                </div>
+                </GlassCard>
             </div>
         )}
       </main>

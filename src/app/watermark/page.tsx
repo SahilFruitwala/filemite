@@ -6,6 +6,8 @@ import Dropzone from '@/components/Dropzone';
 import WatermarkSettings, { WatermarkConfig } from '@/components/WatermarkSettings';
 import ResultCard from '@/components/ResultCard';
 import { CompressedFile } from '@/types';
+import BackgroundGlow from '@/components/ui/BackgroundGlow';
+import PageHeader from '@/components/ui/PageHeader';
 
 export default function WatermarkPage() {
   const [files, setFiles] = useState<CompressedFile[]>([]);
@@ -134,25 +136,21 @@ export default function WatermarkPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-center">
-      {/* Background Glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-500 opacity-[0.08] blur-[120px] rounded-full pointer-events-none z-[-1]"></div>
+      <BackgroundGlow color="indigo" />
       
       <Navbar />
 
       <main className="container mx-auto px-6 pt-32 pb-20">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-white">
-            Add Watermark <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Instantly.</span>
-          </h1>
-          <p className="text-gray-400 max-w-lg mx-auto mb-8">
-              Protect your images properly. Add logos or text watermarks with full control over opacity and positioning.
-          </p>
+        <PageHeader 
+            title={<>Add Watermark <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Instantly.</span></>}
+            description="Protect your images properly. Add logos or text watermarks with full control over opacity and positioning."
+        />
 
              {/* Watermark Settings Panel */}
             <div className="max-w-xl mx-auto mb-16">
                  <WatermarkSettings config={watermarkConfig} onChange={setWatermarkConfig} />
             </div>
-        </div>
+
 
         {/* Dropzone / Result Area */}
         <div className="mb-32">

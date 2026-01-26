@@ -8,6 +8,10 @@ import Dropzone from '@/components/Dropzone';
 import ResultCard from '@/components/ResultCard';
 import { CompressedFile, CompressionLevel } from '@/types';
 
+import BackgroundGlow from '@/components/ui/BackgroundGlow';
+import PageHeader from '@/components/ui/PageHeader';
+import GlassCard from '@/components/ui/GlassCard';
+
 export default function Home() {
   const [files, setFiles] = useState<CompressedFile[]>([]);
   const [isProcesssing, setIsProcessing] = useState(false);
@@ -175,23 +179,19 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-center">
-      {/* Background Glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary opacity-[0.08] blur-[120px] rounded-full pointer-events-none z-[-1]"></div>
+      <BackgroundGlow color="primary" />
+
       
       <Navbar />
 
       <main className="container mx-auto px-6 pt-32 pb-20">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-white">
-            Compress images without <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">losing a pixel.</span>
-          </h1>
+        <PageHeader 
+          title={<>Compress Images <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Flawlessly.</span></>}
+        />
 
-             {/* Compression Settings Panel */}
+            {/* Compression Settings Panel */}
             <div className="max-w-xl mx-auto mb-16">
-                     <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 relative overflow-hidden group animate-[fadeIn_0.3s_ease-out]">
-                         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-
+                     <GlassCard>
                          <div className="relative z-10 flex flex-col gap-6">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-white font-medium flex items-center gap-2">
@@ -279,12 +279,12 @@ export default function Home() {
 
                              </div>
                          </div>
-                     </div>
+                     </GlassCard>
 
 
             </div>
 
-        </div>
+
 
         {/* Dropzone / Result Area */}
         <div className="mb-32">

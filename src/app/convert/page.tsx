@@ -5,6 +5,9 @@ import Navbar from '@/components/Navbar';
 import Dropzone from '@/components/Dropzone';
 import ResultCard from '@/components/ResultCard';
 import { CompressedFile } from '@/types';
+import BackgroundGlow from '@/components/ui/BackgroundGlow';
+import PageHeader from '@/components/ui/PageHeader';
+import GlassCard from '@/components/ui/GlassCard';
 
 type TargetFormat = 'png' | 'jpeg' | 'webp' | 'avif';
 
@@ -88,19 +91,18 @@ export default function ConvertPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-center">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary opacity-[0.08] blur-[120px] rounded-full pointer-events-none z-[-1]"></div>
+
+      <BackgroundGlow color="primary" />
       
       <Navbar />
 
       <main className="container mx-auto px-6 pt-32 pb-20">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-white">
-            Convert image formats <br />
-             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">instantly and Lossless.</span>
-          </h1>
+        <PageHeader 
+            title={<>Convert image formats <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">instantly and Lossless.</span></>}
+        />
 
             <div className="max-w-xl mx-auto mb-16">
-                 <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 relative overflow-hidden group animate-[fadeIn_0.3s_ease-out]">
+                 <GlassCard>
                      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
 
                      <div className="relative z-10 flex flex-col gap-6">
@@ -149,9 +151,9 @@ export default function ConvertPage() {
                              </div>
                         )}
                      </div>
-                 </div>
+                 </GlassCard>
             </div>
-        </div>
+
 
         <div className="mb-32">
             {files.length === 0 ? (
