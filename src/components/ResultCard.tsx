@@ -29,10 +29,17 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
 
     switch (type) {
         case 'compress':
-            resultBlobUrl = file.clientStats?.blobUrl || '';
-            resultSize = file.clientStats?.size || 0;
-            resultTime = file.clientStats?.time || 0;
-            status = file.clientStatus || 'pending';
+            if (file.serverStatus && file.serverStatus !== 'pending') {
+                resultBlobUrl = file.serverStats?.blobUrl || '';
+                resultSize = file.serverStats?.size || 0;
+                resultTime = file.serverStats?.time || 0;
+                status = file.serverStatus;
+            } else {
+                resultBlobUrl = file.clientStats?.blobUrl || '';
+                resultSize = file.clientStats?.size || 0;
+                resultTime = file.clientStats?.time || 0;
+                status = file.clientStatus || 'pending';
+            }
             rightLabel = 'Compressed';
             break;
         case 'convert':

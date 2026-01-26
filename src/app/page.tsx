@@ -16,7 +16,7 @@ export default function Home() {
   const [comparisons, setComparisons] = useState<Record<string, boolean>>({}); // Track which files have comparison active
   const [targetSize, setTargetSize] = useState<string>(''); // in KB
   const [useTargetSize, setUseTargetSize] = useState(false);
-  const [isBenchmarking, setIsBenchmarking] = useState(true); // Default to true for this task
+  const [processingMode, setProcessingMode] = useState<'client' | 'server'>('client');
 
   const formatSize = (bytes: number) => {
     if (bytes === 0) return '0 B';
@@ -52,8 +52,8 @@ export default function Home() {
             setFiles(prev => prev.map(f => f.id === fileId ? { 
                 ...f, 
                 status: 'processing',
-                clientStatus: 'processing',
-                serverStatus: isBenchmarking ? 'processing' : 'pending' 
+                clientStatus: processingMode === 'client' ? 'processing' : 'pending',
+                serverStatus: processingMode === 'server' ? 'processing' : 'pending'
             } : f));
 
             const processClient = async () => {
@@ -91,16 +91,25 @@ export default function Home() {
             };
 
             try {
-                // Always run client
-                const clientPromise = processClient().then(res => ({ type: 'client' as const, success: true, ...res })).catch(e => ({ type: 'client' as const, success: false, error: e }));
-                
-                
-                // Run server if benchmarking
-                const serverPromise = isBenchmarking 
-                    ? processServer().then(res => ({ type: 'server' as const, success: true, ...res })).catch(e => ({ type: 'server' as const, success: false, error: e }))
-                    : Promise.resolve(null);
+                // Execute based on mode
+                let clientRes: { success: boolean; blob?: Blob; time?: number; error?: any } | null = null;
+                let serverRes: { success: boolean; blob?: Blob; time?: number; error?: any } | null = null;
 
-                const [clientRes, serverRes] = await Promise.all([clientPromise, serverPromise]);
+                if (processingMode === 'client') {
+                    try {
+                        const res = await processClient();
+                        clientRes = { success: true, ...res };
+                    } catch (e) {
+                         clientRes = { success: false, error: e };
+                    }
+                } else {
+                     try {
+                        const res = await processServer();
+                        serverRes = { success: true, ...res };
+                    } catch (e) {
+                         serverRes = { success: false, error: e };
+                    }
+                }
 
                 setFiles(prev => prev.map(f => {
                     if (f.id !== fileId) return f;
@@ -108,30 +117,35 @@ export default function Home() {
                     const newFile = { ...f, status: 'done' as const };
 
                     // Update Client Stats
-                    if (clientRes.success && 'blob' in clientRes) {
-                        newFile.clientStats = {
-                            size: clientRes.blob.size,
-                            time: clientRes.time,
-                            blobUrl: URL.createObjectURL(clientRes.blob)
-                        };
-                        newFile.clientStatus = 'done';
-                        // Default main view to client result
-                        newFile.compressedSize = clientRes.blob.size;
-                        newFile.blobUrl = newFile.clientStats.blobUrl;
-                    } else {
-                        newFile.clientStatus = 'error';
+                    if (processingMode === 'client') {
+                        if (clientRes?.success && clientRes.blob) {
+                            newFile.clientStats = {
+                                size: clientRes.blob.size,
+                                time: clientRes.time!,
+                                blobUrl: URL.createObjectURL(clientRes.blob)
+                            };
+                            newFile.clientStatus = 'done';
+                            newFile.compressedSize = clientRes.blob.size;
+                            newFile.blobUrl = newFile.clientStats.blobUrl;
+                        } else {
+                            newFile.clientStatus = 'error';
+                        }
                     }
 
                     // Update Server Stats
-                    if (serverRes && serverRes.success && 'blob' in serverRes) {
-                        newFile.serverStats = {
-                            size: serverRes.blob.size,
-                            time: serverRes.time,
-                            blobUrl: URL.createObjectURL(serverRes.blob)
-                        };
-                        newFile.serverStatus = 'done';
-                    } else if (isBenchmarking) {
-                        newFile.serverStatus = 'error';
+                    if (processingMode === 'server') {
+                        if (serverRes?.success && serverRes.blob) {
+                            newFile.serverStats = {
+                                size: serverRes.blob.size,
+                                time: serverRes.time!,
+                                blobUrl: URL.createObjectURL(serverRes.blob)
+                            };
+                            newFile.serverStatus = 'done';
+                            newFile.compressedSize = serverRes.blob.size;
+                            newFile.blobUrl = newFile.serverStats.blobUrl;
+                        } else {
+                            newFile.serverStatus = 'error';
+                        }
                     }
 
                     return newFile;
@@ -185,12 +199,20 @@ export default function Home() {
                                     Compression Settings
                                 </h3>
                                 <div className="flex gap-2">
-                                    <button 
-                                        onClick={() => setIsBenchmarking(!isBenchmarking)}
-                                        className={`text-xs px-3 py-1 rounded-full border transition-all ${isBenchmarking ? 'bg-secondary border-white/20 text-white' : 'bg-white/5 border-white/10 text-gray-400'}`}
-                                    >
-                                        {isBenchmarking ? 'Benchmark: ON' : 'Benchmark: OFF'}
-                                    </button>
+                                    <div className="flex bg-black/40 p-1 rounded-xl border border-white/10">
+                                        <button 
+                                            onClick={() => setProcessingMode('client')}
+                                            className={`text-xs px-3 py-1.5 rounded-lg transition-all ${processingMode === 'client' ? 'bg-primary text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                                        >
+                                            Browser
+                                        </button>
+                                        <button 
+                                            onClick={() => setProcessingMode('server')}
+                                            className={`text-xs px-3 py-1.5 rounded-lg transition-all ${processingMode === 'server' ? 'bg-primary text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                                        >
+                                            Server
+                                        </button>
+                                    </div>
                                     <button 
                                         onClick={() => {
                                             setUseTargetSize(!useTargetSize);
@@ -288,7 +310,7 @@ export default function Home() {
                                 type="compress"
                                 onDownload={() => {
                                     const link = document.createElement('a');
-                                    link.href = file.clientStats?.blobUrl || '';
+                                    link.href = file.blobUrl || file.clientStats?.blobUrl || '';
                                     link.download = `optimized-${file.originalName.replace(/\.[^/.]+$/, "")}.webp`;
                                     link.click();
                                 }}
