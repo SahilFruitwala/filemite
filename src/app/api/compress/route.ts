@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
 
     // 1. Initialize pipeline with failOnError: false
-    const pipeline = sharp(buffer, { failOnError: false });
+    let pipeline = sharp(buffer, { failOnError: false });
     const metadata = await pipeline.metadata();
 
     // 2. Determine Output Format

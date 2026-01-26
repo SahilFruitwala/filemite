@@ -93,6 +93,7 @@ export default function Home() {
                 // Always run client
                 const clientPromise = processClient().then(res => ({ type: 'client' as const, success: true, ...res })).catch(e => ({ type: 'client' as const, success: false, error: e }));
                 
+                
                 // Run server if benchmarking
                 const serverPromise = isBenchmarking 
                     ? processServer().then(res => ({ type: 'server' as const, success: true, ...res })).catch(e => ({ type: 'server' as const, success: false, error: e }))
@@ -256,6 +257,8 @@ export default function Home() {
                              </div>
                          </div>
                      </div>
+
+
             </div>
 
         </div>

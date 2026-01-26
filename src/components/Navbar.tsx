@@ -69,6 +69,16 @@ export default function Navbar() {
         >
             Palette
         </Link>
+        <Link 
+            href="/watermark" 
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                pathname === '/watermark' 
+                    ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+            }`}
+        >
+            Watermark
+        </Link>
       </div>
 
     </nav>
