@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Dropzone from '@/components/Dropzone';
+import ResultCard from '@/components/ResultCard';
 import { CompressedFile } from '@/types';
 
 type TargetFormat = 'png' | 'jpeg' | 'webp' | 'avif';
@@ -11,6 +12,7 @@ export default function ConvertPage() {
   const [files, setFiles] = useState<CompressedFile[]>([]);
   const [isProcesssing, setIsProcessing] = useState(false);
   const [targetFormat, setTargetFormat] = useState<TargetFormat>('webp');
+  const [comparisons, setComparisons] = useState<Record<string, boolean>>({});
 
   const formatSize = (bytes: number) => {
     if (bytes === 0) return '0 B';
@@ -168,51 +170,17 @@ export default function ConvertPage() {
 
                     <div className="grid gap-4">
                         {files.map((file) => (
-                            <div key={file.id} className="bg-secondary border border-white/5 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 animate-[fadeIn_0.3s_ease-out]">
-                                <div className="flex items-center gap-4 w-full md:w-auto">
-                                    <div className="w-16 h-16 bg-black rounded-lg overflow-hidden flex items-center justify-center border border-white/10 shrink-0">
-                                        {file.blobUrl || file.originalBlobUrl ? (
-                                            <img src={file.blobUrl || file.originalBlobUrl} alt="Preview" className="w-full h-full object-contain" />
-                                        ) : (
-                                            <div className="animate-pulse w-full h-full bg-white/5"></div>
-                                        )}
-                                    </div>
-                                    <div className="min-w-0 flex-1">
-                                        <h3 className="text-white font-medium truncate max-w-[200px] sm:max-w-xs">{file.originalName}</h3>
-                                        <div className="flex items-center gap-3 text-xs mt-1">
-                                            {file.status === 'done' ? (
-                                                <>
-                                                    <span className="text-gray-400">{formatSize(file.originalSize)}</span>
-                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-success"><polyline points="20 6 9 17 4 12"/></svg>
-                                                    <span className="text-white font-bold">{formatSize(file.compressedSize)}</span>
-                                                </>
-                                            ) : file.status === 'processing' ? (
-                                                <span className="text-primary flex items-center gap-1">
-                                                    <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                                                    Converting...
-                                                </span>
-                                             ) : file.status === 'pending' ? (
-                                                <span className="text-gray-500">Ready to convert</span> 
-                                            ) : (
-                                                 <span className="text-error">Error</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-3">
-                                    {file.status === 'done' && (
-                                        <a 
-                                            href={file.blobUrl} 
-                                            download={`${file.originalName.replace(/\.[^/.]+$/, "")}.${targetFormat}`}
-                                            className="bg-primary/10 hover:bg-primary hover:text-white text-primary px-6 py-2 rounded-lg font-medium transition-colors text-sm flex items-center gap-2 border border-primary/20"
-                                        >
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                            Download
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
+                            <ResultCard 
+                                key={file.id} 
+                                file={file} 
+                                type="convert"
+                                onDownload={() => {
+                                    const link = document.createElement('a');
+                                    link.href = file.blobUrl || '';
+                                    link.download = `${file.originalName.replace(/\.[^/.]+$/, "")}.${targetFormat}`;
+                                    link.click();
+                                }}
+                            />
                         ))}
                     </div>
                      <div className='flex justify-center mt-8'>

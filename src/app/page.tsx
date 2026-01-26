@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 
 import Dropzone from '@/components/Dropzone';
-import ImageCompare from '@/components/ImageCompare';
+import ResultCard from '@/components/ResultCard';
 import { CompressedFile, CompressionLevel } from '@/types';
 
 export default function Home() {
@@ -13,6 +13,7 @@ export default function Home() {
   const [isProcesssing, setIsProcessing] = useState(false);
   const [compressionLevel, setCompressionLevel] = useState<CompressionLevel>('mid');
   const [comparingFileId, setComparingFileId] = useState<string | null>(null);
+  const [comparisons, setComparisons] = useState<Record<string, boolean>>({}); // Track which files have comparison active
   const [targetSize, setTargetSize] = useState<string>(''); // in KB
   const [useTargetSize, setUseTargetSize] = useState(false);
   const [isBenchmarking, setIsBenchmarking] = useState(true); // Default to true for this task
@@ -281,103 +282,17 @@ export default function Home() {
 
                     <div className="grid gap-4">
                         {files.map((file) => (
-                            <div key={file.id} className="bg-secondary border border-white/5 rounded-2xl p-4 animate-[fadeIn_0.3s_ease-out]">
-                                <div className="flex items-start gap-4 mb-4">
-                                    <div className="w-16 h-16 bg-black rounded-lg overflow-hidden flex items-center justify-center border border-white/10 shrink-0">
-                                        {file.blobUrl ? (
-                                            <img src={file.blobUrl} alt="Preview" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="animate-pulse w-full h-full bg-white/5"></div>
-                                        )}
-                                    </div>
-                                    <div className="min-w-0 flex-1">
-                                        <h3 className="text-white font-medium truncate max-w-[200px] sm:max-w-xs">{file.originalName}</h3>
-                                        <p className="text-gray-400 text-sm">{formatSize(file.originalSize)}</p>
-                                    </div>
-                                </div>
-
-                                {/* Comparison Grid */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {/* Client Result */}
-                                    <div className="bg-black/20 rounded-xl p-3 border border-white/5">
-                                        <div className="flex justify-between items-center mb-2">
-                                            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Client Side</span>
-                                            {file.clientStatus === 'done' && file.clientStats && (
-                                                <span className="text-xs bg-white/10 text-white px-2 py-0.5 rounded-full">{file.clientStats.time.toFixed(0)}ms</span>
-                                            )}
-                                        </div>
-                                        {file.clientStatus === 'processing' && (
-                                            <div className="flex items-center gap-2 text-primary text-sm">
-                                                <div className="w-4 h-4 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
-                                                Compressing...
-                                            </div>
-                                        )}
-                                        {file.clientStatus === 'done' && file.clientStats && (
-                                            <div>
-                                                <div className="flex items-end gap-2">
-                                                    <span className="text-xl font-bold text-success">{formatSize(file.clientStats.size)}</span>
-                                                    <span className="text-sm text-success/70 mb-1">
-                                                        -{Math.round(((file.originalSize - file.clientStats.size) / file.originalSize) * 100)}%
-                                                    </span>
-                                                </div>
-                                                <button 
-                                                    onClick={() => {
-                                                        const link = document.createElement('a');
-                                                        link.href = file.clientStats!.blobUrl;
-                                                        link.download = `client-${file.originalName.replace(/\.[^/.]+$/, "")}.webp`;
-                                                        link.click();
-                                                    }}
-                                                    className="mt-3 w-full py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-medium text-gray-300 transition-colors"
-                                                >
-                                                    Download Client
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Server Result */}
-                                    {isBenchmarking && (
-                                        <div className="bg-black/20 rounded-xl p-3 border border-white/5">
-                                            <div className="flex justify-between items-center mb-2">
-                                                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Server Side</span>
-                                                {file.serverStatus === 'done' && file.serverStats && (
-                                                    <span className="text-xs bg-white/10 text-white px-2 py-0.5 rounded-full">{file.serverStats.time.toFixed(0)}ms</span>
-                                                )}
-                                            </div>
-                                            {file.serverStatus === 'processing' && (
-                                                <div className="flex items-center gap-2 text-primary text-sm">
-                                                    <div className="w-4 h-4 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
-                                                    Compressing...
-                                                </div>
-                                            )}
-                                            {file.serverStatus === 'done' && file.serverStats && (
-                                                <div>
-                                                    <div className="flex items-end gap-2">
-                                                        <span className="text-xl font-bold text-success">{formatSize(file.serverStats.size)}</span>
-                                                        <span className="text-sm text-success/70 mb-1">
-                                                            -{Math.round(((file.originalSize - file.serverStats.size) / file.originalSize) * 100)}%
-                                                        </span>
-                                                    </div>
-                                                     <button 
-                                                        onClick={() => {
-                                                            const link = document.createElement('a');
-                                                            link.href = file.serverStats!.blobUrl;
-                                                            link.download = `server-${file.originalName}`;
-                                                            link.click();
-                                                        }}
-                                                        className="mt-3 w-full py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-medium text-gray-300 transition-colors"
-                                                    >
-                                                        Download Server
-                                                    </button>
-                                                </div>
-                                            )}
-                                            {file.serverStatus === 'error' && (
-                                                <div className="text-error text-sm">Failed</div>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            <ResultCard 
+                                key={file.id} 
+                                file={file} 
+                                type="compress"
+                                onDownload={() => {
+                                    const link = document.createElement('a');
+                                    link.href = file.clientStats?.blobUrl || '';
+                                    link.download = `optimized-${file.originalName.replace(/\.[^/.]+$/, "")}.webp`;
+                                    link.click();
+                                }}
+                            />
                         ))}
                     </div>
                      <div className='flex justify-center mt-8'>

@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Dropzone from '@/components/Dropzone';
 import WatermarkSettings, { WatermarkConfig } from '@/components/WatermarkSettings';
+import ResultCard from '@/components/ResultCard';
 import { CompressedFile } from '@/types';
 
 export default function WatermarkPage() {
   const [files, setFiles] = useState<CompressedFile[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [comparisons, setComparisons] = useState<Record<string, boolean>>({});
   const [watermarkConfig, setWatermarkConfig] = useState<WatermarkConfig>({
       type: 'text', // Default to text so it's obvious what to do
       text: 'My Watermark',
@@ -170,59 +172,17 @@ export default function WatermarkPage() {
 
                     <div className="grid gap-4">
                         {files.map((file) => (
-                            <div key={file.id} className="bg-secondary border border-white/5 rounded-2xl p-4 animate-[fadeIn_0.3s_ease-out]">
-                                <div className="flex items-start gap-4 mb-4">
-                                    <div className="w-16 h-16 bg-black rounded-lg overflow-hidden flex items-center justify-center border border-white/10 shrink-0">
-                                         {/* Show Original Thumbnail */}
-                                        <img src={file.originalBlobUrl} alt="Original" className="w-full h-full object-cover opacity-50" />
-                                    </div>
-                                    <div className="min-w-0 flex-1">
-                                        <h3 className="text-white font-medium truncate max-w-[200px] sm:max-w-xs">{file.originalName}</h3>
-                                        <p className="text-gray-400 text-sm">{formatSize(file.originalSize)}</p>
-                                    </div>
-                                </div>
-
-                                <div className="bg-black/20 rounded-xl p-3 border border-white/5">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Result</span>
-                                         {file.serverStatus === 'done' && file.serverStats && (
-                                                <span className="text-xs bg-white/10 text-white px-2 py-0.5 rounded-full">{file.serverStats.time.toFixed(0)}ms</span>
-                                         )}
-                                    </div>
-                                    
-                                     {file.serverStatus === 'processing' && (
-                                        <div className="flex items-center gap-2 text-indigo-400 text-sm">
-                                            <div className="w-4 h-4 rounded-full border-2 border-indigo-400 border-t-transparent animate-spin"></div>
-                                            Processing...
-                                        </div>
-                                    )}
-
-                                    {file.serverStatus === 'done' && file.serverStats && (
-                                        <div>
-                                            {/* Preview of Watermarked Image */}
-                                            <div className="w-full h-48 bg-black/50 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                                                <img src={file.serverStats.blobUrl} alt="Watermarked" className="h-full object-contain" />
-                                            </div>
-
-                                            <button 
-                                                onClick={() => {
-                                                    const link = document.createElement('a');
-                                                    link.href = file.serverStats!.blobUrl;
-                                                    link.download = `watermark-${file.originalName}`;
-                                                    link.click();
-                                                }}
-                                                className="w-full py-2 bg-indigo-500 hover:bg-indigo-600 rounded-lg text-sm font-bold text-white transition-all shadow-lg shadow-indigo-500/20"
-                                            >
-                                                Download Image
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {file.serverStatus === 'error' && (
-                                        <div className="text-red-400 text-sm">Failed to watermark</div>
-                                    )}
-                                </div>
-                            </div>
+                            <ResultCard 
+                                key={file.id} 
+                                file={file} 
+                                type="watermark"
+                                onDownload={() => {
+                                    const link = document.createElement('a');
+                                    link.href = file.serverStats?.blobUrl || '';
+                                    link.download = `watermark-${file.originalName}`;
+                                    link.click();
+                                }}
+                            />
                         ))}
                     </div>
                      <div className='flex justify-center mt-8'>

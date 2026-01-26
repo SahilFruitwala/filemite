@@ -5,9 +5,11 @@ import React, { useState, useRef, useEffect } from 'react';
 interface ImageCompareProps {
     original: string;
     compressed: string;
+    leftLabel?: string;
+    rightLabel?: string;
 }
 
-export default function ImageCompare({ original, compressed }: ImageCompareProps) {
+export default function ImageCompare({ original, compressed, leftLabel = 'Original', rightLabel = 'Optimized' }: ImageCompareProps) {
     const [sliderPosition, setSliderPosition] = useState(50);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -34,7 +36,7 @@ export default function ImageCompare({ original, compressed }: ImageCompareProps
             <img 
                 src={compressed} 
                 alt="Compressed" 
-                className="absolute inset-0 w-full h-full object-scale-down"
+                className="absolute inset-0 w-full h-full object-contain"
                 draggable={false}
             />
 
@@ -46,7 +48,7 @@ export default function ImageCompare({ original, compressed }: ImageCompareProps
                 <img 
                     src={original} 
                     alt="Original" 
-                    className="absolute inset-0 w-full h-full object-scale-down"
+                    className="absolute inset-0 w-full h-full object-contain"
                     draggable={false}
                 />
             </div>
@@ -67,10 +69,10 @@ export default function ImageCompare({ original, compressed }: ImageCompareProps
 
             {/* Labels */}
             <div className="absolute bottom-4 left-4 z-30 pointer-events-none">
-                <span className="bg-black/60 backdrop-blur-md text-white text-[10px] uppercase tracking-widest px-2 py-1 rounded border border-white/10 font-bold">Original</span>
+                <span className="bg-black/60 backdrop-blur-md text-white text-[10px] uppercase tracking-widest px-2 py-1 rounded border border-white/10 font-bold">{leftLabel}</span>
             </div>
             <div className="absolute bottom-4 right-4 z-30 pointer-events-none">
-                <span className="bg-primary text-white text-[10px] uppercase tracking-widest px-2 py-1 rounded shadow-lg font-bold">Optimized</span>
+                <span className="bg-primary text-white text-[10px] uppercase tracking-widest px-2 py-1 rounded shadow-lg font-bold">{rightLabel}</span>
             </div>
         </div>
     );
