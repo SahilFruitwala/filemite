@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { Github, Heart, ShieldCheck, Zap } from 'lucide-react';
+import { Github, Heart, ShieldCheck, Zap, Terminal } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -73,8 +73,15 @@ export default function Footer() {
                 <Zap size={10} className="text-primary" />
                 Performance First
              </div>
-             <a href="#" className="text-gray-600 hover:text-white text-xs transition-colors font-medium">Privacy Policy</a>
-             <a href="#" className="text-gray-600 hover:text-white text-xs transition-colors font-medium">Contact</a>
+             <a 
+              href="https://github.com/SahilFruitwala/MicroPng" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-gray-600 hover:text-white text-xs transition-colors font-medium flex items-center gap-2 group"
+             >
+                <Terminal size={12} className="text-primary group-hover:scale-110 transition-transform" />
+                For privacy checkout code and make it more private
+             </a>
           </div>
         </div>
       </div>
