@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from 'react';
+import { Upload, Image as ImageIcon, FileWarning } from 'lucide-react';
 
 interface DropzoneProps {
   onFileSelect: (files: File[]) => void;
@@ -41,10 +42,10 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
 
   return (
     <div
-      className={`relative w-full max-w-2xl mx-auto h-80 rounded-3xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center p-8 cursor-pointer
+      className={`relative w-full max-w-3xl mx-auto min-h-[320px] rounded-[2.5rem] border-2 border-dashed transition-all duration-500 overflow-hidden flex flex-col items-center justify-center p-8 sm:p-12 group cursor-pointer
         ${isDragging 
-          ? 'border-primary bg-primary/10 shadow-[0_0_50px_rgba(47,172,242,0.2)]' 
-          : 'border-secondary bg-[#0a0e14]/50 hover:border-gray-500'
+          ? 'border-primary bg-primary/10 shadow-[0_0_80px_rgba(47,172,242,0.25)] scale-[1.02]' 
+          : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/20'
         }
       `}
       onDragOver={handleDragOver}
@@ -52,6 +53,11 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
       onDrop={handleDrop}
       onClick={handleClick}
     >
+      {/* Dynamic Background Pattern */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[radial-gradient(circle_at_center,rgba(47,172,242,0.1)_0,transparent_70%)] group-hover:scale-110 transition-transform duration-700"></div>
+      </div>
+
       <input 
         type="file" 
         ref={fileInputRef} 
@@ -62,39 +68,42 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
       />
 
       {isCompressing ? (
-        <div className="flex flex-col items-center animate-pulse">
-           <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin mb-4"></div>
-           <p className="text-lg font-medium text-gray-300">Compressing your image...</p>
+        <div className="flex flex-col items-center text-center">
+           <div className="relative mb-6">
+                <div className="w-16 h-16 rounded-2xl border-4 border-primary/20 border-t-primary animate-spin"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-6 h-6 bg-primary/20 rounded-full animate-pulse"></div>
+                </div>
+           </div>
+           <h3 className="text-xl font-bold text-white mb-2">Optimizing your images</h3>
+           <p className="text-gray-400 text-sm max-w-[240px]">We're applying professional-grade compression logic...</p>
         </div>
       ) : (
         <>
-            <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mb-6 text-primary shadow-lg">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 16L12 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M9 11L12 8L15 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M8 16H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M3 15C3 17.8284 3 19.2426 3.87868 20.1213C4.75736 21 6.17157 21 9 21H15C17.8284 21 19.2426 21 20.1213 20.1213C21 19.2426 21 17.8284 21 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M3 9C3 6.17157 3 4.75736 3.87868 3.87868C4.75736 3 6.17157 3 9 3H15C17.8284 3 19.2426 3 20.1213 3.87868C21 4.75736 21 6.17157 21 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+            <div className={`mb-8 p-6 rounded-3xl bg-white/5 border border-white/10 shadow-xl transition-all duration-500 ${isDragging ? 'scale-110 -translate-y-2 bg-primary/20 border-primary/40' : 'group-hover:scale-110 group-hover:-translate-y-1 group-hover:bg-white/10'}`}>
+                {isDragging ? (
+                    <Upload className="w-10 h-10 text-primary animate-bounce" />
+                ) : (
+                    <ImageIcon className="w-10 h-10 text-gray-400 group-hover:text-primary transition-colors" />
+                )}
             </div>
           
-            <h3 className="text-2xl font-bold text-white mb-2">Drag & drop images here</h3>
-            <p className="text-gray-400 mb-8 text-center max-w-sm">
-                or click to browse your computer. Supports JPEG, PNG, WebP. Max file size: 25MB
-            </p>
+            <div className="text-center relative z-10">
+                <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                    {isDragging ? 'Drop it here!' : 'Drop your images here'}
+                </h3>
+                <p className="text-gray-400 mb-10 text-center max-w-sm mx-auto text-sm sm:text-base leading-relaxed">
+                    or <span className="text-primary font-semibold hover:underline">click to browse</span> from your device.
+                    Supports JPEG, PNG, and WebP up to 25MB.
+                </p>
 
-            <button className="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:bg-primary-hover transition-all shadow-[0_0_20px_rgba(47,172,242,0.4)] hover:shadow-[0_0_30px_rgba(47,172,242,0.6)] cursor-pointer">
-                Select Files
-            </button>
-            <div className='flex gap-4 mt-8'>
-                <div className='bg-[#1a202c] px-3 py-1 rounded-md text-xs text-gray-400 flex items-center gap-2'>
-                   <span className="w-1 h-3 bg-gray-600 rounded-full"></span> JPEG
-                </div>
-                <div className='bg-[#1a202c] px-3 py-1 rounded-md text-xs text-gray-400 flex items-center gap-2'>
-                   <span className="w-1 h-3 bg-gray-600 rounded-full"></span> PNG
-                </div>
-                 <div className='bg-[#1a202c] px-3 py-1 rounded-md text-xs text-gray-400 flex items-center gap-2'>
-                   <span className="w-1 h-3 bg-gray-600 rounded-full"></span> WEBP
+                <div className="flex flex-wrap justify-center gap-3">
+                    {['JPEG', 'PNG', 'WEBP'].map((format) => (
+                        <div key={format} className='px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-xs font-bold text-gray-400 tracking-wider flex items-center gap-2 group-hover:border-white/20 transition-colors'>
+                            <div className="w-1.5 h-1.5 rounded-full bg-gray-600"></div>
+                            {format}
+                        </div>
+                    ))}
                 </div>
             </div>
         </>

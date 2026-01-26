@@ -1,7 +1,7 @@
 "use client";
 
 import imageCompression from 'browser-image-compression';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
@@ -22,6 +22,24 @@ export default function Home() {
   const [targetSize, setTargetSize] = useState<string>(''); // in KB
   const [useTargetSize, setUseTargetSize] = useState(false);
   const [processingMode, setProcessingMode] = useState<'client' | 'server'>('client');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      const userAgent = typeof window !== 'undefined' ? navigator.userAgent : '';
+      const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+      const isMob = mobileRegex.test(userAgent) || (typeof window !== 'undefined' && window.innerWidth < 768);
+      setIsMobile(isMob);
+      if (isMob) {
+        setProcessingMode('server');
+      }
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
 
   const formatSize = (bytes: number) => {
     if (bytes === 0) return '0 B';
@@ -194,16 +212,24 @@ export default function Home() {
             <div className="max-w-xl mx-auto mb-16">
                      <GlassCard>
                          <div className="relative z-10 flex flex-col gap-6">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-white font-medium flex items-center gap-2">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-                                    Compression Settings
-                                </h3>
-                                <div className="flex gap-2">
-                                    <div className="flex bg-black/40 p-1 rounded-xl border border-white/10">
+                             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                                 <h3 className="text-white font-medium flex items-center gap-2">
+                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                                     Compression Settings
+                                 </h3>
+                                 <div className="flex gap-2">
+                                    <div className="flex bg-black/40 p-1 rounded-xl border border-white/10 relative">
                                         <button 
-                                            onClick={() => setProcessingMode('client')}
-                                            className={`text-xs px-3 py-1.5 rounded-lg transition-all ${processingMode === 'client' ? 'bg-primary text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                                            onClick={() => !isMobile && setProcessingMode('client')}
+                                            disabled={isMobile}
+                                            className={`text-xs px-3 py-1.5 rounded-lg transition-all ${
+                                                processingMode === 'client' 
+                                                    ? 'bg-primary text-white shadow-lg' 
+                                                    : isMobile 
+                                                        ? 'text-gray-600 cursor-not-allowed' 
+                                                        : 'text-gray-400 hover:text-white'
+                                            }`}
+                                            title={isMobile ? "Browser compression is disabled on mobile" : ""}
                                         >
                                             Browser
                                         </button>
@@ -214,17 +240,18 @@ export default function Home() {
                                             Server
                                         </button>
                                     </div>
-                                    <button 
-                                        onClick={() => {
-                                            setUseTargetSize(!useTargetSize);
-                                            if (!useTargetSize) setTargetSize('');
-                                        }}
-                                        className={`text-xs px-3 py-1 rounded-full border transition-all ${useTargetSize ? 'bg-primary/20 border-primary text-primary' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}
-                                    >
-                                        {useTargetSize ? 'Mode: Target Size' : 'Mode: Manual Quality'}
-                                    </button>
                                 </div>
                             </div>
+
+                            {isMobile && (
+                                <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex gap-3 animate-in fade-in slide-in-from-top-2">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500 shrink-0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                    <p className="text-xs text-amber-200/80 leading-relaxed">
+                                        <strong className="text-amber-400 block mb-0.5">Mobile Device Detected</strong>
+                                        In-browser compression is disabled. It is highly CPU-intensive and inefficient on mobile hardware. Using high-performance <span className="text-white font-medium">Server Mode</span> for the best experience.
+                                    </p>
+                                </div>
+                            )}
 
                              <div className="relative">
                                  {/* Manual Quality Controls */}
@@ -250,34 +277,46 @@ export default function Home() {
                                     </div>
                                  </div>
 
-                                 {/* Target Size Overlay/Section */}
-                                 <div className={`mt-6 pt-6 border-t border-white/10 transition-all duration-300 ${!useTargetSize ? 'opacity-50' : 'opacity-100'}`}>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-10 h-6 rounded-full p-1 transition-colors duration-300 cursor-pointer ${useTargetSize ? 'bg-primary' : 'bg-white/10'}`}
-                                                 onClick={() => setUseTargetSize(!useTargetSize)}>
-                                                <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 ${useTargetSize ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                                 {/* Target Size Toggle Section */}
+                                 <div className={`mt-6 pt-6 border-t border-white/5 transition-all duration-300`}>
+                                    <div className="flex items-center justify-between gap-4">
+                                        <div 
+                                            className="flex items-center gap-4 cursor-pointer group/toggle"
+                                            onClick={() => {
+                                                setUseTargetSize(!useTargetSize);
+                                                if (!useTargetSize) setTargetSize('');
+                                            }}
+                                        >
+                                            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 relative ${useTargetSize ? 'bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]' : 'bg-white/10 border border-white/10'}`}>
+                                                <div className={`w-4 h-4 bg-white rounded-full shadow-md transition-all duration-300 transform ${useTargetSize ? 'translate-x-5' : 'translate-x-0'}`}></div>
                                             </div>
-                                            <div>
-                                                <span className={`block text-sm font-medium transition-colors ${useTargetSize ? 'text-white' : 'text-gray-400'}`}>Specify Target Size</span>
-                                                <span className="text-xs text-gray-500">Compress to a specific size (e.g. 100KB)</span>
+                                            <div className="flex flex-col">
+                                                <span className={`text-sm font-semibold transition-colors ${useTargetSize ? 'text-white' : 'text-gray-400 group-hover/toggle:text-gray-300'}`}>Specify Target Size</span>
+                                                <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Priority over quality</span>
                                             </div>
                                         </div>
                                         
-                                        <div className={`relative transition-all duration-300 ${useTargetSize ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0 pointer-events-none'}`}>
-                                            <input
-                                                type="number"
-                                                value={targetSize}
-                                                onChange={(e) => setTargetSize(e.target.value)}
-                                                placeholder="100"
-                                                min="1"
-                                                className="w-28 bg-black/40 border border-white/20 rounded-xl pl-4 pr-10 py-2 text-right text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                            />
-                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 pointer-events-none">KB</span>
+                                        <div className={`relative transition-all duration-500 origin-right ${useTargetSize ? 'scale-100 opacity-100' : 'scale-90 opacity-0 pointer-events-none'}`}>
+                                            <div className="relative">
+                                                <input
+                                                    type="number"
+                                                    value={targetSize}
+                                                    onChange={(e) => setTargetSize(e.target.value)}
+                                                    placeholder="100"
+                                                    min="1"
+                                                    className="w-24 bg-primary/10 border border-primary/30 rounded-xl pl-3 pr-9 py-2 text-right text-white font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                />
+                                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-primary/70 pointer-events-none uppercase">KB</span>
+                                            </div>
                                         </div>
                                     </div>
                                  </div>
+                             </div>
 
+                             {/* Privacy Note */}
+                             <div className="flex items-center justify-center gap-2 pt-2 opacity-40 hover:opacity-100 transition-opacity">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
                              </div>
                          </div>
                      </GlassCard>

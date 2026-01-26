@@ -114,7 +114,7 @@ export default function ConvertPage() {
                             </h3>
                         </div>
 
-                        <div className="grid grid-cols-4 gap-2">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             {(['webp', 'png', 'jpeg', 'avif'] as const).map((format) => (
                                 <button
                                     key={format}
@@ -151,8 +151,13 @@ export default function ConvertPage() {
                                 </button>
                              </div>
                         )}
-                     </div>
-                 </GlassCard>
+                      </div>
+                      {/* Privacy Note */}
+                      <div className="flex items-center justify-center gap-2 pt-6 opacity-40 hover:opacity-100 transition-opacity border-t border-white/5 mt-6">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
+                      </div>
+                  </GlassCard>
             </div>
 
 

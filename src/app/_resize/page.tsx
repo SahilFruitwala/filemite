@@ -202,7 +202,7 @@ export default function ResizePage() {
 
                             <div className={`transition-all duration-300 overflow-hidden ${resizeWidth && resizeHeight ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'}`}>
                                 <label className="text-xs text-gray-400 mb-2 block uppercase tracking-wider font-semibold">Fit Mode</label>
-                                <div className="grid grid-cols-4 gap-2">
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                     {(['cover', 'contain', 'fill', 'inside'] as const).map((mode) => (
                                         <button
                                             key={mode}

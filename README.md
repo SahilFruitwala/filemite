@@ -63,9 +63,17 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 3. Choose the target format (WebP, PNG, JPEG, or AVIF).
 4. Click "Convert All" to process your files losslessly.
 
-## 🤝 Contributing
+## 🤝 Contributing & Vibe
 
-Contributions are welcome! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to get started.
+MicroPng is **vibe coded** and each feature has been **manually tested** for performance and UX. We believe in simplicity and quality.
+
+If you can improve it, whether through better algorithms, UI refinements, or bug fixes, **any contribution is welcome!** Please see our [CONTRIBUTING.md](CONTRIBUTING.md) to get started.
+
+## 🔒 Privacy & Security
+
+We take your data seriously:
+- **Zero Storage**: We do not store anything on our server. Images are processed in-memory and are gone as soon as the request is completed.
+- **Client-Side Option**: For maximum privacy, use the "Browser" mode to process images entirely on your own device.
 
 ## 📄 License
 

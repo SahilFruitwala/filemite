@@ -68,10 +68,10 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
     };
 
     return (
-        <div className="bg-secondary border border-white/5 rounded-2xl p-4 animate-[fadeIn_0.3s_ease-out]">
-            <div className="flex items-start gap-4 mb-4">
+        <div className="bg-secondary border border-white/5 rounded-2xl p-3 sm:p-4 animate-[fadeIn_0.3s_ease-out]">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 mb-4">
                 {/* Thumbnail / Compare Toggle */}
-                <div className="w-16 h-16 bg-black rounded-lg overflow-hidden flex items-center justify-center border border-white/10 shrink-0 relative group">
+                <div className="w-full sm:w-16 h-32 sm:h-16 bg-black rounded-lg overflow-hidden flex items-center justify-center border border-white/10 shrink-0 relative group">
                     {resultBlobUrl || file.originalBlobUrl ? (
                         <img 
                             src={resultBlobUrl || file.originalBlobUrl} 
@@ -96,11 +96,11 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
                     )}
                 </div>
 
-                <div className="min-w-0 flex-1">
-                    <h3 className="text-white font-medium truncate max-w-[200px] sm:max-w-xs">{file.originalName}</h3>
+                <div className="min-w-0 flex-1 text-center sm:text-left">
+                    <h3 className="text-white font-medium truncate max-w-full sm:max-w-xs">{file.originalName}</h3>
                     
                     {/* Stats Row */}
-                    <div className="flex items-center gap-3 text-xs mt-1">
+                    <div className="flex items-center justify-center sm:justify-start gap-3 text-xs mt-1">
                         {status === 'done' ? (
                             <>
                                 <span className="text-gray-400">{formatSize(file.originalSize)}</span>
@@ -123,16 +123,16 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
 
                 {/* Main Actions */}
                  {status === 'done' && (
-                    <div className="flex flex-col gap-2 shrink-0">
+                    <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                          <button 
                             onClick={onDownload}
-                            className="bg-primary hover:bg-primary/90 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-lg shadow-primary/20"
+                            className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-lg shadow-primary/20"
                         >
                             Download
                         </button>
                         <button 
                             onClick={() => setIsComparing(!isComparing)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${isComparing ? 'bg-white text-black border-white' : 'bg-transparent text-gray-400 border-white/20 hover:text-white'}`}
+                            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${isComparing ? 'bg-white text-black border-white' : 'bg-transparent text-gray-400 border-white/20 hover:text-white'}`}
                         >
                             {isComparing ? 'Close' : 'Compare'}
                         </button>
