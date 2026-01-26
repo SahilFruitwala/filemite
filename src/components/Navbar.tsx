@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -8,14 +9,10 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 flex items-center justify-between px-6 py-4 bg-[#0a0e14]/80 backdrop-blur-md border-b border-white/10">
       <Link href="/" className="flex items-center gap-2">
-        <div className="bg-primary text-white p-1 rounded-md">
-           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
-              <path d="M21 15L16 10L5 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-           </svg>
+        <div className="bg-primary text-white p-1 rounded-md overflow-hidden flex items-center justify-center">
+           <Image src="/icon.png" alt="MicroPng Logo" width={24} height={24} className="object-contain" />
         </div>
-        <span className="text-xl font-bold tracking-tight text-white">ImageCompress</span>
+        <span className="text-xl font-bold tracking-tight text-white">MicroPng</span>
       </Link>
 
       <div className="flex items-center gap-1 bg-white/5 p-1 rounded-lg border border-white/10">
@@ -79,6 +76,18 @@ export default function Navbar() {
         >
             Watermark
         </Link>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <a 
+          href="https://github.com/SahilFruitwala/MicroPng" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-gray-400 hover:text-white transition-colors p-2"
+          title="View on GitHub"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+        </a>
       </div>
 
     </nav>

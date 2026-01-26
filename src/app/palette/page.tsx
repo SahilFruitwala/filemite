@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Dropzone from "@/components/Dropzone";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import ColorThief from "colorthief";
 import BackgroundGlow from "@/components/ui/BackgroundGlow";
 import PageHeader from "@/components/ui/PageHeader";
@@ -164,6 +165,7 @@ export default function PalettePage() {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

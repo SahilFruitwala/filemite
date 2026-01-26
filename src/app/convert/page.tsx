@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
 import ResultCard from '@/components/ResultCard';
 import { CompressedFile } from '@/types';
@@ -193,9 +194,7 @@ export default function ConvertPage() {
         </div>
       </main>
       
-      <footer className="py-8 text-center text-gray-600 text-sm border-t border-white/10">
-        &copy; {new Date().getFullYear()} ImageCompress. All rights reserved.
-      </footer>
+      <Footer />
     </div>
   );
 }

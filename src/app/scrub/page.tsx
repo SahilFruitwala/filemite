@@ -3,6 +3,7 @@
 
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
 import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
@@ -205,6 +206,7 @@ export default function ScrubPage() {
             </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

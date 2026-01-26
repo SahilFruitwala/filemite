@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
 import { CompressedFile } from '@/types';
 import ImageCompare from '@/components/ImageCompare';
@@ -508,9 +509,7 @@ export default function ResizePage() {
 
       </main>
       
-      <footer className="py-8 text-center text-gray-600 text-sm border-t border-white/10">
-        &copy; {new Date().getFullYear()} ImageCompress. All rights reserved.
-      </footer>
+      <Footer />
     </div>
   );
 }
