@@ -216,30 +216,23 @@ export default function Home() {
                                      Compression Settings
                                  </h3>
                                  <div className="flex gap-2">
-                                    <div className="flex bg-surface rounded-xl p-1 border border-border relative">
-                                        <button 
-                                            onClick={() => !isMobile && setProcessingMode('client')}
-                                            disabled={isMobile}
-                                            className={`text-xs px-3 py-1.5 rounded-lg transition-all ${
-                                                processingMode === 'client' 
-                                                    ? 'bg-primary text-white shadow-lg' 
-                                                    : isMobile 
-                                                        ? 'text-subtle cursor-not-allowed' 
-                                                        : 'text-muted hover:text-white'
-                                            }`}
-                                            title={isMobile ? "Browser compression is disabled on mobile" : ""}
-                                        >
-                                            Browser
-                                        </button>
-                                        <button 
-                                            onClick={() => setProcessingMode('server')}
-                                            className={`text-xs px-3 py-1.5 rounded-lg transition-all ${processingMode === 'server' ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-white'}`}
-                                        >
-                                            Server
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                                     <div 
+                                         className={`flex items-center gap-3 cursor-pointer group/mode-toggle ${isMobile ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                         onClick={() => {
+                                             if (!isMobile) {
+                                                 setProcessingMode(processingMode === 'client' ? 'server' : 'client');
+                                             }
+                                         }}
+                                         title={isMobile ? "Browser compression is disabled on mobile" : ""}
+                                     >
+                                         <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${processingMode === 'client' ? 'text-primary' : 'text-muted'}`}>Browser</span>
+                                         <div className={`w-10 h-5 rounded-full p-1 transition-all duration-300 relative ${processingMode === 'server' ? 'bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]' : 'bg-surface border border-border'}`}>
+                                             <div className={`w-3 h-3 bg-white rounded-full shadow-md transition-all duration-300 transform ${processingMode === 'server' ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                         </div>
+                                         <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${processingMode === 'server' ? 'text-primary' : 'text-muted'}`}>Server</span>
+                                     </div>
+                                 </div>
+                             </div>
 
                             {isMobile && (
                                 <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex gap-3 animate-in fade-in slide-in-from-top-2">
