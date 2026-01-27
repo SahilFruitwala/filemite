@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { Menu, X, Github } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -24,7 +25,7 @@ export default function Navbar() {
           <div className="bg-primary text-white p-1 rounded-md overflow-hidden flex items-center justify-center">
              <Image src="/icon.png" alt="MicroPng Logo" width={24} height={24} className="object-contain" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-white">MicroPng</span>
+          <span className="text-xl font-bold tracking-tight text-foreground">MicroPng</span>
         </Link>
 
         {/* Desktop Links */}
@@ -54,6 +55,8 @@ export default function Navbar() {
           >
             <Github size={22} />
           </a>
+          
+          <ThemeToggle />
           
           {/* Mobile Menu Toggle */}
           <button 

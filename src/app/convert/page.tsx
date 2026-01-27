@@ -99,7 +99,7 @@ export default function ConvertPage() {
 
       <main className="container mx-auto px-6 pt-32 pb-20">
         <PageHeader 
-            title={<>Convert image formats <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">instantly and Lossless.</span></>}
+            title={<>Convert image formats <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">instantly and Lossless.</span></>}
         />
 
             <div className="max-w-xl mx-auto mb-16">
@@ -108,7 +108,7 @@ export default function ConvertPage() {
 
                      <div className="relative z-10 flex flex-col gap-6">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-white font-medium flex items-center gap-2">
+                            <h3 className="text-foreground font-medium flex items-center gap-2">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M21 16v5h-5"/><path d="M3 16v5h5"/><path d="M7 21L21 7M7 3l14 14"/></svg>
                                 Target Format
                             </h3>
@@ -122,7 +122,7 @@ export default function ConvertPage() {
                                     className={`py-3 px-2 rounded-xl text-sm font-medium transition-all duration-200 border uppercase ${
                                         targetFormat === format 
                                             ? 'bg-primary text-white border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]' 
-                                            : 'bg-white/5 text-gray-400 border-transparent hover:bg-white/10 hover:text-white'
+                                            : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-foreground'
                                     }`}
                                 >
                                     {format}
@@ -153,9 +153,9 @@ export default function ConvertPage() {
                         )}
                       </div>
                       {/* Privacy Note */}
-                      <div className="flex items-center justify-center gap-2 pt-6 opacity-40 hover:opacity-100 transition-opacity border-t border-border mt-6">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
+                       <div className="flex items-center justify-center gap-2 pt-6 opacity-40 hover:opacity-100 transition-opacity border-t border-border mt-6">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span className="text-[10px] text-muted font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
                       </div>
                   </GlassCard>
             </div>
@@ -167,10 +167,10 @@ export default function ConvertPage() {
             ) : (
                 <div className="w-full max-w-4xl mx-auto space-y-4">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold text-white">Converted Images</h2>
+                        <h2 className="text-2xl font-bold text-foreground">Converted Images</h2>
                         <button 
                             onClick={handleReset}
-                            className="text-sm text-gray-400 hover:text-white underline underline-offset-4"
+                            className="text-sm text-muted hover:text-foreground underline underline-offset-4"
                         >
                             Start Over
                         </button>

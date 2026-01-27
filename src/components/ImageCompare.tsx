@@ -102,11 +102,11 @@ export default function ImageCompare({ original, compressed, leftLabel = 'Origin
 
             {/* Slider Line */}
             <div 
-                className={`absolute inset-y-0 w-0.5 bg-white shadow-[0_0_15px_rgba(0,0,0,0.5)] z-20 pointer-events-none transition-transform duration-75 ${isDragging ? 'scale-x-150' : ''}`}
+                className={`absolute inset-y-0 w-0.5 bg-foreground shadow-[0_0_15px_rgba(0,0,0,0.5)] z-20 pointer-events-none transition-transform duration-75 ${isDragging ? 'scale-x-150' : ''}`}
                 style={{ left: `${sliderPosition}%` }}
             >
                 {/* Slider Handle */}
-                <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-2xl flex items-center justify-center border-2 border-primary transition-transform ${isDragging ? 'scale-110' : 'group-hover:scale-105'}`}>
+                <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-background rounded-full shadow-2xl flex items-center justify-center border-2 border-primary transition-transform ${isDragging ? 'scale-110' : 'group-hover:scale-105'}`}>
                     <div className="flex gap-1">
                         <div className="w-0.5 h-4 bg-primary rounded-full"></div>
                         <div className="w-0.5 h-4 bg-primary rounded-full"></div>
@@ -116,7 +116,7 @@ export default function ImageCompare({ original, compressed, leftLabel = 'Origin
 
             {/* Labels */}
             <div className={`absolute bottom-4 left-4 z-30 pointer-events-none transition-opacity duration-300 ${isDragging ? 'opacity-20' : 'opacity-100'}`}>
-                <span className="bg-black/60 backdrop-blur-md text-white text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded border border-border font-bold shadow-lg">{leftLabel}</span>
+                <span className="bg-surface backdrop-blur-md text-foreground text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded border border-border font-bold shadow-lg">{leftLabel}</span>
             </div>
             <div className={`absolute bottom-4 right-4 z-30 pointer-events-none transition-opacity duration-300 ${isDragging ? 'opacity-20' : 'opacity-100'}`}>
                 <span className="bg-primary text-white text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded shadow-xl font-bold">{rightLabel}</span>

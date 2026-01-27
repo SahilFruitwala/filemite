@@ -134,11 +134,11 @@ export default function FaviconPage() {
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <div className="text-center mb-16">
-                    <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-white">
+                    <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-foreground">
                         Favicon Generator <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">for all devices.</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">for all devices.</span>
                     </h1>
-                    <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+                    <p className="text-muted max-w-2xl mx-auto text-lg">
                         Generate web, mobile, and legacy .ico icons from a single upload.
                     </p>
                 </div>
@@ -159,8 +159,8 @@ export default function FaviconPage() {
                                     </button>
                                 </div>
                                 <div className="flex-1 text-center md:text-left">
-                                    <h3 className="text-2xl font-bold text-white mb-2">{originalFile.name}</h3>
-                                    <p className="text-gray-400 mb-6 font-medium">Now generates Apple Touch Icon and favicon.ico</p>
+                                    <h3 className="text-2xl font-bold text-foreground mb-2">{originalFile.name}</h3>
+                                    <p className="text-muted mb-6 font-medium">Now generates Apple Touch Icon and favicon.ico</p>
                                     <button
                                         onClick={generateFavicons}
                                         disabled={isGenerating || generatedFiles.length > 0}
@@ -191,7 +191,7 @@ export default function FaviconPage() {
                             {generatedFiles.length > 0 && (
                                 <div className="space-y-12 animate-[fadeIn_0.5s_ease-out]">
                                     <div className="flex justify-between items-center">
-                                        <h2 className="text-2xl font-bold text-white">Generated Assets</h2>
+                                        <h2 className="text-2xl font-bold text-foreground">Generated Assets</h2>
                                         <button 
                                             onClick={downloadAll}
                                             className="bg-success text-white px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-success/20 hover:bg-success/90"
@@ -203,8 +203,8 @@ export default function FaviconPage() {
 
                                     {/* Web Category */}
                                     <section>
-                                        <h3 className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-2">
-                                            <span className="w-8 h-[1px] bg-white/10"></span> Standard Web Icons
+                                        <h3 className="text-muted text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-2">
+                                            <span className="w-8 h-[1px] bg-border"></span> Standard Web Icons
                                         </h3>
                                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
                                             {generatedFiles.filter(f => f.type === 'web').map((file) => (
@@ -234,12 +234,12 @@ export default function FaviconPage() {
                                             <div className="bg-surface border border-border rounded-2xl p-6 flex items-center gap-6">
                                                 {generatedFiles.filter(f => f.type === 'mobile').map((file) => (
                                                     <React.Fragment key={file.size}>
-                                                        <div className="w-20 h-20 flex items-center justify-center bg-black rounded-xl border border-border overflow-hidden shadow-xl">
+                                                        <div className="w-20 h-20 flex items-center justify-center bg-background rounded-xl border border-border overflow-hidden shadow-xl">
                                                             <img src={file.url} alt="Apple Touch Icon" className="w-full h-full" />
                                                         </div>
                                                         <div className="flex-1">
-                                                            <p className="text-white font-bold">Apple Touch Icon</p>
-                                                            <p className="text-gray-500 text-sm">180x180 px • PNG</p>
+                                                            <p className="text-foreground font-bold">Apple Touch Icon</p>
+                                                            <p className="text-muted text-sm">180x180 px • PNG</p>
                                                             <a 
                                                                 href={file.url} 
                                                                 download="apple-touch-icon.png"

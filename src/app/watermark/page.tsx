@@ -160,10 +160,10 @@ export default function WatermarkPage() {
             ) : (
                 <div className="w-full max-w-4xl mx-auto space-y-4">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold text-white">Watermarked Images</h2>
+                        <h2 className="text-2xl font-bold text-foreground">Watermarked Images</h2>
                         <button 
                             onClick={handleReset}
-                            className="text-sm text-gray-400 hover:text-white underline underline-offset-4"
+                            className="text-sm text-muted hover:text-foreground underline underline-offset-4"
                         >
                             Start Over
                         </button>

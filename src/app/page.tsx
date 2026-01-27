@@ -211,7 +211,7 @@ export default function Home() {
                      <GlassCard>
                          <div className="relative z-10 flex flex-col gap-6">
                              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                                 <h3 className="text-white font-medium flex items-center gap-2">
+                                 <h3 className="text-foreground font-medium flex items-center gap-2">
                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
                                      Compression Settings
                                  </h3>
@@ -246,7 +246,7 @@ export default function Home() {
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500 shrink-0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                     <p className="text-xs text-amber-200/80 leading-relaxed">
                                         <strong className="text-amber-400 block mb-0.5">Mobile Device Detected</strong>
-                                        In-browser compression is disabled. It is highly CPU-intensive and inefficient on mobile hardware. Using high-performance <span className="text-white font-medium">Server Mode</span> for the best experience.
+                                        In-browser compression is disabled. It is highly CPU-intensive and inefficient on mobile hardware. Using high-performance <span className="text-foreground font-medium">Server Mode</span> for the best experience.
                                     </p>
                                 </div>
                             )}
@@ -302,7 +302,7 @@ export default function Home() {
                                                     onChange={(e) => setTargetSize(e.target.value)}
                                                     placeholder="100"
                                                     min="1"
-                                                    className="w-24 bg-primary/10 border border-primary/20 rounded-xl pl-3 pr-9 py-2 text-right text-white font-bold focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                    className="w-24 bg-primary/10 border border-primary/20 rounded-xl pl-3 pr-9 py-2 text-right text-foreground font-bold focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                 />
                                                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-primary/70 pointer-events-none uppercase">KB</span>
                                             </div>
@@ -331,10 +331,10 @@ export default function Home() {
             ) : (
                 <div className="w-full max-w-4xl mx-auto space-y-4">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold text-white">Your Optimized Images</h2>
+                        <h2 className="text-2xl font-bold text-foreground">Your Optimized Images</h2>
                         <button 
                             onClick={handleReset}
-                            className="text-sm text-muted hover:text-white underline underline-offset-4"
+                            className="text-sm text-muted hover:text-foreground underline underline-offset-4"
                         >
                             Start Over
                         </button>

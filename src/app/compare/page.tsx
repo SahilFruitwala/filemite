@@ -19,7 +19,7 @@ export default function ComparePage() {
     <main className="min-h-screen pt-24 pb-12 px-6 max-w-7xl mx-auto">
       {/* Hero Section */}
       <div className="text-center mb-16 space-y-4 relative">
-        <Link href="/" className="absolute left-0 top-0 inline-flex items-center gap-2 text-muted hover:text-white transition-colors md:absolute md:left-0 md:top-2">
+        <Link href="/" className="absolute left-0 top-0 inline-flex items-center gap-2 text-muted hover:text-foreground transition-colors md:absolute md:left-0 md:top-2">
             <ArrowLeft size={20} />
             <span className="hidden md:inline">Back to App</span>
         </Link>
@@ -28,7 +28,7 @@ export default function ComparePage() {
           <Shield size={14} />
           <span>Transparency & Privacy First</span>
         </div>
-        <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
+        <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-muted">
           MicroPng vs TinyPNG
         </h1>
         <p className="text-xl text-muted max-w-2xl mx-auto">
@@ -42,7 +42,7 @@ export default function ComparePage() {
           <div className="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-4">
             <Shield size={24} />
           </div>
-          <h3 className="text-xl font-semibold mb-2 text-blue-100">Local-First Privacy</h3>
+          <h3 className="text-xl font-semibold mb-2 text-foreground">Local-First Privacy</h3>
           <p className="text-muted leading-relaxed text-sm">
             We prioritize local browser processing for desktop compression. When server processing is required (Mobile/Scrubbing), images are processed in volatile RAM and immediately discarded. **We never store your data.**
           </p>
@@ -51,7 +51,7 @@ export default function ComparePage() {
           <div className="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 flex items-center justify-center mb-4">
             <Check size={24} />
           </div>
-          <h3 className="text-xl font-semibold mb-2 text-green-100">Professional Quality</h3>
+          <h3 className="text-xl font-semibold mb-2 text-foreground">Professional Quality</h3>
           <p className="text-muted leading-relaxed text-sm">
             TinyPNG's free tier has strict file size and count limits. MicroPng provides a superior, high-capacity experience designed for creators who need professional-grade optimization without the artificial friction.
           </p>
@@ -60,7 +60,7 @@ export default function ComparePage() {
           <div className="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-4">
             <Zap size={24} />
           </div>
-          <h3 className="text-xl font-semibold mb-2 text-purple-100">Hybrid Speed</h3>
+          <h3 className="text-xl font-semibold mb-2 text-foreground">Hybrid Speed</h3>
           <p className="text-muted leading-relaxed text-sm">
             On desktop, compression is instant (0ms upload). On mobile, we use high-performance server clusters to handle heavy computation that would otherwise drain your battery.
           </p>
@@ -70,7 +70,7 @@ export default function ComparePage() {
       {/* Interactive Compression Demo */}
       <div className="mb-20">
         <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4">Quality You Can Trust</h2>
+            <h2 className="text-3xl font-bold mb-4 text-foreground">Quality You Can Trust</h2>
             <p className="text-muted max-w-2xl mx-auto">
                 Drag the slider to compare. Our intelligent compression algorithms reduce file size significantly while maintaining pixel-perfect quality.
             </p>
@@ -82,7 +82,7 @@ export default function ComparePage() {
                 leftLabel="Original (7.1 MB)"
                 rightLabel="MicroPng (~3.2 MB)" 
              />
-             <div className="text-center mt-4 text-xs text-gray-500">
+             <div className="text-center mt-4 text-xs text-muted">
                 * Note: This is a simulation using the sample image. Actual compression results depend on image complexity.
              </div>
         </div>
@@ -151,7 +151,7 @@ export default function ComparePage() {
         <div className="px-6 py-6 rounded-2xl bg-surface border border-border flex gap-4 items-start">
             <Info size={24} className="text-primary shrink-0 mt-1" />
             <div className="space-y-3">
-                <h4 className="text-lg font-semibold text-white">Why the Hybrid Model?</h4>
+                <h4 className="text-lg font-semibold text-foreground">Why the Hybrid Model?</h4>
                 <p className="text-sm text-muted leading-relaxed">
                     Unlike traditional tools that force you to upload every byte, MicroPng uses a <strong>Local-First architecture</strong>. For most desktop tasks, your image stays on your machine.
                 </p>
@@ -167,7 +167,7 @@ export default function ComparePage() {
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
             </div>
             <div className="space-y-3">
-                <h4 className="text-lg font-semibold text-white">Community Supported & Open Source</h4>
+                <h4 className="text-lg font-semibold text-foreground">Community Supported & Open Source</h4>
                 <p className="text-sm text-muted leading-relaxed">
                     * MicroPng is a free service hosted by the community. We are committed to keeping it free as long as we can sustain the hosting costs.
                 </p>

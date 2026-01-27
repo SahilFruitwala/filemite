@@ -86,9 +86,9 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
                     {/* Hover Overlay for Compare */}
                     {resultBlobUrl && (
                          <div 
-                            className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer pointer-events-none"
+                            className="absolute inset-0 bg-background/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer pointer-events-none"
                         >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white scale-75">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-foreground scale-75">
                                 <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
                                 <circle cx="12" cy="12" r="3"/>
                             </svg>
@@ -97,7 +97,7 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
                 </div>
 
                 <div className="min-w-0 flex-1 text-center sm:text-left">
-                    <h3 className="text-white font-medium truncate max-w-full sm:max-w-xs">{file.originalName}</h3>
+                    <h3 className="text-foreground font-medium truncate max-w-full sm:max-w-xs">{file.originalName}</h3>
                     
                     {/* Stats Row */}
                     <div className="flex items-center justify-center sm:justify-start gap-3 text-xs mt-1">
@@ -105,8 +105,8 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
                             <>
                                 <span className="text-muted">{formatSize(file.originalSize)}</span>
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-success"><polyline points="20 6 9 17 4 12"/></svg>
-                                <span className="text-white font-bold">{formatSize(resultSize)}</span>
-                                {type !== 'convert' && resultTime > 0 && <span className="bg-surface text-white px-1.5 py-0.5 rounded text-[10px]">{resultTime.toFixed(0)}ms</span>}
+                                <span className="text-foreground font-bold">{formatSize(resultSize)}</span>
+                                {type !== 'convert' && resultTime > 0 && <span className="bg-surface text-foreground px-1.5 py-0.5 rounded text-[10px]">{resultTime.toFixed(0)}ms</span>}
                             </>
                         ) : status === 'processing' ? (
                             <span className="text-primary flex items-center gap-1">
@@ -132,7 +132,7 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
                         </button>
                         <button 
                             onClick={() => setIsComparing(!isComparing)}
-                            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${isComparing ? 'bg-white text-black border-primary/20' : 'bg-transparent text-muted border-border hover:text-white hover:border-primary/30'}`}
+                            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${isComparing ? 'bg-foreground text-background border-primary/20' : 'bg-transparent text-muted border-border hover:text-foreground hover:border-primary/30'}`}
                         >
                             {isComparing ? 'Close' : 'Compare'}
                         </button>

@@ -104,7 +104,7 @@ export default function PalettePage() {
                         setUploadedImage(null);
                         setColors([]);
                      }}
-                     className="absolute top-4 right-4 bg-black/60 hover:bg-red-500/80 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
+                     className="absolute top-4 right-4 bg-background/60 hover:bg-red-500/80 text-foreground p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
                      title="Remove image"
                    >
                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -142,12 +142,12 @@ export default function PalettePage() {
                                         style={{ backgroundColor: color }}
                                     ></div>
                                     <div>
-                                        <p className="text-xl font-mono font-bold tracking-wider">{color}</p>
-                                        <p className="text-sm text-gray-500">HEX</p>
+                                        <p className="text-xl font-mono font-bold tracking-wider text-foreground">{color}</p>
+                                        <p className="text-sm text-muted">HEX</p>
                                     </div>
                                 </div>
                                 <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <span className={`text-sm font-medium px-3 py-1 rounded-full ${copyFeedback === color ? 'bg-green-500/20 text-green-400' : 'bg-surface text-gray-300'}`}>
+                                    <span className={`text-sm font-medium px-3 py-1 rounded-full ${copyFeedback === color ? 'bg-green-500/20 text-green-400' : 'bg-surface text-muted'}`}>
                                         {copyFeedback === color ? 'Copied!' : 'Copy'}
                                     </span>
                                 </div>
@@ -156,7 +156,7 @@ export default function PalettePage() {
                     </div>
                     
                     {colors.length > 0 && (
-                        <div className="mt-8 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl text-sm text-blue-200">
+                        <div className="mt-8 p-4 bg-primary/10 border border-primary/20 rounded-xl text-sm text-primary">
                             <strong>Tip:</strong> Click on any color row to copy the HEX code to your clipboard.
                         </div>
                     )}

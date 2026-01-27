@@ -12,7 +12,7 @@ export default function FeatureCard({ icon, title, description }: FeatureCardPro
       <div className="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
         {icon}
       </div>
-      <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
+      <h3 className="text-lg font-bold text-foreground mb-2">{title}</h3>
       <p className="text-muted text-sm leading-relaxed">{description}</p>
     </div>
   );

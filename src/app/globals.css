@@ -3,30 +3,59 @@
 @theme {
   --color-primary: #2facf2;
   --color-primary-hover: #1e8bcc;
-  --color-secondary: #2e3440;
+  --color-secondary: var(--color-secondary);
   --color-accent: #88c0d0;
   --color-success: #a3be8c;
   --color-error: #bf616a;
-  /* Semantic Theme Variables */
-  --color-surface: rgba(255, 255, 255, 0.05);
-  --color-surface-hover: rgba(255, 255, 255, 0.06);
-  --color-border: rgba(47, 172, 242, 0.06); /* Subtle primary-tinted border */
+
+  /* Semantic Theme Variables mapped to CSS variables */
+  --color-surface: var(--color-surface);
+  --color-surface-hover: var(--color-surface-hover);
+  --color-border: var(--color-border);
   
-  --color-muted: #9ca3af; /* text-muted */
-  --color-subtle: #6b7280; /* text-subtle */
-  --color-dim: #4b5563; /* text-dim */
+  --color-muted: var(--color-muted);
+  --color-subtle: var(--color-subtle);
+  --color-dim: var(--color-dim);
   
   --color-info: #3b82f6;
   --color-warning: #eab308;
+
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 :root {
+  --background: #f8fafc; /* SLATE-50 */
+  --foreground: #0f172a; /* SLATE-900 */
+  --glass: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(0, 0, 0, 0.05);
+
+  --color-secondary: #f1f5f9; /* SLATE-100 */
+  --color-surface: rgba(0, 0, 0, 0.04);
+  --color-surface-hover: rgba(0, 0, 0, 0.07);
+  --color-border: rgba(47, 172, 242, 0.12);
+  
+  --color-muted: #475569; /* SLATE-600 */
+  --color-subtle: #94a3b8; /* SLATE-400 */
+  --color-dim: #cbd5e1; /* SLATE-300 */
+}
+
+.dark {
   --background: #0a0e14;
   --foreground: #eceff4;
   --glass: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
+
+  --color-secondary: #1a1f28;
+  --color-surface: rgba(255, 255, 255, 0.05);
+  --color-surface-hover: rgba(255, 255, 255, 0.06);
+  --color-border: rgba(47, 172, 242, 0.06);
+  
+  --color-muted: #9ca3af;
+  --color-subtle: #6b7280;
+  --color-dim: #4b5563;
 }
 
 body {
@@ -34,6 +63,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 a, button {

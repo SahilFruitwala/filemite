@@ -152,9 +152,9 @@ export default function ResizePage() {
       <main className="container mx-auto px-6 pt-32 pb-20">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-white">
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-foreground">
             Resize images with <br />
-             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">perfect precision.</span>
+             <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">perfect precision.</span>
           </h1>
 
              {/* Resize Settings Panel */}
@@ -164,7 +164,7 @@ export default function ResizePage() {
 
                      <div className="relative z-10 flex flex-col gap-6">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-white font-medium flex items-center gap-2">
+                            <h3 className="text-foreground font-medium flex items-center gap-2">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><polyline points="11 3 11 11 14 8 17 11 17 3"/></svg>
                                 Resize & Crop
                             </h3>
@@ -180,9 +180,9 @@ export default function ResizePage() {
                                             value={resizeWidth}
                                             onChange={(e) => setResizeWidth(e.target.value)}
                                             placeholder="Auto"
-                                            className="w-full bg-black/40 border border-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
+                                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
                                         />
-                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none">PX</span>
+                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted pointer-events-none">PX</span>
                                     </div>
                                 </div>
                                 <div className="flex-1">
@@ -193,9 +193,9 @@ export default function ResizePage() {
                                             value={resizeHeight}
                                             onChange={(e) => setResizeHeight(e.target.value)}
                                             placeholder="Auto"
-                                            className="w-full bg-black/40 border border-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
+                                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
                                         />
-                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none">PX</span>
+                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted pointer-events-none">PX</span>
                                     </div>
                                 </div>
                             </div>
@@ -210,7 +210,7 @@ export default function ResizePage() {
                                             className={`py-2 px-2 rounded-lg text-xs font-medium transition-all duration-200 border capitalize ${
                                                 resizeFit === mode 
                                                     ? 'bg-primary/20 text-primary border-primary' 
-                                                    : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-white'
+                                                    : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-foreground'
                                             }`}
                                         >
                                             {mode}
@@ -227,7 +227,7 @@ export default function ResizePage() {
 
                             {/* Aspect Ratio Hint */}
                             {((resizeWidth && !resizeHeight) || (!resizeWidth && resizeHeight)) && (
-                                <div className="text-xs text-gray-500 italic flex items-center gap-2 animate-[fadeIn_0.3s_ease-out]">
+                                <div className="text-xs text-muted italic flex items-center gap-2 animate-[fadeIn_0.3s_ease-out]">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                     Aspect ratio will be automatically preserved
                                 </div>
@@ -277,10 +277,10 @@ export default function ResizePage() {
             ) : (
                 <div className="w-full max-w-4xl mx-auto space-y-4">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold text-white">Your Resized Images</h2>
+                        <h2 className="text-2xl font-bold text-foreground">Your Resized Images</h2>
                         <button 
                             onClick={handleReset}
-                            className="text-sm text-gray-400 hover:text-white underline underline-offset-4"
+                            className="text-sm text-muted hover:text-foreground underline underline-offset-4"
                         >
                             Start Over
                         </button>
@@ -290,7 +290,7 @@ export default function ResizePage() {
                         {files.map((file) => (
                             <div key={file.id} className="bg-secondary border border-border rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 animate-[fadeIn_0.3s_ease-out]">
                                 <div className="flex items-center gap-4 w-full md:w-auto">
-                                    <div className="w-16 h-16 bg-black rounded-lg overflow-hidden flex items-center justify-center border border-border shrink-0">
+                                    <div className="w-16 h-16 bg-background rounded-lg overflow-hidden flex items-center justify-center border border-border shrink-0">
                                         {file.blobUrl ? (
                                             <img src={file.blobUrl} alt="Preview" className="w-full h-full object-contain" />
                                         ) : (
@@ -298,12 +298,12 @@ export default function ResizePage() {
                                         )}
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                        <h3 className="text-white font-medium truncate max-w-[200px] sm:max-w-xs">{file.originalName}</h3>
+                                        <h3 className="text-foreground font-medium truncate max-w-[200px] sm:max-w-xs">{file.originalName}</h3>
                                         <div className="flex items-center gap-3 text-xs mt-1">
                                             {file.status === 'done' ? (
                                                 <>
                                                     <span className="text-muted line-through">{formatSize(file.originalSize)}</span>
-                                                    <span className="text-white font-bold">New: {formatSize(file.compressedSize)}</span>
+                                                    <span className="text-foreground font-bold">New: {formatSize(file.compressedSize)}</span>
                                                 </>
                                             ) : file.status === 'processing' ? (
                                                 <span className="text-primary flex items-center gap-1">
@@ -337,7 +337,7 @@ export default function ResizePage() {
                                                     className={`px-2 py-1 rounded text-[10px] uppercase font-bold transition-all ${
                                                         // We don't have per-file fit state, so we highlight based on global or just generic style
                                                         // Ideally we should track "last used fit" per file, but for now just showing options is enough
-                                                        'text-muted hover:text-white hover:bg-surface-hover'
+                                                        'text-muted hover:text-foreground hover:bg-surface-hover'
                                                     }`}
                                                     title={`Reprocess with ${mode}`}
                                                 >
@@ -352,7 +352,7 @@ export default function ResizePage() {
                                             <>
                                                 <button
                                                     onClick={() => setComparingFileId(file.id)}
-                                                    className="bg-surface hover:bg-surface-hover text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm flex items-center gap-2 border border-border"
+                                                    className="bg-surface hover:bg-surface-hover text-foreground px-4 py-2 rounded-lg font-medium transition-colors text-sm flex items-center gap-2 border border-border"
                                                 >
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                                     <span className="hidden sm:inline">Compare</span>
@@ -397,22 +397,22 @@ export default function ResizePage() {
         {comparingFile && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 animate-[fadeIn_0.2s_ease-out]">
                 <div 
-                    className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                    className="absolute inset-0 bg-background/80 backdrop-blur-sm"
                     onClick={() => setComparingFileId(null)}
                 ></div>
                 <div className="relative bg-[#0A0A0A] border border-border rounded-3xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col max-h-full">
                     {/* Modal Header */}
                     <div className="flex items-center justify-between p-6 border-b border-border">
                         <div className="min-w-0">
-                            <h2 className="text-xl font-bold text-white truncate">{comparingFile.originalName}</h2>
-                            <p className="text-gray-400 text-sm mt-0.5">
+                            <h2 className="text-xl font-bold text-foreground truncate">{comparingFile.originalName}</h2>
+                            <p className="text-muted text-sm mt-0.5">
                                 {formatSize(comparingFile.originalSize)} → {formatSize(comparingFile.compressedSize)} 
                                 <span className="text-success ml-2">-{Math.round(((comparingFile.originalSize - comparingFile.compressedSize) / comparingFile.originalSize) * 100)}% saved</span>
                             </p>
                         </div>
                         <button 
                             onClick={() => setComparingFileId(null)}
-                            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
+                            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 text-muted hover:text-foreground transition-colors"
                         >
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         </button>
@@ -432,7 +432,7 @@ export default function ResizePage() {
                     <div className="p-6 border-t border-border flex justify-end gap-3">
                         <button 
                             onClick={() => setComparingFileId(null)}
-                            className="px-6 py-2.5 rounded-xl font-medium text-gray-400 hover:text-white transition-colors"
+                            className="px-6 py-2.5 rounded-xl font-medium text-muted hover:text-foreground transition-colors"
                         >
                             Close
                         </button>
@@ -497,8 +497,8 @@ export default function ResizePage() {
                              )}
                         </div>
                         
-                        <div className="text-sm text-gray-400">
-                             Previewing: <span className="text-white font-mono">{resizeWidth || '?'} x {resizeHeight || '?'}</span> 
+                        <div className="text-sm text-muted">
+                             Previewing: <span className="text-foreground font-mono">{resizeWidth || '?'} x {resizeHeight || '?'}</span> 
                              <span className="mx-2">•</span>
                              Mode: <span className="text-primary uppercase font-bold">{resizeFit}</span>
                         </div>

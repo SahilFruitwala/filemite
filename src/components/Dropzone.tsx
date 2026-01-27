@@ -75,8 +75,8 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
                     <div className="w-6 h-6 bg-primary/20 rounded-full animate-pulse"></div>
                 </div>
            </div>
-           <h3 className="text-xl font-bold text-white mb-2">Optimizing your images</h3>
-           <p className="text-gray-400 text-sm max-w-[240px]">We're applying professional-grade compression logic...</p>
+           <h3 className="text-xl font-bold text-foreground mb-2">Optimizing your images</h3>
+           <p className="text-muted text-sm max-w-[240px]">We're applying professional-grade compression logic...</p>
         </div>
       ) : (
         <>
@@ -89,7 +89,7 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
             </div>
           
             <div className="text-center relative z-10">
-                <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
                     {isDragging ? 'Drop it here!' : 'Drop your images here'}
                 </h3>
                 <p className="text-muted mb-10 text-center max-w-sm mx-auto text-sm sm:text-base leading-relaxed">

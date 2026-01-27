@@ -9,7 +9,7 @@ interface PageHeaderProps {
 export default function PageHeader({ title, description, className = '' }: PageHeaderProps) {
   return (
     <div className={`text-center mb-16 ${className}`}>
-      <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-white animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-foreground animate-in fade-in slide-in-from-bottom-4 duration-700">
         {title}
       </h1>
       {description && (

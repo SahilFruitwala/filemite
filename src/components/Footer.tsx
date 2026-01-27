@@ -17,7 +17,7 @@ export default function Footer() {
                <div className="bg-primary text-white p-1 rounded-md overflow-hidden flex items-center justify-center">
                    <Image src="/icon.png" alt="MicroPng Logo" width={20} height={20} className="object-contain" />
                </div>
-               <span className="text-xl font-bold tracking-tight text-white uppercase">MicroPng</span>
+               <span className="text-xl font-bold tracking-tight text-foreground uppercase">MicroPng</span>
             </div>
             <p className="text-muted text-sm text-center lg:text-left leading-relaxed">
                 Professional-grade image optimization, right in your browser. Built with a focus on speed, precision, and privacy.
@@ -30,7 +30,7 @@ export default function Footer() {
 
           {/* Privacy & Handling */}
           <div className="lg:col-span-4 flex flex-col items-center lg:items-start gap-4">
-            <div className="flex items-center gap-2 text-white font-bold text-sm uppercase tracking-widest">
+            <div className="flex items-center gap-2 text-foreground font-bold text-sm uppercase tracking-widest">
                 <ShieldCheck size={18} className="text-primary" />
                 Zero Data Retention
             </div>
@@ -43,8 +43,8 @@ export default function Footer() {
           <div className="lg:col-span-4 flex flex-col items-center lg:items-end gap-6">
             <div className="flex flex-col items-center lg:items-end gap-2">
                 <span className="text-xs font-semibold text-subtle uppercase tracking-widest">Resources</span>
-                <a href="/compare" className="text-sm text-muted hover:text-white transition-colors">Why MicroPng?</a>
-                <a href="/bg-remover" className="text-sm text-gray-400 hover:text-white transition-colors opacity-50 cursor-not-allowed" title="Coming Soon">Background Remover</a>
+                <a href="/compare" className="text-sm text-muted hover:text-foreground transition-colors">Why MicroPng?</a>
+                <a href="/bg-remover" className="text-sm text-muted hover:text-foreground transition-colors opacity-50 cursor-not-allowed" title="Coming Soon">Background Remover</a>
             </div>
 
             <div className="flex flex-col items-center lg:items-end gap-2">
@@ -53,7 +53,7 @@ export default function Footer() {
                   href="https://github.com/SahilFruitwala/MicroPng" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="group flex items-center gap-3 bg-surface hover:bg-surface-hover border border-border px-4 py-2 rounded-2xl text-white transition-all shadow-xl"
+                  className="group flex items-center gap-3 bg-surface hover:bg-surface-hover border border-border px-4 py-2 rounded-2xl text-foreground transition-all shadow-xl"
                 >
                   <Github size={20} />
                   <span className="text-sm font-medium">Improve this tool</span>
@@ -83,7 +83,7 @@ export default function Footer() {
               href="https://github.com/SahilFruitwala/MicroPng" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="text-subtle hover:text-white text-xs transition-colors font-medium flex items-center gap-2 group"
+              className="text-subtle hover:text-foreground text-xs transition-colors font-medium flex items-center gap-2 group"
              >
                 <Terminal size={12} className="text-primary group-hover:scale-110 transition-transform" />
                 For privacy checkout code and make it more private

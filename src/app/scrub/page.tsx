@@ -93,7 +93,7 @@ export default function ScrubPage() {
           .map(([key, value]) => (
               <div key={key} className="flex justify-between py-2 border-b border-border last:border-0">
                   <span className="text-muted text-sm font-mono">{key}</span>
-                  <span className="text-white text-sm truncate max-w-[200px]">{String(value)}</span>
+                  <span className="text-foreground text-sm truncate max-w-[200px]">{String(value)}</span>
               </div>
           ));
   };
@@ -105,7 +105,7 @@ export default function ScrubPage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-background text-white">
+    <div className="min-h-screen relative overflow-hidden bg-background text-foreground">
       {/* Background Glows */}
 
       <BackgroundGlow color="emerald" />
@@ -127,12 +127,12 @@ export default function ScrubPage() {
                 {/* Left Column: Image & Status */}
                 <div className="space-y-6">
                     <GlassCard className="p-4">
-                        <div className="relative aspect-square md:aspect-video rounded-xl overflow-hidden bg-black/50 mb-4">
+                        <div className="relative aspect-square md:aspect-video rounded-xl overflow-hidden bg-surface mb-4">
                              <img src={file.previewUrl} alt="Preview" className="w-full h-full object-contain" />
                         </div>
                         <div className="flex justify-between items-center">
                              <div>
-                                 <h3 className="font-medium truncate max-w-[200px]">{file.file.name}</h3>
+                                 <h3 className="font-medium truncate max-w-[200px] text-foreground">{file.file.name}</h3>
                                  <p className="text-sm text-muted">{(file.file.size / 1024 / 1024).toFixed(2)} MB</p>
                              </div>
                              <button onClick={() => setFile(null)} className="text-sm text-red-400 hover:text-red-300">
@@ -143,10 +143,10 @@ export default function ScrubPage() {
 
                     {file.status === 'done' && file.scrubbedUrl && (
                         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6 text-center animate-in fade-in slide-in-from-bottom-4">
-                            <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-black">
+                            <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-2">Image Scrubbed!</h3>
+                            <h3 className="text-xl font-bold text-foreground mb-2">Image Scrubbed!</h3>
                             <p className="text-muted mb-6 text-sm">All metadata has been removed successfully.</p>
                             <a 
                                 href={file.scrubbedUrl} 
@@ -162,7 +162,7 @@ export default function ScrubPage() {
                 {/* Right Column: Metadata & Actions */}
                 <GlassCard className="h-fit max-h-[800px] overflow-hidden flex flex-col p-6">
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold flex items-center gap-2">
+                        <h2 className="text-xl font-bold flex items-center gap-2 text-foreground">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-400"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                             Metadata Report
                         </h2>
@@ -179,7 +179,7 @@ export default function ScrubPage() {
                                 {formatMetadata(file.metadata)}
                             </div>
                         ) : (
-                            <div className="text-center py-12 text-gray-500">
+                            <div className="text-center py-12 text-muted">
                                 No metadata found or failed to load.
                             </div>
                         )}
