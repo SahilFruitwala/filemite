@@ -42,6 +42,12 @@ export default function Footer() {
           {/* Connect & Contribute */}
           <div className="lg:col-span-4 flex flex-col items-center lg:items-end gap-6">
             <div className="flex flex-col items-center lg:items-end gap-2">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Resources</span>
+                <a href="/compare" className="text-sm text-gray-400 hover:text-white transition-colors">Why MicroPng?</a>
+                <a href="/bg-remover" className="text-sm text-gray-400 hover:text-white transition-colors opacity-50 cursor-not-allowed" title="Coming Soon">Background Remover</a>
+            </div>
+
+            <div className="flex flex-col items-center lg:items-end gap-2">
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Contribute</span>
                 <a 
                   href="https://github.com/SahilFruitwala/MicroPng" 
