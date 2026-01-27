@@ -37,7 +37,7 @@ export default function Navbar() {
               className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
                   pathname === link.href 
                       ? 'bg-primary text-white shadow-lg shadow-primary/20' 
-                      : 'text-muted hover:text-white hover:bg-surface'
+                      : 'text-muted hover:text-foreground hover:bg-surface-hover'
               }`}
             >
               {link.label}
@@ -50,7 +50,7 @@ export default function Navbar() {
             href="https://github.com/SahilFruitwala/MicroPng" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="hidden sm:flex text-muted hover:text-white transition-colors p-2"
+            className="hidden sm:flex text-muted hover:text-foreground transition-colors p-2"
             title="View on GitHub"
           >
             <Github size={22} />
@@ -61,7 +61,7 @@ export default function Navbar() {
           {/* Mobile Menu Toggle */}
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden text-muted hover:text-white p-2 z-[101]"
+            className="lg:hidden text-muted hover:text-foreground p-2 z-[101]"
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -80,7 +80,7 @@ export default function Navbar() {
                 className={`text-3xl font-bold transition-all ${
                     pathname === link.href 
                         ? 'text-primary' 
-                        : 'text-muted hover:text-white'
+                        : 'text-muted hover:text-foreground'
                 }`}
               >
                 {link.label}
@@ -94,7 +94,7 @@ export default function Navbar() {
             href="https://github.com/SahilFruitwala/MicroPng" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center gap-3 text-muted hover:text-white text-lg font-medium"
+            className="flex items-center gap-3 text-muted hover:text-foreground text-lg font-medium"
           >
             <Github size={24} />
             GitHub Repository

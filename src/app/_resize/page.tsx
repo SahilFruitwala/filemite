@@ -400,7 +400,7 @@ export default function ResizePage() {
                     className="absolute inset-0 bg-background/80 backdrop-blur-sm"
                     onClick={() => setComparingFileId(null)}
                 ></div>
-                <div className="relative bg-[#0A0A0A] border border-border rounded-3xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col max-h-full">
+                <div className="relative bg-background border border-border rounded-3xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col max-h-full">
                     {/* Modal Header */}
                     <div className="flex items-center justify-between p-6 border-b border-border">
                         <div className="min-w-0">
@@ -456,12 +456,12 @@ export default function ResizePage() {
                     className="absolute inset-0 bg-black/80 backdrop-blur-sm"
                     onClick={() => setPreviewFileId(null)}
                 ></div>
-                <div className="relative bg-[#0A0A0A] border border-border rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col">
+                <div className="relative bg-background border border-border rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col">
                     <div className="p-6 border-b border-border flex items-center justify-between">
-                         <h2 className="text-xl font-bold text-white">Resize Preview</h2>
+                         <h2 className="text-xl font-bold text-foreground">Resize Preview</h2>
                          <button 
                             onClick={() => setPreviewFileId(null)}
-                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
+                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-hover text-muted hover:text-foreground transition-colors"
                         >
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         </button>

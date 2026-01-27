@@ -44,7 +44,7 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
     <div
       className={`relative w-full max-w-3xl mx-auto min-h-[320px] rounded-[2.5rem] border border-dashed transition-all duration-500 overflow-hidden flex flex-col items-center justify-center p-8 sm:p-12 group cursor-pointer
         ${isDragging 
-          ? 'border-primary/50 bg-primary/10 shadow-[0_0_80px_rgba(47,172,242,0.15)] scale-[1.02]' 
+          ? 'border-primary/50 bg-primary/10 shadow-[0_0_80px_rgba(var(--primary-rgb),0.15)] scale-[1.02]' 
           : 'border-border/60 bg-surface hover:bg-surface-hover hover:border-primary/30'
         }
       `}
@@ -55,7 +55,7 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
     >
       {/* Dynamic Background Pattern */}
       <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[radial-gradient(circle_at_center,rgba(47,172,242,0.1)_0,transparent_70%)] group-hover:scale-110 transition-transform duration-700"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.1)_0,transparent_70%)] group-hover:scale-110 transition-transform duration-700"></div>
       </div>
 
       <input 

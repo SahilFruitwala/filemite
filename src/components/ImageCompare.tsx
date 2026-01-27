@@ -74,7 +74,10 @@ export default function ImageCompare({ original, compressed, leftLabel = 'Origin
             onTouchStart={onTouchStart}
         >
             {/* Checkerboard background for transparent images */}
-            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'conic-gradient(#fff 0.25turn, #000 0.25turn 0.5turn, #fff 0.5turn 0.75turn, #000 0.75turn)', backgroundSize: '20px 20px' }}></div>
+            <div className="absolute inset-0 opacity-10" style={{ 
+                backgroundImage: 'conic-gradient(var(--foreground) 0.25turn, var(--background) 0.25turn 0.5turn, var(--foreground) 0.5turn 0.75turn, var(--background) 0.75turn)', 
+                backgroundSize: '20px 20px' 
+            }}></div>
 
             {/* Compressed Image (Background) */}
             <img 
@@ -102,7 +105,7 @@ export default function ImageCompare({ original, compressed, leftLabel = 'Origin
 
             {/* Slider Line */}
             <div 
-                className={`absolute inset-y-0 w-0.5 bg-foreground shadow-[0_0_15px_rgba(0,0,0,0.5)] z-20 pointer-events-none transition-transform duration-75 ${isDragging ? 'scale-x-150' : ''}`}
+                className={`absolute inset-y-0 w-0.5 bg-foreground shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:shadow-[0_0_15px_rgba(255,255,255,0.1)] z-20 pointer-events-none transition-transform duration-75 ${isDragging ? 'scale-x-150' : ''}`}
                 style={{ left: `${sliderPosition}%` }}
             >
                 {/* Slider Handle */}
