@@ -159,7 +159,7 @@ export default function ResizePage() {
 
              {/* Resize Settings Panel */}
             <div className="max-w-xl mx-auto mb-16">
-                 <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 relative overflow-hidden group animate-[fadeIn_0.3s_ease-out]">
+                 <div className="bg-surface backdrop-blur-md border border-border rounded-2xl p-6 relative overflow-hidden group animate-[fadeIn_0.3s_ease-out]">
                      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
 
                      <div className="relative z-10 flex flex-col gap-6">
@@ -173,27 +173,27 @@ export default function ResizePage() {
                         <div className="grid gap-6">
                             <div className="flex gap-4">
                                 <div className="flex-1">
-                                    <label className="text-xs text-gray-400 mb-2 block uppercase tracking-wider font-semibold">Width</label>
+                                    <label className="text-xs text-subtle mb-2 block uppercase tracking-wider font-semibold">Width</label>
                                     <div className="relative">
                                         <input
                                             type="number"
                                             value={resizeWidth}
                                             onChange={(e) => setResizeWidth(e.target.value)}
                                             placeholder="Auto"
-                                            className="w-full bg-black/40 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
+                                            className="w-full bg-black/40 border border-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
                                         />
                                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none">PX</span>
                                     </div>
                                 </div>
                                 <div className="flex-1">
-                                    <label className="text-xs text-gray-400 mb-2 block uppercase tracking-wider font-semibold">Height</label>
+                                    <label className="text-xs text-subtle mb-2 block uppercase tracking-wider font-semibold">Height</label>
                                     <div className="relative">
                                         <input
                                             type="number"
                                             value={resizeHeight}
                                             onChange={(e) => setResizeHeight(e.target.value)}
                                             placeholder="Auto"
-                                            className="w-full bg-black/40 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
+                                            className="w-full bg-black/40 border border-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
                                         />
                                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none">PX</span>
                                     </div>
@@ -201,7 +201,7 @@ export default function ResizePage() {
                             </div>
 
                             <div className={`transition-all duration-300 overflow-hidden ${resizeWidth && resizeHeight ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                                <label className="text-xs text-gray-400 mb-2 block uppercase tracking-wider font-semibold">Fit Mode</label>
+                                <label className="text-xs text-subtle mb-2 block uppercase tracking-wider font-semibold">Fit Mode</label>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                     {(['cover', 'contain', 'fill', 'inside'] as const).map((mode) => (
                                         <button
@@ -210,14 +210,14 @@ export default function ResizePage() {
                                             className={`py-2 px-2 rounded-lg text-xs font-medium transition-all duration-200 border capitalize ${
                                                 resizeFit === mode 
                                                     ? 'bg-primary/20 text-primary border-primary' 
-                                                    : 'bg-white/5 text-gray-400 border-transparent hover:bg-white/10 hover:text-white'
+                                                    : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-white'
                                             }`}
                                         >
                                             {mode}
                                         </button>
                                     ))}
                                 </div>
-                                <p className="text-xs text-gray-500 mt-2">
+                                <p className="text-xs text-subtle mt-2">
                                     {resizeFit === 'cover' && 'Crops to fill dimensions. Aspect ratio preserved.'}
                                     {resizeFit === 'contain' && 'Fits within dimensions. Letterboxing may occur.'}
                                     {resizeFit === 'fill' && 'Stretches to exact dimensions. Retains no aspect ratio.'}
@@ -253,7 +253,7 @@ export default function ResizePage() {
                             >
                                 {isProcesssing ? (
                                     <>
-                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
                                         Processing...
                                     </>
                                 ) : (
@@ -288,13 +288,13 @@ export default function ResizePage() {
 
                     <div className="grid gap-4">
                         {files.map((file) => (
-                            <div key={file.id} className="bg-secondary border border-white/5 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 animate-[fadeIn_0.3s_ease-out]">
+                            <div key={file.id} className="bg-secondary border border-border rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 animate-[fadeIn_0.3s_ease-out]">
                                 <div className="flex items-center gap-4 w-full md:w-auto">
-                                    <div className="w-16 h-16 bg-black rounded-lg overflow-hidden flex items-center justify-center border border-white/10 shrink-0">
+                                    <div className="w-16 h-16 bg-black rounded-lg overflow-hidden flex items-center justify-center border border-border shrink-0">
                                         {file.blobUrl ? (
                                             <img src={file.blobUrl} alt="Preview" className="w-full h-full object-contain" />
                                         ) : (
-                                            <div className="animate-pulse w-full h-full bg-white/5"></div>
+                                            <div className="animate-pulse w-full h-full bg-surface"></div>
                                         )}
                                     </div>
                                     <div className="min-w-0 flex-1">
@@ -302,7 +302,7 @@ export default function ResizePage() {
                                         <div className="flex items-center gap-3 text-xs mt-1">
                                             {file.status === 'done' ? (
                                                 <>
-                                                    <span className="text-gray-400 line-through">{formatSize(file.originalSize)}</span>
+                                                    <span className="text-muted line-through">{formatSize(file.originalSize)}</span>
                                                     <span className="text-white font-bold">New: {formatSize(file.compressedSize)}</span>
                                                 </>
                                             ) : file.status === 'processing' ? (
@@ -318,7 +318,7 @@ export default function ResizePage() {
                                             ) : file.status === 'error' ? (
                                                 <span className="text-error">Error</span>
                                             ) : (
-                                                 <span className="text-gray-500">Pending...</span>
+                                                 <span className="text-subtle">Pending...</span>
                                             )}
                                         </div>
                                     </div>
@@ -329,7 +329,7 @@ export default function ResizePage() {
                                     
                                     {/* Fit Mode Switcher for Done Files - Only if dimensions allow */}
                                     {file.status === 'done' && resizeWidth && resizeHeight && (
-                                        <div className="flex bg-black/40 rounded-lg p-1 border border-white/10">
+                                        <div className="flex bg-black/40 rounded-lg p-1 border border-border">
                                              {(['cover', 'contain', 'fill'] as const).map((mode) => (
                                                 <button
                                                     key={mode}
@@ -337,7 +337,7 @@ export default function ResizePage() {
                                                     className={`px-2 py-1 rounded text-[10px] uppercase font-bold transition-all ${
                                                         // We don't have per-file fit state, so we highlight based on global or just generic style
                                                         // Ideally we should track "last used fit" per file, but for now just showing options is enough
-                                                        'text-gray-400 hover:text-white hover:bg-white/10'
+                                                        'text-muted hover:text-white hover:bg-surface-hover'
                                                     }`}
                                                     title={`Reprocess with ${mode}`}
                                                 >
@@ -352,7 +352,7 @@ export default function ResizePage() {
                                             <>
                                                 <button
                                                     onClick={() => setComparingFileId(file.id)}
-                                                    className="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm flex items-center gap-2 border border-white/5"
+                                                    className="bg-surface hover:bg-surface-hover text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm flex items-center gap-2 border border-border"
                                                 >
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                                     <span className="hidden sm:inline">Compare</span>
@@ -375,7 +375,7 @@ export default function ResizePage() {
                                         {file.status === 'waiting' && (
                                             <button
                                                 onClick={() => setPreviewFileId(file.id)}
-                                                className="bg-white/5 hover:bg-white/10 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-xs flex items-center gap-2 border border-white/5"
+                                                className="bg-surface hover:bg-surface-hover text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-xs flex items-center gap-2 border border-border"
                                             >
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                                 Preview
@@ -400,9 +400,9 @@ export default function ResizePage() {
                     className="absolute inset-0 bg-black/80 backdrop-blur-sm"
                     onClick={() => setComparingFileId(null)}
                 ></div>
-                <div className="relative bg-[#0A0A0A] border border-white/10 rounded-3xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col max-h-full">
+                <div className="relative bg-[#0A0A0A] border border-border rounded-3xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col max-h-full">
                     {/* Modal Header */}
-                    <div className="flex items-center justify-between p-6 border-b border-white/5">
+                    <div className="flex items-center justify-between p-6 border-b border-border">
                         <div className="min-w-0">
                             <h2 className="text-xl font-bold text-white truncate">{comparingFile.originalName}</h2>
                             <p className="text-gray-400 text-sm mt-0.5">
@@ -429,7 +429,7 @@ export default function ResizePage() {
                     </div>
 
                     {/* Modal Footer */}
-                    <div className="p-6 border-t border-white/5 flex justify-end gap-3">
+                    <div className="p-6 border-t border-border flex justify-end gap-3">
                         <button 
                             onClick={() => setComparingFileId(null)}
                             className="px-6 py-2.5 rounded-xl font-medium text-gray-400 hover:text-white transition-colors"
@@ -456,8 +456,8 @@ export default function ResizePage() {
                     className="absolute inset-0 bg-black/80 backdrop-blur-sm"
                     onClick={() => setPreviewFileId(null)}
                 ></div>
-                <div className="relative bg-[#0A0A0A] border border-white/10 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col">
-                    <div className="p-6 border-b border-white/5 flex items-center justify-between">
+                <div className="relative bg-[#0A0A0A] border border-border rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col">
+                    <div className="p-6 border-b border-border flex items-center justify-between">
                          <h2 className="text-xl font-bold text-white">Resize Preview</h2>
                          <button 
                             onClick={() => setPreviewFileId(null)}
@@ -468,7 +468,7 @@ export default function ResizePage() {
                     </div>
                     
                     <div className="p-8 bg-black/40 flex flex-col items-center justify-center gap-4">
-                        <div className="relative border-2 border-dashed border-white/10 rounded-lg overflow-hidden flex items-center justify-center bg-black/50 transition-all duration-300"
+                        <div className="relative border-2 border-dashed border-border rounded-lg overflow-hidden flex items-center justify-center bg-black/50 transition-all duration-300"
                              style={{
                                  width: resizeWidth ? `${Math.min(parseInt(resizeWidth), 400)}px` : 'auto',
                                  height: resizeHeight ? `${Math.min(parseInt(resizeHeight), 400)}px` : 'auto',

@@ -69,7 +69,7 @@ export default function ImageCompare({ original, compressed, leftLabel = 'Origin
     return (
         <div 
             ref={containerRef}
-            className="relative w-full aspect-video rounded-xl overflow-hidden cursor-col-resize select-none bg-black group"
+            className="relative w-full aspect-video rounded-xl overflow-hidden cursor-col-resize select-none bg-background group"
             onMouseDown={onMouseDown}
             onTouchStart={onTouchStart}
         >
@@ -116,7 +116,7 @@ export default function ImageCompare({ original, compressed, leftLabel = 'Origin
 
             {/* Labels */}
             <div className={`absolute bottom-4 left-4 z-30 pointer-events-none transition-opacity duration-300 ${isDragging ? 'opacity-20' : 'opacity-100'}`}>
-                <span className="bg-black/60 backdrop-blur-md text-white text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded border border-white/10 font-bold shadow-lg">{leftLabel}</span>
+                <span className="bg-black/60 backdrop-blur-md text-white text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded border border-border font-bold shadow-lg">{leftLabel}</span>
             </div>
             <div className={`absolute bottom-4 right-4 z-30 pointer-events-none transition-opacity duration-300 ${isDragging ? 'opacity-20' : 'opacity-100'}`}>
                 <span className="bg-primary text-white text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded shadow-xl font-bold">{rightLabel}</span>

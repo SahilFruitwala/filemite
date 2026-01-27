@@ -13,7 +13,7 @@ export default function PageHeader({ title, description, className = '' }: PageH
         {title}
       </h1>
       {description && (
-        <p className="text-xl text-gray-400 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100">
+        <p className="text-xl text-muted max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100">
           {description}
         </p>
       )}

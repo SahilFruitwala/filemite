@@ -91,8 +91,8 @@ export default function ScrubPage() {
       return Object.entries(meta)
           .filter(([_, value]) => typeof value !== 'object' || value === null)
           .map(([key, value]) => (
-              <div key={key} className="flex justify-between py-2 border-b border-white/5 last:border-0">
-                  <span className="text-gray-400 text-sm font-mono">{key}</span>
+              <div key={key} className="flex justify-between py-2 border-b border-border last:border-0">
+                  <span className="text-muted text-sm font-mono">{key}</span>
                   <span className="text-white text-sm truncate max-w-[200px]">{String(value)}</span>
               </div>
           ));
@@ -105,7 +105,7 @@ export default function ScrubPage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#0A0E14] text-white">
+    <div className="min-h-screen relative overflow-hidden bg-background text-white">
       {/* Background Glows */}
 
       <BackgroundGlow color="emerald" />
@@ -133,7 +133,7 @@ export default function ScrubPage() {
                         <div className="flex justify-between items-center">
                              <div>
                                  <h3 className="font-medium truncate max-w-[200px]">{file.file.name}</h3>
-                                 <p className="text-sm text-gray-400">{(file.file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                 <p className="text-sm text-muted">{(file.file.size / 1024 / 1024).toFixed(2)} MB</p>
                              </div>
                              <button onClick={() => setFile(null)} className="text-sm text-red-400 hover:text-red-300">
                                  Remove
@@ -147,7 +147,7 @@ export default function ScrubPage() {
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                             </div>
                             <h3 className="text-xl font-bold text-white mb-2">Image Scrubbed!</h3>
-                            <p className="text-gray-400 mb-6 text-sm">All metadata has been removed successfully.</p>
+                            <p className="text-muted mb-6 text-sm">All metadata has been removed successfully.</p>
                             <a 
                                 href={file.scrubbedUrl} 
                                 download={`scrubbed-${file.file.name}`}
@@ -172,7 +172,7 @@ export default function ScrubPage() {
                         {file.status === 'scanning' ? (
                             <div className="py-12 text-center">
                                 <div className="w-8 h-8 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin mx-auto mb-4"></div>
-                                <p className="text-gray-400">Scanning image data...</p>
+                                <p className="text-muted">Scanning image data...</p>
                             </div>
                         ) : file.metadata ? (
                             <div className="space-y-1">
@@ -186,7 +186,7 @@ export default function ScrubPage() {
                     </div>
 
                     {file.status === 'scanned' && (
-                        <div className="pt-6 border-t border-white/10 animate-in fade-in slide-in-from-bottom-2">
+                        <div className="pt-6 border-t border-border animate-in fade-in slide-in-from-bottom-2">
                              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 mb-4">
                                 <p className="text-yellow-200 text-sm flex gap-2">
                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>

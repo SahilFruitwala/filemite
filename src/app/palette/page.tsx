@@ -90,7 +90,7 @@ export default function PalettePage() {
              <div className="grid md:grid-cols-2 gap-12 items-start">
                 
                 {/* Image Preview */}
-                <GlassCard className="p-0 border-white/10 shadow-2xl bg-transparent">
+                <GlassCard className="p-0 border-border shadow-2xl bg-transparent">
                    <img 
                       ref={imgRef}
                       src={uploadedImage} 
@@ -124,7 +124,7 @@ export default function PalettePage() {
                     {colors.length === 0 && isExtracting && (
                          <div className="flex gap-2 mb-6">
                             {[1, 2, 3, 4, 5].map((i) => (
-                                <div key={i} className="h-20 w-full rounded-xl bg-white/5 animate-pulse"></div>
+                                <div key={i} className="h-20 w-full rounded-xl bg-surface animate-pulse"></div>
                             ))}
                          </div>
                     )}
@@ -134,11 +134,11 @@ export default function PalettePage() {
                             <div 
                                 key={index}
                                 onClick={() => copyToClipboard(color)}
-                                className="group flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/20 hover:bg-white/10 transition-all cursor-pointer"
+                                className="group flex items-center justify-between p-4 rounded-xl bg-surface border border-border hover:border-primary/20 hover:bg-surface-hover transition-all cursor-pointer"
                             >
                                 <div className="flex items-center gap-4">
                                     <div 
-                                        className="w-16 h-16 rounded-lg shadow-lg border border-white/10 transition-transform group-hover:scale-105" 
+                                        className="w-16 h-16 rounded-lg shadow-lg border border-border transition-transform group-hover:scale-105" 
                                         style={{ backgroundColor: color }}
                                     ></div>
                                     <div>
@@ -147,7 +147,7 @@ export default function PalettePage() {
                                     </div>
                                 </div>
                                 <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <span className={`text-sm font-medium px-3 py-1 rounded-full ${copyFeedback === color ? 'bg-green-500/20 text-green-400' : 'bg-white/10 text-gray-300'}`}>
+                                    <span className={`text-sm font-medium px-3 py-1 rounded-full ${copyFeedback === color ? 'bg-green-500/20 text-green-400' : 'bg-surface text-gray-300'}`}>
                                         {copyFeedback === color ? 'Copied!' : 'Copy'}
                                     </span>
                                 </div>

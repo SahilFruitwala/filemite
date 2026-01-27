@@ -19,7 +19,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-[100] flex items-center justify-between px-6 py-4 bg-[#0a0e14]/80 backdrop-blur-md border-b border-white/10">
+      <nav className="fixed top-0 w-full z-[100] flex items-center justify-between px-6 py-4 bg-background/80 backdrop-blur-md">
         <Link href="/" className="flex items-center gap-2 z-[101]">
           <div className="bg-primary text-white p-1 rounded-md overflow-hidden flex items-center justify-center">
              <Image src="/icon.png" alt="MicroPng Logo" width={24} height={24} className="object-contain" />
@@ -28,7 +28,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Links */}
-        <div className="hidden lg:flex items-center gap-1 bg-white/5 p-1 rounded-lg border border-white/10">
+        <div className="hidden lg:flex items-center gap-1 bg-surface p-1 rounded-lg">
           {navLinks.map((link) => (
             <Link 
               key={link.href}
@@ -36,7 +36,7 @@ export default function Navbar() {
               className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
                   pathname === link.href 
                       ? 'bg-primary text-white shadow-lg shadow-primary/20' 
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                      : 'text-muted hover:text-white hover:bg-surface'
               }`}
             >
               {link.label}
@@ -49,7 +49,7 @@ export default function Navbar() {
             href="https://github.com/SahilFruitwala/MicroPng" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="hidden sm:flex text-gray-400 hover:text-white transition-colors p-2"
+            className="hidden sm:flex text-muted hover:text-white transition-colors p-2"
             title="View on GitHub"
           >
             <Github size={22} />
@@ -58,7 +58,7 @@ export default function Navbar() {
           {/* Mobile Menu Toggle */}
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden text-gray-400 hover:text-white p-2 z-[101]"
+            className="lg:hidden text-muted hover:text-white p-2 z-[101]"
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -66,7 +66,7 @@ export default function Navbar() {
       </nav>
 
       {/* Mobile Menu Overlay */}
-      <div className={`fixed inset-0 bg-[#0a0e14]/95 backdrop-blur-xl z-[90] lg:hidden transition-all duration-300 ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+      <div className={`fixed inset-0 bg-background/95 backdrop-blur-xl z-[90] lg:hidden transition-all duration-300 ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         <div className="flex flex-col items-center justify-center h-full gap-8 p-6">
           <div className="flex flex-col items-center gap-4">
              {navLinks.map((link) => (
@@ -77,7 +77,7 @@ export default function Navbar() {
                 className={`text-3xl font-bold transition-all ${
                     pathname === link.href 
                         ? 'text-primary' 
-                        : 'text-gray-400 hover:text-white'
+                        : 'text-muted hover:text-white'
                 }`}
               >
                 {link.label}
@@ -85,13 +85,13 @@ export default function Navbar() {
              ))}
           </div>
           
-          <div className="h-px w-24 bg-white/10" />
+          <div className="h-px w-24 bg-border" />
           
           <a 
             href="https://github.com/SahilFruitwala/MicroPng" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center gap-3 text-gray-400 hover:text-white text-lg font-medium"
+            className="flex items-center gap-3 text-muted hover:text-white text-lg font-medium"
           >
             <Github size={24} />
             GitHub Repository

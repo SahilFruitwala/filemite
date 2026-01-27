@@ -68,10 +68,10 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
     };
 
     return (
-        <div className="bg-secondary border border-white/5 rounded-2xl p-3 sm:p-4 animate-[fadeIn_0.3s_ease-out]">
+        <div className="bg-secondary border border-border rounded-2xl p-3 sm:p-4 animate-[fadeIn_0.3s_ease-out]">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 mb-4">
                 {/* Thumbnail / Compare Toggle */}
-                <div className="w-full sm:w-16 h-32 sm:h-16 bg-black rounded-lg overflow-hidden flex items-center justify-center border border-white/10 shrink-0 relative group">
+                <div className="w-full sm:w-16 h-32 sm:h-16 bg-background rounded-lg overflow-hidden flex items-center justify-center border border-border shrink-0 relative group">
                     {resultBlobUrl || file.originalBlobUrl ? (
                         <img 
                             src={resultBlobUrl || file.originalBlobUrl} 
@@ -80,7 +80,7 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
                             onClick={() => resultBlobUrl && setIsComparing(!isComparing)}
                         />
                     ) : (
-                        <div className="animate-pulse w-full h-full bg-white/5"></div>
+                        <div className="animate-pulse w-full h-full bg-surface"></div>
                     )}
                     
                     {/* Hover Overlay for Compare */}
@@ -103,10 +103,10 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
                     <div className="flex items-center justify-center sm:justify-start gap-3 text-xs mt-1">
                         {status === 'done' ? (
                             <>
-                                <span className="text-gray-400">{formatSize(file.originalSize)}</span>
+                                <span className="text-muted">{formatSize(file.originalSize)}</span>
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-success"><polyline points="20 6 9 17 4 12"/></svg>
                                 <span className="text-white font-bold">{formatSize(resultSize)}</span>
-                                {type !== 'convert' && resultTime > 0 && <span className="bg-white/10 text-white px-1.5 py-0.5 rounded text-[10px]">{resultTime.toFixed(0)}ms</span>}
+                                {type !== 'convert' && resultTime > 0 && <span className="bg-surface text-white px-1.5 py-0.5 rounded text-[10px]">{resultTime.toFixed(0)}ms</span>}
                             </>
                         ) : status === 'processing' ? (
                             <span className="text-primary flex items-center gap-1">
@@ -116,7 +116,7 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
                          ) : status === 'error' ? (
                              <span className="text-red-400">Failed</span>
                          ) : (
-                            <span className="text-gray-500">Pending...</span> 
+                            <span className="text-subtle">Pending...</span> 
                         )}
                     </div>
                 </div>
@@ -132,7 +132,7 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
                         </button>
                         <button 
                             onClick={() => setIsComparing(!isComparing)}
-                            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${isComparing ? 'bg-white text-black border-white' : 'bg-transparent text-gray-400 border-white/20 hover:text-white'}`}
+                            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${isComparing ? 'bg-white text-black border-primary/20' : 'bg-transparent text-muted border-border hover:text-white hover:border-primary/30'}`}
                         >
                             {isComparing ? 'Close' : 'Compare'}
                         </button>
@@ -142,8 +142,8 @@ export default function ResultCard({ file, type, onDownload }: ResultCardProps) 
 
             {/* Comparison View */}
             {isComparing && status === 'done' && resultBlobUrl && (
-                <div className="mt-4 animate-[fadeIn_0.3s_ease-out] border-t border-white/5 pt-4">
-                    <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/50">
+                <div className="mt-4 animate-[fadeIn_0.3s_ease-out] border-t border-border pt-4">
+                    <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-background/50">
                         <ImageCompare 
                             original={file.originalBlobUrl || ''} 
                             compressed={resultBlobUrl}

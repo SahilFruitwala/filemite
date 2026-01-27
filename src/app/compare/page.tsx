@@ -19,7 +19,7 @@ export default function ComparePage() {
     <main className="min-h-screen pt-24 pb-12 px-6 max-w-7xl mx-auto">
       {/* Hero Section */}
       <div className="text-center mb-16 space-y-4 relative">
-        <Link href="/" className="absolute left-0 top-0 inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors md:absolute md:left-0 md:top-2">
+        <Link href="/" className="absolute left-0 top-0 inline-flex items-center gap-2 text-muted hover:text-white transition-colors md:absolute md:left-0 md:top-2">
             <ArrowLeft size={20} />
             <span className="hidden md:inline">Back to App</span>
         </Link>
@@ -31,37 +31,37 @@ export default function ComparePage() {
         <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
           MicroPng vs TinyPNG
         </h1>
-        <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+        <p className="text-xl text-muted max-w-2xl mx-auto">
           Honest comparison between local-first processing and traditional cloud compression.
         </p>
       </div>
 
       {/* Feature Highlight Cards */}
       <div className="grid md:grid-cols-3 gap-6 mb-20">
-        <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors">
+        <div className="p-6 rounded-2xl bg-surface border border-border backdrop-blur-sm hover:bg-surface-hover transition-colors">
           <div className="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-4">
             <Shield size={24} />
           </div>
           <h3 className="text-xl font-semibold mb-2 text-blue-100">Local-First Privacy</h3>
-          <p className="text-gray-400 leading-relaxed text-sm">
+          <p className="text-muted leading-relaxed text-sm">
             We prioritize local browser processing for desktop compression. When server processing is required (Mobile/Scrubbing), images are processed in volatile RAM and immediately discarded. **We never store your data.**
           </p>
         </div>
-        <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors">
+        <div className="p-6 rounded-2xl bg-surface border border-border backdrop-blur-sm hover:bg-surface-hover transition-colors">
           <div className="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 flex items-center justify-center mb-4">
             <Check size={24} />
           </div>
           <h3 className="text-xl font-semibold mb-2 text-green-100">Professional Quality</h3>
-          <p className="text-gray-400 leading-relaxed text-sm">
+          <p className="text-muted leading-relaxed text-sm">
             TinyPNG's free tier has strict file size and count limits. MicroPng provides a superior, high-capacity experience designed for creators who need professional-grade optimization without the artificial friction.
           </p>
         </div>
-        <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors">
+        <div className="p-6 rounded-2xl bg-surface border border-border backdrop-blur-sm hover:bg-surface-hover transition-colors">
           <div className="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-4">
             <Zap size={24} />
           </div>
           <h3 className="text-xl font-semibold mb-2 text-purple-100">Hybrid Speed</h3>
-          <p className="text-gray-400 leading-relaxed text-sm">
+          <p className="text-muted leading-relaxed text-sm">
             On desktop, compression is instant (0ms upload). On mobile, we use high-performance server clusters to handle heavy computation that would otherwise drain your battery.
           </p>
         </div>
@@ -71,11 +71,11 @@ export default function ComparePage() {
       <div className="mb-20">
         <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4">Quality You Can Trust</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
+            <p className="text-muted max-w-2xl mx-auto">
                 Drag the slider to compare. Our intelligent compression algorithms reduce file size significantly while maintaining pixel-perfect quality.
             </p>
         </div>
-        <div className="bg-[#0a0e14]/50 border border-white/10 rounded-2xl p-4 backdrop-blur-md max-w-4xl mx-auto">
+        <div className="bg-background/50 border border-border rounded-2xl p-4 backdrop-blur-md max-w-4xl mx-auto">
              <ImageCompare 
                 original="/test-image.jpg" 
                 compressed="/test-image.jpg" 
@@ -89,11 +89,11 @@ export default function ComparePage() {
       </div>
 
       {/* Comparison Table */}
-      <div className="bg-[#0a0e14]/50 border border-white/10 rounded-3xl overflow-hidden mb-8 backdrop-blur-md">
-        <div className="grid grid-cols-3 p-6 border-b border-white/10 bg-white/5">
-          <div className="text-lg font-semibold text-gray-400">Feature</div>
+      <div className="bg-background/50 border border-border rounded-3xl overflow-hidden mb-8 backdrop-blur-md">
+        <div className="grid grid-cols-3 p-6 border-b border-border bg-surface">
+          <div className="text-lg font-semibold text-muted">Feature</div>
           <div className="text-xl font-bold text-center text-primary">MicroPng</div>
-          <div className="text-xl font-bold text-center text-gray-500">TinyPNG</div>
+          <div className="text-xl font-bold text-center text-subtle">TinyPNG</div>
         </div>
         
         <ComparisonRow 
@@ -148,14 +148,14 @@ export default function ComparePage() {
 
       {/* Detailed Technical Note */}
       <div className="max-w-4xl mx-auto mb-20 space-y-4">
-        <div className="px-6 py-6 rounded-2xl bg-white/[0.02] border border-white/5 flex gap-4 items-start">
+        <div className="px-6 py-6 rounded-2xl bg-surface border border-border flex gap-4 items-start">
             <Info size={24} className="text-primary shrink-0 mt-1" />
             <div className="space-y-3">
                 <h4 className="text-lg font-semibold text-white">Why the Hybrid Model?</h4>
-                <p className="text-sm text-gray-400 leading-relaxed">
+                <p className="text-sm text-muted leading-relaxed">
                     Unlike traditional tools that force you to upload every byte, MicroPng uses a <strong>Local-First architecture</strong>. For most desktop tasks, your image stays on your machine.
                 </p>
-                <p className="text-sm text-gray-400 leading-relaxed">
+                <p className="text-sm text-muted leading-relaxed">
                     However, some tasks (like heavy watermarking or mobile processing) require significant memory (up to 4x the file size in RAM). To protect your battery and device performance, we gracefully switch to high-speed server-side processing—but we maintain our privacy promise: <strong>nothing is ever written to a disk.</strong>
                 </p>
             </div>
@@ -168,10 +168,10 @@ export default function ComparePage() {
             </div>
             <div className="space-y-3">
                 <h4 className="text-lg font-semibold text-white">Community Supported & Open Source</h4>
-                <p className="text-sm text-gray-400 leading-relaxed">
+                <p className="text-sm text-muted leading-relaxed">
                     * MicroPng is a free service hosted by the community. We are committed to keeping it free as long as we can sustain the hosting costs.
                 </p>
-                <p className="text-sm text-gray-400 leading-relaxed">
+                <p className="text-sm text-muted leading-relaxed">
                     Concerned about longevity or privacy? <strong>You don't have to rely on us.</strong> MicroPng is 100% Open Source. You can clone the repository and run your own private instance locally.
                 </p>
                 <a href="https://github.com/SahilFruitwala/MicroPng" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors">
@@ -182,7 +182,7 @@ export default function ComparePage() {
       </div>
 
       {/* Final CTA */}
-      <div className="text-center bg-gradient-to-b from-white/10 to-transparent p-12 rounded-3xl border border-white/10">
+      <div className="text-center bg-gradient-to-b from-surface to-transparent p-12 rounded-3xl border border-border">
         <h2 className="text-3xl font-bold mb-6">Ready to compress without limits?</h2>
         <Link 
           href="/" 
@@ -191,7 +191,7 @@ export default function ComparePage() {
           <Upload size={20} />
           Start Compressing Now
         </Link>
-        <p className="mt-4 text-sm text-gray-500">
+        <p className="mt-4 text-sm text-subtle">
           No sign-up required. Completely free.
         </p>
       </div>
@@ -201,13 +201,13 @@ export default function ComparePage() {
 
 function ComparisonRow({ feature, micro, tiny, isBetter }: { feature: string, micro: string, tiny: string, isBetter: boolean }) {
   return (
-    <div className="grid grid-cols-3 p-6 border-b border-white/5 hover:bg-white/[0.02] transition-colors items-center">
-      <div className="font-medium text-gray-300">{feature}</div>
+    <div className="grid grid-cols-3 p-6 border-b border-border hover:bg-surface transition-colors items-center">
+      <div className="font-medium text-foreground">{feature}</div>
       <div className="text-center font-semibold text-green-400 flex items-center justify-center gap-2">
         {isBetter && <Check size={18} />}
         {micro}
       </div>
-      <div className="text-center text-gray-500 flex items-center justify-center gap-2">
+      <div className="text-center text-subtle flex items-center justify-center gap-2">
         {!isBetter && <Check size={18} />}
         {tiny}
       </div>

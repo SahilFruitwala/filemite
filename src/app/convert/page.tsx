@@ -104,7 +104,7 @@ export default function ConvertPage() {
 
             <div className="max-w-xl mx-auto mb-16">
                  <GlassCard>
-                     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 transition-opacity pointer-events-none"></div>
 
                      <div className="relative z-10 flex flex-col gap-6">
                         <div className="flex items-center justify-between">
@@ -139,7 +139,7 @@ export default function ConvertPage() {
                                 >
                                     {isProcesssing ? (
                                         <>
-                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                            <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
                                             Converting...
                                         </>
                                     ) : (
@@ -153,7 +153,7 @@ export default function ConvertPage() {
                         )}
                       </div>
                       {/* Privacy Note */}
-                      <div className="flex items-center justify-center gap-2 pt-6 opacity-40 hover:opacity-100 transition-opacity border-t border-white/5 mt-6">
+                      <div className="flex items-center justify-center gap-2 pt-6 opacity-40 hover:opacity-100 transition-opacity border-t border-border mt-6">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
                       </div>

@@ -216,7 +216,7 @@ export default function Home() {
                                      Compression Settings
                                  </h3>
                                  <div className="flex gap-2">
-                                    <div className="flex bg-black/40 p-1 rounded-xl border border-white/10 relative">
+                                    <div className="flex bg-surface rounded-xl p-1 border border-border relative">
                                         <button 
                                             onClick={() => !isMobile && setProcessingMode('client')}
                                             disabled={isMobile}
@@ -224,8 +224,8 @@ export default function Home() {
                                                 processingMode === 'client' 
                                                     ? 'bg-primary text-white shadow-lg' 
                                                     : isMobile 
-                                                        ? 'text-gray-600 cursor-not-allowed' 
-                                                        : 'text-gray-400 hover:text-white'
+                                                        ? 'text-subtle cursor-not-allowed' 
+                                                        : 'text-muted hover:text-white'
                                             }`}
                                             title={isMobile ? "Browser compression is disabled on mobile" : ""}
                                         >
@@ -233,7 +233,7 @@ export default function Home() {
                                         </button>
                                         <button 
                                             onClick={() => setProcessingMode('server')}
-                                            className={`text-xs px-3 py-1.5 rounded-lg transition-all ${processingMode === 'server' ? 'bg-primary text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                                            className={`text-xs px-3 py-1.5 rounded-lg transition-all ${processingMode === 'server' ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-white'}`}
                                         >
                                             Server
                                         </button>
@@ -254,7 +254,7 @@ export default function Home() {
                              <div className="relative">
                                  {/* Manual Quality Controls */}
                                  <div className={`transition-all duration-300 ${useTargetSize ? 'opacity-20 blur-sm pointer-events-none scale-95' : 'opacity-100 scale-100'}`}>
-                                    <label className="text-sm text-gray-400 mb-3 block">Quality Preset</label>
+                                    <label className="text-sm text-muted mb-3 block">Quality Preset</label>
                                     <div className="grid grid-cols-3 gap-2">
                                         {(['best', 'mid', 'low'] as const).map((level) => (
                                             <button
@@ -264,7 +264,7 @@ export default function Home() {
                                                 className={`py-3 px-2 rounded-xl text-sm font-medium transition-all duration-200 border ${
                                                     compressionLevel === level 
                                                         ? 'bg-primary text-white border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]' 
-                                                        : 'bg-white/5 text-gray-400 border-transparent hover:bg-white/10 hover:text-white'
+                                                        : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-white'
                                                 }`}
                                             >
                                                 {level === 'best' && 'Best'}
@@ -276,7 +276,7 @@ export default function Home() {
                                  </div>
 
                                  {/* Target Size Toggle Section */}
-                                 <div className={`mt-6 pt-6 border-t border-white/5 transition-all duration-300`}>
+                                 <div className={`mt-6 pt-6 border-t border-border/50 transition-all duration-300`}>
                                     <div className="flex items-center justify-between gap-4">
                                         <div 
                                             className="flex items-center gap-4 cursor-pointer group/toggle"
@@ -285,12 +285,12 @@ export default function Home() {
                                                 if (!useTargetSize) setTargetSize('');
                                             }}
                                         >
-                                            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 relative ${useTargetSize ? 'bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]' : 'bg-white/10 border border-white/10'}`}>
+                                            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 relative ${useTargetSize ? 'bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]' : 'bg-surface border border-border'}`}>
                                                 <div className={`w-4 h-4 bg-white rounded-full shadow-md transition-all duration-300 transform ${useTargetSize ? 'translate-x-5' : 'translate-x-0'}`}></div>
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className={`text-sm font-semibold transition-colors ${useTargetSize ? 'text-white' : 'text-gray-400 group-hover/toggle:text-gray-300'}`}>Specify Target Size</span>
-                                                <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Priority over quality</span>
+                                                <span className={`text-sm font-semibold transition-colors ${useTargetSize ? 'text-white' : 'text-muted group-hover/toggle:text-gray-300'}`}>Specify Target Size</span>
+                                                <span className="text-[10px] text-subtle uppercase tracking-widest font-bold">Priority over quality</span>
                                             </div>
                                         </div>
                                         
@@ -302,7 +302,7 @@ export default function Home() {
                                                     onChange={(e) => setTargetSize(e.target.value)}
                                                     placeholder="100"
                                                     min="1"
-                                                    className="w-24 bg-primary/10 border border-primary/30 rounded-xl pl-3 pr-9 py-2 text-right text-white font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                    className="w-24 bg-primary/10 border border-primary/20 rounded-xl pl-3 pr-9 py-2 text-right text-white font-bold focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                 />
                                                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-primary/70 pointer-events-none uppercase">KB</span>
                                             </div>
@@ -314,7 +314,7 @@ export default function Home() {
                              {/* Privacy Note */}
                              <div className="flex items-center justify-center gap-2 pt-2 opacity-40 hover:opacity-100 transition-opacity">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
+                                <span className="text-[10px] text-subtle font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
                              </div>
                          </div>
                      </GlassCard>
@@ -334,7 +334,7 @@ export default function Home() {
                         <h2 className="text-2xl font-bold text-white">Your Optimized Images</h2>
                         <button 
                             onClick={handleReset}
-                            className="text-sm text-gray-400 hover:text-white underline underline-offset-4"
+                            className="text-sm text-muted hover:text-white underline underline-offset-4"
                         >
                             Start Over
                         </button>

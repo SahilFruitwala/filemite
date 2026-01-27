@@ -4,7 +4,7 @@ import { Github, Heart, ShieldCheck, Zap, Terminal } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="py-16 border-t border-white/10 mt-20 relative overflow-hidden">
+    <footer className="py-16 border-t border-border mt-20 relative overflow-hidden">
       {/* Background Decorative Element */}
       <div className="absolute bottom-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] rounded-full pointer-events-none"></div>
       
@@ -19,10 +19,10 @@ export default function Footer() {
                </div>
                <span className="text-xl font-bold tracking-tight text-white uppercase">MicroPng</span>
             </div>
-            <p className="text-gray-400 text-sm text-center lg:text-left leading-relaxed">
+            <p className="text-muted text-sm text-center lg:text-left leading-relaxed">
                 Professional-grade image optimization, right in your browser. Built with a focus on speed, precision, and privacy.
             </p>
-            <div className="flex items-center gap-2 mt-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-gray-500">
+            <div className="flex items-center gap-2 mt-2 px-3 py-1.5 rounded-xl bg-surface border border-border text-xs text-subtle">
                 <Heart size={14} className="text-red-500 fill-red-500" />
                 <span>Vibe coded & manually tested</span>
             </div>
@@ -34,7 +34,7 @@ export default function Footer() {
                 <ShieldCheck size={18} className="text-primary" />
                 Zero Data Retention
             </div>
-            <p className="text-gray-500 text-sm text-center lg:text-left leading-relaxed">
+            <p className="text-subtle text-sm text-center lg:text-left leading-relaxed">
                 We value your privacy. We <strong>do not store</strong> any images on our servers. Files are processed in-memory and immediately deleted after delivery.
             </p>
           </div>
@@ -42,18 +42,18 @@ export default function Footer() {
           {/* Connect & Contribute */}
           <div className="lg:col-span-4 flex flex-col items-center lg:items-end gap-6">
             <div className="flex flex-col items-center lg:items-end gap-2">
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Resources</span>
-                <a href="/compare" className="text-sm text-gray-400 hover:text-white transition-colors">Why MicroPng?</a>
+                <span className="text-xs font-semibold text-subtle uppercase tracking-widest">Resources</span>
+                <a href="/compare" className="text-sm text-muted hover:text-white transition-colors">Why MicroPng?</a>
                 <a href="/bg-remover" className="text-sm text-gray-400 hover:text-white transition-colors opacity-50 cursor-not-allowed" title="Coming Soon">Background Remover</a>
             </div>
 
             <div className="flex flex-col items-center lg:items-end gap-2">
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Contribute</span>
+                <span className="text-xs font-semibold text-subtle uppercase tracking-widest">Contribute</span>
                 <a 
                   href="https://github.com/SahilFruitwala/MicroPng" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="group flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-2xl text-white transition-all shadow-xl"
+                  className="group flex items-center gap-3 bg-surface hover:bg-surface-hover border border-border px-4 py-2 rounded-2xl text-white transition-all shadow-xl"
                 >
                   <Github size={20} />
                   <span className="text-sm font-medium">Improve this tool</span>
@@ -61,7 +61,7 @@ export default function Footer() {
             </div>
             
             <div className="flex flex-col items-center lg:items-end gap-2 text-center lg:text-right">
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Status</span>
+                <span className="text-xs font-semibold text-subtle uppercase tracking-widest">Status</span>
                 <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-success/10 border border-success/20">
                     <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></div>
                     <span className="text-[10px] font-bold text-success uppercase tracking-wider">Live & Open Source</span>
@@ -70,12 +70,12 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <p className="text-gray-600 text-xs font-medium">
+        <div className="mt-16 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-6">
+          <p className="text-subtle text-xs font-medium">
             &copy; {new Date().getFullYear()} MicroPng. Crafted with precision.
           </p>
           <div className="flex items-center gap-8">
-             <div className="flex items-center gap-2 text-gray-600 text-[10px] uppercase font-bold tracking-widest">
+             <div className="flex items-center gap-2 text-subtle text-[10px] uppercase font-bold tracking-widest">
                 <Zap size={10} className="text-primary" />
                 Performance First
              </div>
@@ -83,7 +83,7 @@ export default function Footer() {
               href="https://github.com/SahilFruitwala/MicroPng" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="text-gray-600 hover:text-white text-xs transition-colors font-medium flex items-center gap-2 group"
+              className="text-subtle hover:text-white text-xs transition-colors font-medium flex items-center gap-2 group"
              >
                 <Terminal size={12} className="text-primary group-hover:scale-110 transition-transform" />
                 For privacy checkout code and make it more private

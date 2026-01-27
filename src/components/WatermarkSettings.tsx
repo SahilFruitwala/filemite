@@ -66,10 +66,10 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                     Watermark
                 </h3>
                 
-                <div className="flex bg-black/40 rounded-lg p-1 border border-white/10">
+                <div className="flex bg-black/40 rounded-lg p-1 border border-border">
                      <button
                         onClick={() => handleTypeChange(null)}
-                        className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${config.type === null ? 'bg-primary text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                        className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${config.type === null ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-white'}`}
                     >
                         None
                     </button>
@@ -81,7 +81,7 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                     </button>
                     <button
                         onClick={() => handleTypeChange('image')}
-                        className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${config.type === 'image' ? 'bg-primary text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                        className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${config.type === 'image' ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-white'}`}
                     >
                         Image
                     </button>
@@ -91,8 +91,8 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
             {config.type && (
                 <div className="space-y-6">
                     {/* Content Section */}
-                    <div className="bg-black/20 rounded-xl p-4 border border-white/5">
-                        <label className="text-sm text-gray-400 mb-2 block font-medium">Content</label>
+                    <div className="bg-black/20 rounded-xl p-4 border border-border">
+                        <label className="text-sm text-subtle mb-2 block font-medium">Content</label>
                         
                         {config.type === 'text' && (
                             <input
@@ -100,7 +100,7 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                                 value={config.text}
                                 onChange={handleTextChange}
                                 placeholder="Enter watermark text..."
-                                className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all placeholder:text-gray-600"
+                                className="w-full bg-black/40 border border-border rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all placeholder:text-gray-600"
                             />
                         )}
 
@@ -108,7 +108,7 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                             <div className="flex items-center gap-4">
                                 <div 
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="w-16 h-16 bg-black/40 border border-dashed border-white/20 rounded-lg flex items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all overflow-hidden relative group"
+                                    className="w-16 h-16 bg-black/40 border border-dashed border-border rounded-lg flex items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all overflow-hidden relative group"
                                 >
                                     {config.imageUrl ? (
                                         <img src={config.imageUrl} alt="Watermark" className="w-full h-full object-contain" />
@@ -139,9 +139,9 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                     {/* Appearance Section */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Opacity */}
-                        <div className="bg-black/20 rounded-xl p-4 border border-white/5">
+                        <div className="bg-black/20 rounded-xl p-4 border border-border">
                             <div className="flex justify-between mb-2">
-                                <label className="text-sm text-gray-400 font-medium">Opacity</label>
+                                <label className="text-sm text-subtle font-medium">Opacity</label>
                                 <span className="text-xs text-white font-mono bg-white/10 px-2 py-0.5 rounded">{config.opacity}%</span>
                             </div>
                             <input
@@ -155,8 +155,8 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                         </div>
 
                         {/* Position */}
-                        <div className="bg-black/20 rounded-xl p-4 border border-white/5">
-                             <label className="text-sm text-gray-400 font-medium mb-3 block">Position</label>
+                        <div className="bg-black/20 rounded-xl p-4 border border-border">
+                             <label className="text-sm text-subtle font-medium mb-3 block">Position</label>
                              <div className="grid grid-cols-3 gap-2">
                                 {positions.map((pos) => (
                                     <button
@@ -165,7 +165,7 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                                         className={`h-10 rounded-lg border flex items-center justify-center transition-all ${
                                             config.position === pos.id 
                                                 ? 'bg-primary/20 border-primary text-primary' 
-                                                : 'bg-white/5 border-transparent text-gray-500 hover:bg-white/10 hover:text-gray-300'
+                                                : 'bg-surface border-transparent text-subtle hover:bg-surface-hover hover:text-gray-300'
                                         }`}
                                         title={pos.label}
                                     >
@@ -180,9 +180,9 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                 </div>
             )}
             {/* Privacy Note */}
-            <div className="flex items-center justify-center gap-2 pt-6 opacity-40 hover:opacity-100 transition-opacity border-t border-white/5 mt-6">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
+            <div className="flex items-center justify-center gap-2 pt-6 opacity-40 hover:opacity-100 transition-opacity border-t border-border mt-6">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span className="text-[10px] text-muted font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
             </div>
         </GlassCard>
     );

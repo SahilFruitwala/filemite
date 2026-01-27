@@ -42,10 +42,10 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
 
   return (
     <div
-      className={`relative w-full max-w-3xl mx-auto min-h-[320px] rounded-[2.5rem] border-2 border-dashed transition-all duration-500 overflow-hidden flex flex-col items-center justify-center p-8 sm:p-12 group cursor-pointer
+      className={`relative w-full max-w-3xl mx-auto min-h-[320px] rounded-[2.5rem] border border-dashed transition-all duration-500 overflow-hidden flex flex-col items-center justify-center p-8 sm:p-12 group cursor-pointer
         ${isDragging 
-          ? 'border-primary bg-primary/10 shadow-[0_0_80px_rgba(47,172,242,0.25)] scale-[1.02]' 
-          : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/20'
+          ? 'border-primary/50 bg-primary/10 shadow-[0_0_80px_rgba(47,172,242,0.15)] scale-[1.02]' 
+          : 'border-border/60 bg-surface hover:bg-surface-hover hover:border-primary/30'
         }
       `}
       onDragOver={handleDragOver}
@@ -80,11 +80,11 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
         </div>
       ) : (
         <>
-            <div className={`mb-8 p-6 rounded-3xl bg-white/5 border border-white/10 shadow-xl transition-all duration-500 ${isDragging ? 'scale-110 -translate-y-2 bg-primary/20 border-primary/40' : 'group-hover:scale-110 group-hover:-translate-y-1 group-hover:bg-white/10'}`}>
+            <div className={`mb-8 p-6 rounded-3xl bg-surface border border-border/50 shadow-xl transition-all duration-500 ${isDragging ? 'scale-110 -translate-y-2 bg-primary/20 border-primary/30' : 'group-hover:scale-110 group-hover:-translate-y-1 group-hover:bg-surface-hover'}`}>
                 {isDragging ? (
                     <Upload className="w-10 h-10 text-primary animate-bounce" />
                 ) : (
-                    <ImageIcon className="w-10 h-10 text-gray-400 group-hover:text-primary transition-colors" />
+                    <ImageIcon className="w-10 h-10 text-muted group-hover:text-primary transition-colors" />
                 )}
             </div>
           
@@ -92,15 +92,15 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
                 <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">
                     {isDragging ? 'Drop it here!' : 'Drop your images here'}
                 </h3>
-                <p className="text-gray-400 mb-10 text-center max-w-sm mx-auto text-sm sm:text-base leading-relaxed">
+                <p className="text-muted mb-10 text-center max-w-sm mx-auto text-sm sm:text-base leading-relaxed">
                     or <span className="text-primary font-semibold hover:underline">click to browse</span> from your device.
                     Supports JPEG, PNG, and WebP up to 25MB.
                 </p>
 
                 <div className="flex flex-wrap justify-center gap-3">
                     {['JPEG', 'PNG', 'WEBP'].map((format) => (
-                        <div key={format} className='px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-xs font-bold text-gray-400 tracking-wider flex items-center gap-2 group-hover:border-white/20 transition-colors'>
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-600"></div>
+                        <div key={format} className='px-4 py-1.5 rounded-full bg-surface border border-border text-[10px] sm:text-xs font-bold text-muted tracking-wider flex items-center gap-2 group-hover:border-border transition-colors'>
+                            <div className="w-1.5 h-1.5 rounded-full bg-subtle"></div>
                             {format}
                         </div>
                     ))}

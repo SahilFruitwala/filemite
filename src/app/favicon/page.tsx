@@ -148,8 +148,8 @@ export default function FaviconPage() {
                         <Dropzone onFileSelect={handleFileSelect} isCompressing={isGenerating} />
                     ) : (
                         <div className="space-y-8 animate-[fadeIn_0.3s_ease-out]">
-                            <div className="bg-secondary border border-white/5 rounded-3xl p-8 flex flex-col md:flex-row gap-8 items-center">
-                                <div className="w-48 h-48 bg-black rounded-2xl overflow-hidden border border-white/10 shrink-0 shadow-2xl relative group">
+                            <div className="bg-secondary border border-border rounded-3xl p-8 flex flex-col md:flex-row gap-8 items-center">
+                                <div className="w-48 h-48 bg-black rounded-2xl overflow-hidden border border-border shrink-0 shadow-2xl relative group">
                                     {previewUrl && <img src={previewUrl} alt="Preview" className="w-full h-full object-contain" />}
                                     <button 
                                         onClick={handleReset}
@@ -170,7 +170,7 @@ export default function FaviconPage() {
                                     >
                                         {isGenerating ? (
                                             <>
-                                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
                                                 Generating Assets...
                                             </>
                                         ) : generatedFiles.length > 0 ? (
@@ -208,11 +208,11 @@ export default function FaviconPage() {
                                         </h3>
                                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
                                             {generatedFiles.filter(f => f.type === 'web').map((file) => (
-                                                <div key={file.size} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center gap-3 transition-colors hover:border-primary/50 group">
-                                                    <div className="w-12 h-12 flex items-center justify-center bg-black rounded-lg border border-white/5 overflow-hidden">
+                                                <div key={file.size} className="bg-surface border border-border rounded-2xl p-4 flex flex-col items-center gap-3 transition-colors hover:border-primary/50 group">
+                                                    <div className="w-12 h-12 flex items-center justify-center bg-black rounded-lg border border-border overflow-hidden">
                                                         <img src={file.url} alt={`${file.size}x${file.size}`} className="max-w-full max-h-full" />
                                                     </div>
-                                                    <span className="text-xs font-mono text-gray-400">{file.size}x{file.size}</span>
+                                                    <span className="text-xs font-mono text-muted">{file.size}x{file.size}</span>
                                                     <a 
                                                         href={file.url} 
                                                         download={`favicon-${file.size}x${file.size}.png`}
@@ -231,10 +231,10 @@ export default function FaviconPage() {
                                             <h3 className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-2">
                                                 <span className="w-8 h-[1px] bg-white/10"></span> Mobile (iOS)
                                             </h3>
-                                            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center gap-6">
+                                            <div className="bg-surface border border-border rounded-2xl p-6 flex items-center gap-6">
                                                 {generatedFiles.filter(f => f.type === 'mobile').map((file) => (
                                                     <React.Fragment key={file.size}>
-                                                        <div className="w-20 h-20 flex items-center justify-center bg-black rounded-xl border border-white/5 overflow-hidden shadow-xl">
+                                                        <div className="w-20 h-20 flex items-center justify-center bg-black rounded-xl border border-border overflow-hidden shadow-xl">
                                                             <img src={file.url} alt="Apple Touch Icon" className="w-full h-full" />
                                                         </div>
                                                         <div className="flex-1">
@@ -257,8 +257,8 @@ export default function FaviconPage() {
                                             <h3 className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-2">
                                                 <span className="w-8 h-[1px] bg-white/10"></span> Legacy Support
                                             </h3>
-                                            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center gap-6">
-                                                <div className="w-20 h-20 flex items-center justify-center bg-black rounded-xl border border-white/5 shadow-xl">
+                                            <div className="bg-surface border border-border rounded-2xl p-6 flex items-center gap-6">
+                                                <div className="w-20 h-20 flex items-center justify-center bg-black rounded-xl border border-border shadow-xl">
                                                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
                                                 </div>
                                                 <div className="flex-1">

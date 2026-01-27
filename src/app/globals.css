@@ -7,7 +7,18 @@
   --color-accent: #88c0d0;
   --color-success: #a3be8c;
   --color-error: #bf616a;
+  /* Semantic Theme Variables */
+  --color-surface: rgba(255, 255, 255, 0.05);
+  --color-surface-hover: rgba(255, 255, 255, 0.06);
+  --color-border: rgba(47, 172, 242, 0.06); /* Subtle primary-tinted border */
   
+  --color-muted: #9ca3af; /* text-muted */
+  --color-subtle: #6b7280; /* text-subtle */
+  --color-dim: #4b5563; /* text-dim */
+  
+  --color-info: #3b82f6;
+  --color-warning: #eab308;
+
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
