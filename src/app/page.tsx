@@ -28,7 +28,7 @@ export default function Home() {
     const checkIfMobile = () => {
       const userAgent = typeof window !== 'undefined' ? navigator.userAgent : '';
       const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-      const isMob = mobileRegex.test(userAgent) || (typeof window !== 'undefined' && window.innerWidth < 768);
+      const isMob = mobileRegex.test(userAgent);
       setIsMobile(isMob);
       if (isMob) {
         setProcessingMode('server');
@@ -36,8 +36,6 @@ export default function Home() {
     };
     
     checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-    return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
 
 
