@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import sharp from 'sharp';
 
 // Configuration: Adjust these limits as needed
-const MAX_WIDTH = 1920; 
-const DEFAULT_QUALITY = 80;
+const MAX_WIDTH = 8192; 
+const DEFAULT_QUALITY = 92;
 
 export async function POST(req: NextRequest) {
   try {
