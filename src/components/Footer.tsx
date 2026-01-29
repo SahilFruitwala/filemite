@@ -14,7 +14,7 @@ export default function Footer() {
           {/* Brand & Mission */}
           <div className="lg:col-span-4 flex flex-col items-center lg:items-start gap-4">
             <div className="flex items-center gap-2">
-               <div className="bg-primary text-white p-1 rounded-md overflow-hidden flex items-center justify-center">
+               <div className="text-white p-1 rounded-xl overflow-hidden flex items-center justify-center">
                    <Image src="/icon.png" alt="MicroPng Logo" width={20} height={20} className="object-contain" />
                </div>
                <span className="text-xl font-bold tracking-tight text-foreground uppercase">MicroPng</span>
