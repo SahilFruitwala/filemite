@@ -22,8 +22,8 @@ export default function Navbar() {
     <>
       <nav className="fixed top-0 w-full z-[100] flex items-center justify-between px-6 py-4 bg-background/80 backdrop-blur-md">
         <Link href="/" className="flex items-center gap-2 z-[101]">
-          <div className="text-white p-1 rounded-xl overflow-hidden flex items-center justify-center">
-             <Image src="/icon.png" alt="MicroPng Logo" width={24} height={24} className="object-contain" />
+          <div className="text-white p-1 overflow-hidden flex items-center justify-center">
+             <Image src="/icon.png" alt="MicroPng Logo" width={50} height={50} className="object-contain rounded-full" />
           </div>
           <span className="text-xl font-bold tracking-tight text-foreground">MicroPng</span>
         </Link>
