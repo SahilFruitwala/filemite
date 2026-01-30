@@ -23,6 +23,7 @@ export interface CompressedFile {
     serverStats?: CompressionStats;
     clientStatus?: 'pending' | 'processing' | 'done' | 'error';
     serverStatus?: 'pending' | 'processing' | 'done' | 'error';
+    outputFormat?: string;
 }
 
 export type CompressionLevel = 'best' | 'mid' | 'low';

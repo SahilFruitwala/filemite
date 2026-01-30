@@ -22,6 +22,7 @@ export default function Home() {
   const [targetSize, setTargetSize] = useState<string>(''); // in KB
   const [useTargetSize, setUseTargetSize] = useState(false);
   const [processingMode, setProcessingMode] = useState<'client' | 'server'>('client');
+  const [convertToWebP, setConvertToWebP] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -83,11 +84,18 @@ export default function Home() {
                     maxSizeMB: useTargetSize && targetSize ? parseFloat(targetSize) / 1024 : undefined,
                     maxWidthOrHeight: 1920,
                     useWebWorker: true,
-                    fileType: 'image/webp',
+                    fileType: convertToWebP ? 'image/webp' : file.type,
                     initialQuality: compressionLevel === 'best' ? 0.95 : compressionLevel === 'mid' ? 0.8 : 0.6,
+                    maxIteration: 10,
                 };
                 
-                const compressedBlob = await imageCompression(file, options);
+                let compressedBlob = await imageCompression(file, options);
+                
+                // If it got larger, use original
+                if (compressedBlob.size > file.size) {
+                    compressedBlob = file;
+                }
+                
                 const end = performance.now();
                 return { blob: compressedBlob, time: end - start };
             };
@@ -145,9 +153,10 @@ export default function Home() {
                                 time: clientRes.time!,
                                 blobUrl: URL.createObjectURL(clientRes.blob)
                             };
-                            newFile.clientStatus = 'done';
+                             newFile.clientStatus = 'done';
                             newFile.compressedSize = clientRes.blob.size;
                             newFile.blobUrl = newFile.clientStats.blobUrl;
+                            newFile.outputFormat = convertToWebP ? 'webp' : file.type.split('/')[1];
                         } else {
                             newFile.clientStatus = 'error';
                         }
@@ -164,6 +173,7 @@ export default function Home() {
                             newFile.serverStatus = 'done';
                             newFile.compressedSize = serverRes.blob.size;
                             newFile.blobUrl = newFile.serverStats.blobUrl;
+                            newFile.outputFormat = serverRes.blob.type.split('/')[1];
                         } else {
                             newFile.serverStatus = 'error';
                         }
@@ -268,6 +278,28 @@ export default function Home() {
                                     </div>
                                  </div>
 
+                                 {/* WebP Toggle - Only for Browser Mode */}
+                                 {processingMode === 'client' && (
+                                     <div className="mt-4 p-3 bg-surface/50 border border-border/50 rounded-xl animate-in fade-in slide-in-from-top-2">
+                                         <label className="flex items-center gap-3 cursor-pointer group">
+                                             <div className="relative">
+                                                 <input 
+                                                     type="checkbox" 
+                                                     className="sr-only peer"
+                                                     checked={convertToWebP}
+                                                     onChange={(e) => setConvertToWebP(e.target.checked)}
+                                                 />
+                                                 <div className="w-10 h-5 bg-surface border border-border rounded-full peer peer-checked:bg-primary/20 peer-checked:border-primary/50 transition-all"></div>
+                                                 <div className="absolute left-1 top-1 w-3 h-3 bg-muted rounded-full peer-checked:translate-x-5 peer-checked:bg-primary transition-all shadow-sm"></div>
+                                             </div>
+                                             <div className="flex flex-col">
+                                                 <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors">Convert to WebP (Best Compression)</span>
+                                                 <span className="text-[10px] text-muted">Uses WebP for superior size reduction, otherwise keeps original type.</span>
+                                             </div>
+                                         </label>
+                                     </div>
+                                 )}
+
                                  {/* Target Size Toggle Section */}
                                  <div className={`mt-6 pt-6 border-t border-border/50 transition-all duration-300`}>
                                     <div className="flex items-center justify-between gap-4">
@@ -342,7 +374,8 @@ export default function Home() {
                                 onDownload={() => {
                                     const link = document.createElement('a');
                                     link.href = file.blobUrl || file.clientStats?.blobUrl || '';
-                                    link.download = `optimized-${file.originalName.replace(/\.[^/.]+$/, "")}.webp`;
+                                    const extension = file.outputFormat || file.fileRaw?.name.split('.').pop() || 'webp';
+                                    link.download = `optimized-${file.originalName.replace(/\.[^/.]+$/, "")}.${extension}`;
                                     link.click();
                                 }}
                             />
