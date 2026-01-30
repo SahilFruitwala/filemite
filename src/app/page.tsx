@@ -227,13 +227,11 @@ export default function Home() {
                                  </h3>
                                  <div className="flex gap-2">
                                      <div 
-                                         className={`flex items-center gap-3 cursor-pointer group/mode-toggle ${isMobile ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                         className={`flex items-center gap-3 cursor-pointer group/mode-toggle transition-opacity duration-300`}
                                          onClick={() => {
-                                             if (!isMobile) {
-                                                 setProcessingMode(processingMode === 'client' ? 'server' : 'client');
-                                             }
+                                             setProcessingMode(processingMode === 'client' ? 'server' : 'client');
                                          }}
-                                         title={isMobile ? "Browser compression is disabled on mobile" : ""}
+                                         title={isMobile && processingMode === 'server' ? "Browser compression is not recommended on mobile but can be enabled" : ""}
                                      >
                                          <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${processingMode === 'client' ? 'text-primary' : 'text-muted'}`}>Browser</span>
                                          <div className={`w-10 h-5 rounded-full p-1 transition-all duration-300 relative ${processingMode === 'server' ? 'bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]' : 'bg-surface border border-border'}`}>
@@ -244,12 +242,14 @@ export default function Home() {
                                  </div>
                              </div>
 
-                            {isMobile && (
+                            {processingMode === 'client' && (
                                 <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex gap-3 animate-in fade-in slide-in-from-top-2">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500 shrink-0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                     <p className="text-xs text-amber-200/80 leading-relaxed">
-                                        <strong className="text-amber-400 block mb-0.5">Mobile Device Detected</strong>
-                                        In-browser compression is disabled. It is highly CPU-intensive and inefficient on mobile hardware. Using high-performance <span className="text-foreground font-medium">Server Mode</span> for the best experience.
+                                        <strong className="text-amber-400 block mb-0.5">Browser Mode Warning</strong>
+                                        In-browser compression might not always work as expected or produce the highest quality results. 
+                                        {isMobile && " On mobile devices, it can be extremely CPU-intensive and may cause performance issues."} 
+                                        <span className="text-foreground font-medium"> Server Mode</span> is recommended for the best and most reliable compression performance.
                                     </p>
                                 </div>
                             )}
