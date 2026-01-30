@@ -22,7 +22,7 @@ export default function Home() {
   const [targetSize, setTargetSize] = useState<string>(''); // in KB
   const [useTargetSize, setUseTargetSize] = useState(false);
   const [processingMode, setProcessingMode] = useState<'client' | 'server'>('client');
-  const [convertToWebP, setConvertToWebP] = useState(true);
+  const [outputFormat, setOutputFormat] = useState<'original' | 'webp' | 'jpeg'>('webp');
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export default function Home() {
                     maxSizeMB: useTargetSize && targetSize ? parseFloat(targetSize) / 1024 : undefined,
                     maxWidthOrHeight: 1920,
                     useWebWorker: true,
-                    fileType: convertToWebP ? 'image/webp' : file.type,
+                    fileType: outputFormat === 'webp' ? 'image/webp' : outputFormat === 'jpeg' ? 'image/jpeg' : file.type,
                     initialQuality: compressionLevel === 'best' ? 0.95 : compressionLevel === 'mid' ? 0.8 : 0.6,
                     maxIteration: 10,
                 };
@@ -156,7 +156,7 @@ export default function Home() {
                              newFile.clientStatus = 'done';
                             newFile.compressedSize = clientRes.blob.size;
                             newFile.blobUrl = newFile.clientStats.blobUrl;
-                            newFile.outputFormat = convertToWebP ? 'webp' : file.type.split('/')[1];
+                            newFile.outputFormat = outputFormat === 'original' ? file.type.split('/')[1] : outputFormat;
                         } else {
                             newFile.clientStatus = 'error';
                         }
@@ -278,25 +278,30 @@ export default function Home() {
                                     </div>
                                  </div>
 
-                                 {/* WebP Toggle - Only for Browser Mode */}
+                                 {/* Format Selection - Only for Browser Mode */}
                                  {processingMode === 'client' && (
                                      <div className="mt-4 p-3 bg-surface/50 border border-border/50 rounded-xl animate-in fade-in slide-in-from-top-2">
-                                         <label className="flex items-center gap-3 cursor-pointer group">
-                                             <div className="relative">
-                                                 <input 
-                                                     type="checkbox" 
-                                                     className="sr-only peer"
-                                                     checked={convertToWebP}
-                                                     onChange={(e) => setConvertToWebP(e.target.checked)}
-                                                 />
-                                                 <div className="w-10 h-5 bg-surface border border-border rounded-full peer peer-checked:bg-primary/20 peer-checked:border-primary/50 transition-all"></div>
-                                                 <div className="absolute left-1 top-1 w-3 h-3 bg-muted rounded-full peer-checked:translate-x-5 peer-checked:bg-primary transition-all shadow-sm"></div>
-                                             </div>
-                                             <div className="flex flex-col">
-                                                 <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors">Convert to WebP (Best Compression)</span>
-                                                 <span className="text-[10px] text-muted">Uses WebP for superior size reduction, otherwise keeps original type.</span>
-                                             </div>
-                                         </label>
+                                         <label className="text-xs font-bold text-muted uppercase tracking-wider mb-2 block">Output Format</label>
+                                         <div className="grid grid-cols-3 gap-2">
+                                             {(['original', 'webp', 'jpeg'] as const).map((format) => (
+                                                 <button
+                                                     key={format}
+                                                     onClick={() => setOutputFormat(format)}
+                                                     className={`py-2 px-1 rounded-lg text-xs font-bold uppercase tracking-tight transition-all duration-200 border ${
+                                                         outputFormat === format 
+                                                             ? 'bg-primary/20 text-primary border-primary/50' 
+                                                             : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-white'
+                                                     }`}
+                                                 >
+                                                     {format === 'original' ? 'Original' : format.toUpperCase()}
+                                                 </button>
+                                             ))}
+                                         </div>
+                                         <p className="text-xs text-subtle mt-2 leading-tight">
+                                             {outputFormat === 'original' && "Keeps the same file type as the original."}
+                                             {outputFormat === 'webp' && "Best compression with transparency."}
+                                             {outputFormat === 'jpeg' && "Small size, but no transparency support."}
+                                         </p>
                                      </div>
                                  )}
 
