@@ -401,7 +401,7 @@ export default function ResizePage() {
                                         alt="Preview" 
                                         className="w-full h-full select-none"
                                         style={{ 
-                                            objectFit: (resizeFit === 'inside' ? 'contain' : resizeFit) as any 
+                                            objectFit: 'contain'
                                         }}
                                     />
                                     
