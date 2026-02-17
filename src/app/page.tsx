@@ -1,9 +1,11 @@
 "use client";
 
 import imageCompression from 'browser-image-compression';
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import JSZip from 'jszip';
 
 import Dropzone from '@/components/Dropzone';
 import ResultCard from '@/components/ResultCard';
@@ -16,11 +18,44 @@ import GlassCard from '@/components/ui/GlassCard';
 export default function Home() {
   const [files, setFiles] = useState<CompressedFile[]>([]);
   const [isProcesssing, setIsProcessing] = useState(false);
+  const [isZipping, setIsZipping] = useState(false);
   const [compressionLevel, setCompressionLevel] = useState<CompressionLevel>('mid');
   const [comparingFileId, setComparingFileId] = useState<string | null>(null);
   const [comparisons, setComparisons] = useState<Record<string, boolean>>({}); // Track which files have comparison active
   const [targetSize, setTargetSize] = useState<string>(''); // in KB
   const [useTargetSize, setUseTargetSize] = useState(false);
+
+  const downloadAllAsZip = async () => {
+      const doneFiles = files.filter((f: CompressedFile) => f.status === 'done' && (f.blobUrl || f.clientStats?.blobUrl));
+      if (doneFiles.length === 0) return;
+
+
+      setIsZipping(true);
+      try {
+          const zip = new JSZip();
+          for (const file of doneFiles) {
+              const url = file.blobUrl || file.clientStats?.blobUrl;
+              if (url) {
+                  const response = await fetch(url);
+                  const blob = await response.blob();
+                  const extension = file.outputFormat || file.fileRaw?.name.split('.').pop() || 'webp';
+                  zip.file(`optimized-${file.originalName.replace(/\.[^/.]+$/, "")}.${extension}`, blob);
+              }
+          }
+          const content = await zip.generateAsync({ type: 'blob' });
+          const zipUrl = URL.createObjectURL(content);
+          const link = document.createElement('a');
+          link.href = zipUrl;
+          link.download = `micropng-compressed.zip`;
+          link.click();
+          URL.revokeObjectURL(zipUrl);
+      } catch (error) {
+          console.error('Error creating ZIP:', error);
+      } finally {
+          setIsZipping(false);
+      }
+  };
+
   const [processingMode, setProcessingMode] = useState<'client' | 'server'>('client');
   const [outputFormat, setOutputFormat] = useState<'original' | 'webp' | 'jpeg'>('webp');
   const [isMobile, setIsMobile] = useState(false);
@@ -377,12 +412,29 @@ export default function Home() {
                 <div className="w-full max-w-4xl mx-auto space-y-4">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-2xl font-bold text-foreground">Your Optimized Images</h2>
-                        <button 
-                            onClick={handleReset}
-                            className="text-sm text-muted hover:text-foreground underline underline-offset-4"
-                        >
-                            Start Over
-                        </button>
+                        <div className="flex items-center gap-4">
+                            {files.filter((f: CompressedFile) => f.status === 'done').length > 1 && (
+                                <button 
+                                    onClick={downloadAllAsZip}
+
+                                    disabled={isZipping}
+                                    className="text-sm font-bold text-primary hover:text-primary/80 flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl transition-all"
+                                >
+                                    {isZipping ? (
+                                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                    ) : (
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    )}
+                                    Download All (ZIP)
+                                </button>
+                            )}
+                            <button 
+                                onClick={handleReset}
+                                className="text-sm text-muted hover:text-foreground underline underline-offset-4"
+                            >
+                                Start Over
+                            </button>
+                        </div>
                     </div>
 
                     <div className="grid gap-4">

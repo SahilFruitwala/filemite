@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
 import ResultCard from '@/components/ResultCard';
 import { CompressedFile } from '@/types';
+import JSZip from 'jszip';
 import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
@@ -15,8 +16,40 @@ type TargetFormat = 'png' | 'jpeg' | 'webp' | 'avif';
 export default function ConvertPage() {
   const [files, setFiles] = useState<CompressedFile[]>([]);
   const [isProcesssing, setIsProcessing] = useState(false);
+  const [isZipping, setIsZipping] = useState(false);
   const [targetFormat, setTargetFormat] = useState<TargetFormat>('webp');
   const [comparisons, setComparisons] = useState<Record<string, boolean>>({});
+
+  const downloadAllAsZip = async () => {
+      const doneFiles = files.filter((f: CompressedFile) => f.status === 'done' && f.blobUrl);
+      if (doneFiles.length === 0) return;
+
+
+      setIsZipping(true);
+      try {
+          const zip = new JSZip();
+          for (const file of doneFiles) {
+              const url = file.blobUrl;
+              if (url) {
+                  const response = await fetch(url);
+                  const blob = await response.blob();
+                  zip.file(`converted-${file.originalName.replace(/\.[^/.]+$/, "")}.${targetFormat}`, blob);
+              }
+          }
+          const content = await zip.generateAsync({ type: 'blob' });
+          const zipUrl = URL.createObjectURL(content);
+          const link = document.createElement('a');
+          link.href = zipUrl;
+          link.download = `micropng-converted.zip`;
+          link.click();
+          URL.revokeObjectURL(zipUrl);
+      } catch (error) {
+          console.error('Error creating ZIP:', error);
+      } finally {
+          setIsZipping(false);
+      }
+  };
+
 
   const formatSize = (bytes: number) => {
     if (bytes === 0) return '0 B';
@@ -168,12 +201,29 @@ export default function ConvertPage() {
                 <div className="w-full max-w-4xl mx-auto space-y-4">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-2xl font-bold text-foreground">Converted Images</h2>
-                        <button 
-                            onClick={handleReset}
-                            className="text-sm text-muted hover:text-foreground underline underline-offset-4"
-                        >
-                            Start Over
-                        </button>
+                        <div className="flex items-center gap-4">
+                            {files.filter((f: CompressedFile) => f.status === 'done').length > 1 && (
+                                <button 
+                                    onClick={downloadAllAsZip}
+                                    disabled={isZipping}
+
+                                    className="text-sm font-bold text-primary hover:text-primary/80 flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl transition-all"
+                                >
+                                    {isZipping ? (
+                                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                    ) : (
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    )}
+                                    Download All (ZIP)
+                                </button>
+                            )}
+                            <button 
+                                onClick={handleReset}
+                                className="text-sm text-muted hover:text-foreground underline underline-offset-4"
+                            >
+                                Start Over
+                            </button>
+                        </div>
                     </div>
 
                     <div className="grid gap-4">

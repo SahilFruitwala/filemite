@@ -6,9 +6,16 @@ import { Upload, Image as ImageIcon, FileWarning } from 'lucide-react';
 interface DropzoneProps {
   onFileSelect: (files: File[]) => void;
   isCompressing: boolean;
+  message?: string;
+  accept?: string;
 }
 
-export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps) {
+export default function Dropzone({ 
+  onFileSelect, 
+  isCompressing, 
+  message = "Drop your images here", 
+  accept = "image/png, image/jpeg, image/webp" 
+}: DropzoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -40,6 +47,8 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
     }
   };
 
+  const displayFormats = accept.split(',').map(f => f.trim().split('/').pop()?.toUpperCase()).filter(Boolean);
+
   return (
     <div
       className={`relative w-full max-w-3xl mx-auto min-h-[320px] rounded-[2.5rem] border border-dashed transition-all duration-500 overflow-hidden flex flex-col items-center justify-center p-8 sm:p-12 group cursor-pointer
@@ -63,7 +72,7 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
         ref={fileInputRef} 
         onChange={handleFileInput} 
         className="hidden" 
-        accept="image/png, image/jpeg, image/webp"
+        accept={accept}
         multiple
       />
 
@@ -75,8 +84,8 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
                     <div className="w-6 h-6 bg-primary/20 rounded-full animate-pulse"></div>
                 </div>
            </div>
-           <h3 className="text-xl font-bold text-foreground mb-2">Optimizing your images</h3>
-           <p className="text-muted text-sm max-w-[240px]">We're applying professional-grade compression logic...</p>
+           <h3 className="text-xl font-bold text-foreground mb-2">Processing your files</h3>
+           <p className="text-muted text-sm max-w-[240px]">We're handling your request with professional-grade logic...</p>
         </div>
       ) : (
         <>
@@ -90,15 +99,15 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
           
             <div className="text-center relative z-10">
                 <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
-                    {isDragging ? 'Drop it here!' : 'Drop your images here'}
+                    {isDragging ? 'Drop it here!' : message}
                 </h3>
                 <p className="text-muted mb-10 text-center max-w-sm mx-auto text-sm sm:text-base leading-relaxed">
                     or <span className="text-primary font-semibold hover:underline">click to browse</span> from your device.
-                    Supports JPEG, PNG, and WebP up to 25MB.
+                    Supports {displayFormats.join(', ')} up to 25MB.
                 </p>
 
                 <div className="flex flex-wrap justify-center gap-3">
-                    {['JPEG', 'PNG', 'WEBP'].map((format) => (
+                    {displayFormats.map((format) => (
                         <div key={format} className='px-4 py-1.5 rounded-full bg-surface border border-border text-[10px] sm:text-xs font-bold text-muted tracking-wider flex items-center gap-2 group-hover:border-border transition-colors'>
                             <div className="w-1.5 h-1.5 rounded-full bg-subtle"></div>
                             {format}
@@ -111,3 +120,4 @@ export default function Dropzone({ onFileSelect, isCompressing }: DropzoneProps)
     </div>
   );
 }
+

@@ -6,10 +6,24 @@ import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
 import { CompressedFile } from '@/types';
 import ImageCompare from '@/components/ImageCompare';
+import JSZip from 'jszip';
+import BackgroundGlow from '@/components/ui/BackgroundGlow';
+import PageHeader from '@/components/ui/PageHeader';
+
+const SOCIAL_PRESETS = [
+    { label: 'IG Square', width: '1080', height: '1080', icon: '📸' },
+    { label: 'IG Story', width: '1080', height: '1920', icon: '📱' },
+    { label: 'FB Cover', width: '820', height: '312', icon: '👥' },
+    { label: 'Twitter', width: '1200', height: '675', icon: '🐦' },
+    { label: 'LinkedIn', width: '1200', height: '627', icon: '💼' },
+    { label: 'YouTube', width: '1280', height: '720', icon: '🎥' },
+];
+
 
 export default function ResizePage() {
   const [files, setFiles] = useState<CompressedFile[]>([]);
   const [isProcesssing, setIsProcessing] = useState(false);
+  const [isZipping, setIsZipping] = useState(false);
   const [previewFileId, setPreviewFileId] = useState<string | null>(null);
   const [comparingFileId, setComparingFileId] = useState<string | null>(null);
 
@@ -17,6 +31,39 @@ export default function ResizePage() {
   const [resizeWidth, setResizeWidth] = useState<string>('');
   const [resizeHeight, setResizeHeight] = useState<string>('');
   const [resizeFit, setResizeFit] = useState<'cover' | 'contain' | 'fill' | 'inside'>('cover');
+
+  const applyPreset = (width: string, height: string) => {
+      setResizeWidth(width);
+      setResizeHeight(height);
+      setResizeFit('cover');
+  };
+
+  const downloadAllAsZip = async () => {
+      const doneFiles = files.filter(f => f.status === 'done' && f.blobUrl);
+      if (doneFiles.length === 0) return;
+
+      setIsZipping(true);
+      try {
+          const zip = new JSZip();
+          for (const file of doneFiles) {
+              const response = await fetch(file.blobUrl);
+              const blob = await response.blob();
+              zip.file(`resized-${file.originalName}`, blob);
+          }
+          const content = await zip.generateAsync({ type: 'blob' });
+          const url = URL.createObjectURL(content);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `micropng-resized.zip`;
+          link.click();
+          URL.revokeObjectURL(url);
+      } catch (error) {
+          console.error('Error creating ZIP:', error);
+      } finally {
+          setIsZipping(false);
+      }
+  };
+
 
   const formatSize = (bytes: number) => {
     if (bytes === 0) return '0 B';
@@ -232,8 +279,28 @@ export default function ResizePage() {
                                     Aspect ratio will be automatically preserved
                                 </div>
                             )}
+
+                            {/* Social Media Presets */}
+                            <div className="pt-4 border-t border-border/50">
+                                <label className="text-xs text-subtle mb-3 block uppercase tracking-wider font-semibold">Social Media Presets</label>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                    {SOCIAL_PRESETS.map((preset) => (
+                                        <button
+                                            key={preset.label}
+                                            onClick={() => applyPreset(preset.width, preset.height)}
+                                            className="flex items-center gap-2 p-2 rounded-lg bg-surface/50 border border-border hover:border-primary/50 hover:bg-surface-hover transition-all text-xs font-medium text-foreground group"
+                                        >
+                                            <span className="text-base group-hover:scale-110 transition-transform">{preset.icon}</span>
+                                            <div className="flex flex-col items-start overflow-hidden">
+                                                <span className="truncate w-full text-left">{preset.label}</span>
+                                                <span className="text-[10px] text-muted">{preset.width}x{preset.height}</span>
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
-                     </div>
+                    </div>
                      
                      {/* Action Button for Resize Tab */}
                      {/* Show this button ALWAYS if there are waiting files, unlike old page where it was conditional on tab */}
@@ -278,12 +345,28 @@ export default function ResizePage() {
                 <div className="w-full max-w-4xl mx-auto space-y-4">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-2xl font-bold text-foreground">Your Resized Images</h2>
-                        <button 
-                            onClick={handleReset}
-                            className="text-sm text-muted hover:text-foreground underline underline-offset-4"
-                        >
-                            Start Over
-                        </button>
+                        <div className="flex items-center gap-4">
+                            {files.filter((f: CompressedFile) => f.status === 'done').length > 1 && (
+                                <button 
+                                    onClick={downloadAllAsZip}
+                                    disabled={isZipping}
+                                    className="text-sm font-bold text-primary hover:text-primary/80 flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl transition-all"
+                                >
+                                    {isZipping ? (
+                                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                    ) : (
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    )}
+                                    Download All (ZIP)
+                                </button>
+                            )}
+                            <button 
+                                onClick={handleReset}
+                                className="text-sm text-muted hover:text-foreground underline underline-offset-4"
+                            >
+                                Start Over
+                            </button>
+                        </div>
                     </div>
 
                     <div className="grid gap-4">
