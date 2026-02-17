@@ -14,14 +14,21 @@ export async function POST(req: NextRequest) {
     const targetSize = targetSizeMsg ? parseInt(targetSizeMsg as string) : null;
     const speed = formData.get('speed') as string || 'normal'; // 'fast' | 'normal'
 
-    // Parse resize options
+    // Parse resize & crop options
     const widthRaw = formData.get('width');
     const heightRaw = formData.get('height');
     const resizeFit = (formData.get('fit') as keyof sharp.FitEnum) || 'cover';
     
+    // Manual Crop parameters (pixels)
+    const cropX = formData.get('cropX') ? parseInt(formData.get('cropX') as string) : null;
+    const cropY = formData.get('cropY') ? parseInt(formData.get('cropY') as string) : null;
+    const cropW = formData.get('cropW') ? parseInt(formData.get('cropW') as string) : null;
+    const cropH = formData.get('cropH') ? parseInt(formData.get('cropH') as string) : null;
+    
     const finalWidth = widthRaw ? parseInt(widthRaw as string) : undefined;
     const finalHeight = heightRaw ? parseInt(heightRaw as string) : undefined;
     
+    const shouldCrop = cropW !== null && cropH !== null && cropX !== null && cropY !== null;
     const shouldResize = (finalWidth && !isNaN(finalWidth)) || (finalHeight && !isNaN(finalHeight));
 
     if (!file) {
@@ -40,8 +47,17 @@ export async function POST(req: NextRequest) {
     
     if (targetFormat === 'jpg') targetFormat = 'jpeg';
 
-    // 3. Pre-processing: Auto-rotate and Resize
+    // 3. Pre-processing: Manual Crop, Auto-rotate, and Resize
     pipeline.rotate(); 
+
+    if (shouldCrop) {
+        pipeline.extract({
+            left: Math.max(0, cropX!),
+            top: Math.max(0, cropY!),
+            width: cropW!,
+            height: cropH!
+        });
+    }
 
     if (shouldResize) {
         pipeline.resize({

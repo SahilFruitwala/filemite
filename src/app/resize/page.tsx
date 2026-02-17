@@ -1,615 +1,478 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
 import { CompressedFile } from '@/types';
-import ImageCompare from '@/components/ImageCompare';
 import JSZip from 'jszip';
 import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
+import GlassCard from '@/components/ui/GlassCard';
+import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
+import { Download, Scissors, RefreshCw, Maximize2, Move, Layout, CheckCircle2, ChevronRight, AlertCircle } from 'lucide-react';
 
 const SOCIAL_PRESETS = [
-    { label: 'IG Square', width: '1080', height: '1080', icon: '📸' },
-    { label: 'IG Story', width: '1080', height: '1920', icon: '📱' },
-    { label: 'FB Cover', width: '820', height: '312', icon: '👥' },
-    { label: 'Twitter', width: '1200', height: '675', icon: '🐦' },
-    { label: 'LinkedIn', width: '1200', height: '627', icon: '💼' },
-    { label: 'YouTube', width: '1280', height: '720', icon: '🎥' },
+    { label: 'IG Square', width: 1080, height: 1080, aspect: 1, icon: '📸' },
+    { label: 'IG Story', width: 1080, height: 1920, aspect: 9/16, icon: '📱' },
+    { label: 'FB Cover', width: 820, height: 312, aspect: 820/312, icon: '👥' },
+    { label: 'Twitter', width: 1200, height: 675, aspect: 16/9, icon: '🐦' },
+    { label: 'LinkedIn', width: 1200, height: 627, aspect: 1.91/1, icon: '💼' },
+    { label: 'YouTube', width: 1280, height: 720, aspect: 16/9, icon: '🎥' },
 ];
 
-
 export default function ResizePage() {
-  const [files, setFiles] = useState<CompressedFile[]>([]);
-  const [isProcesssing, setIsProcessing] = useState(false);
-  const [isZipping, setIsZipping] = useState(false);
-  const [previewFileId, setPreviewFileId] = useState<string | null>(null);
-  const [comparingFileId, setComparingFileId] = useState<string | null>(null);
+    const [file, setFile] = useState<CompressedFile | null>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
+    
+    // Resize & Crop State
+    const [resizeWidth, setResizeWidth] = useState<string>('1080');
+    const [resizeHeight, setResizeHeight] = useState<string>('1080');
+    const [resizeFit, setResizeFit] = useState<'cover' | 'contain' | 'fill' | 'inside'>('cover');
+    const [lockAspectRatio, setLockAspectRatio] = useState(true);
+    const [aspectRatio, setAspectRatio] = useState<number | undefined>(1);
 
-  // Resize State
-  const [resizeWidth, setResizeWidth] = useState<string>('');
-  const [resizeHeight, setResizeHeight] = useState<string>('');
-  const [resizeFit, setResizeFit] = useState<'cover' | 'contain' | 'fill' | 'inside'>('cover');
-  const [lockAspectRatio, setLockAspectRatio] = useState(true);
+    // Manual Crop States
+    const [crop, setCrop] = useState<Crop>();
+    const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+    const [isCropMode, setIsCropMode] = useState(false);
+    const [cropPreviewUrl, setCropPreviewUrl] = useState<string | null>(null);
+    
+    const imgRef = useRef<HTMLImageElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
 
-  const applyPreset = (width: string, height: string) => {
-      setResizeWidth(width);
-      setResizeHeight(height);
-      setResizeFit('cover');
-      setLockAspectRatio(true);
-  };
+    // Generate a cropped preview blob from the current crop selection.
+    // MUST be called while imgRef is still mounted (before setting isCropMode=false).
+    const applyCrop = useCallback(() => {
+        if (!completedCrop || !imgRef.current) {
+            setIsCropMode(false);
+            return;
+        }
 
-  const downloadAllAsZip = async () => {
-      const doneFiles = files.filter(f => f.status === 'done' && f.blobUrl);
-      if (doneFiles.length === 0) return;
+        const image = imgRef.current;
+        const canvas = document.createElement('canvas');
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
 
-      setIsZipping(true);
-      try {
-          const zip = new JSZip();
-          for (const file of doneFiles) {
-              const response = await fetch(file.blobUrl);
-              const blob = await response.blob();
-              zip.file(`resized-${file.originalName}`, blob);
-          }
-          const content = await zip.generateAsync({ type: 'blob' });
-          const url = URL.createObjectURL(content);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `micropng-resized.zip`;
-          link.click();
-          URL.revokeObjectURL(url);
-      } catch (error) {
-          console.error('Error creating ZIP:', error);
-      } finally {
-          setIsZipping(false);
-      }
-  };
+        const cropX = completedCrop.x * scaleX;
+        const cropY = completedCrop.y * scaleY;
+        const cropW = completedCrop.width * scaleX;
+        const cropH = completedCrop.height * scaleY;
 
+        canvas.width = cropW;
+        canvas.height = cropH;
 
-  const formatSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            setIsCropMode(false);
+            return;
+        }
 
-  const handleFilesSelect = async (selectedFiles: File[]) => {
-      // Initialize file states with 'waiting' status for resize
-      const newFiles: CompressedFile[] = selectedFiles.map(file => ({
-          id: Math.random().toString(36).substr(2, 9),
-          originalName: file.name,
-          originalSize: file.size,
-          originalBlobUrl: URL.createObjectURL(file),
-          compressedSize: 0,
-          blobUrl: '',
-          status: 'waiting',
-          fileRaw: file
-      }));
+        ctx.drawImage(image, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
 
-      setFiles(prev => [...prev, ...newFiles]);
-  };
+        canvas.toBlob((blob) => {
+            if (!blob) return;
+            // Revoke old preview URL if any
+            if (cropPreviewUrl) URL.revokeObjectURL(cropPreviewUrl);
+            const url = URL.createObjectURL(blob);
+            setCropPreviewUrl(url);
+            // NOW it's safe to exit crop mode
+            setIsCropMode(false);
+        }, 'image/png');
+    }, [completedCrop, cropPreviewUrl]);
 
-  const handleProcessWaitingFiles = async () => {
-      const waitingFiles = files.filter(f => f.status === 'waiting');
-      if (waitingFiles.length === 0) return;
+    const handleFileSelect = (selectedFiles: File[]) => {
+        if (selectedFiles.length > 0) {
+            const f = selectedFiles[0];
+            const newFile: CompressedFile = {
+                id: Math.random().toString(36).substr(2, 9),
+                originalName: f.name,
+                originalSize: f.size,
+                originalBlobUrl: URL.createObjectURL(f),
+                compressedSize: 0,
+                blobUrl: '',
+                status: 'waiting',
+                fileRaw: f
+            };
+            setFile(newFile);
+            setIsCropMode(false);
+            setCompletedCrop(undefined);
+            setCrop(undefined);
+            setCropPreviewUrl(null);
+        }
+    };
 
-      setIsProcessing(true);
-      
-      const sourceFiles = waitingFiles.map(f => f.fileRaw);
-      
-      for (const [index, file] of sourceFiles.entries()) {
-            const fileId = waitingFiles[index].id;
-            
-            setFiles(prev => prev.map(f => f.id === fileId ? { ...f, status: 'processing' } : f));
+    const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+        const { width, height } = e.currentTarget;
+        if (aspectRatio) {
+            const initialCrop = centerCrop(
+                makeAspectCrop(
+                    { unit: '%', width: 90 },
+                    aspectRatio,
+                    width,
+                    height
+                ),
+                width,
+                height
+            );
+            setCrop(initialCrop);
+        }
+    };
 
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('level', 'lossless');
-            if (resizeWidth) formData.append('width', resizeWidth);
-            if (resizeHeight) formData.append('height', resizeHeight);
-            formData.append('fit', resizeFit);
-            
-            try {
-                const response = await fetch('/api/compress', {
-                    method: 'POST',
-                    body: formData,
-                });
+    const applyPreset = (width: number, height: number, aspect: number) => {
+        setResizeWidth(width.toString());
+        setResizeHeight(height.toString());
+        setAspectRatio(aspect);
+        setResizeFit('cover');
+        setLockAspectRatio(true);
 
-                if (!response.ok) throw new Error('Resize failed');
+        // Update crop if in crop mode
+        if (imgRef.current) {
+            const { width: imgW, height: imgH } = imgRef.current;
+            const newCrop = centerCrop(
+                makeAspectCrop({ unit: '%', width: 90 }, aspect, imgW, imgH),
+                imgW,
+                imgH
+            );
+             setCrop(newCrop);
+        }
+    };
 
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
+    const handleResize = async () => {
+        if (!file) return;
+        setIsProcessing(true);
 
-                setFiles(prev => prev.map(f => f.id === fileId ? { 
-                    ...f, 
-                    status: 'done',
-                    compressedSize: blob.size,
-                    blobUrl: url
-                } : f));
+        const formData = new FormData();
+        formData.append('file', file.fileRaw);
+        formData.append('width', resizeWidth);
+        formData.append('height', resizeHeight);
+        formData.append('fit', resizeFit);
+        formData.append('level', 'lossless');
 
-            } catch (error) {
-                console.error(error);
-                 setFiles(prev => prev.map(f => f.id === fileId ? { 
-                    ...f, 
-                    status: 'error',
-                    error: 'Failed'
-                } : f));
+        if (completedCrop) {
+            // Need to convert relative crop to image pixels
+            // CompletedCrop is already in pixels relative to the DOM image element
+            // We need to scale them to the actual image resolution
+            if (imgRef.current) {
+                const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
+                const scaleY = imgRef.current.naturalHeight / imgRef.current.height;
+                
+                formData.append('cropX', Math.round(completedCrop.x * scaleX).toString());
+                formData.append('cropY', Math.round(completedCrop.y * scaleY).toString());
+                formData.append('cropW', Math.round(completedCrop.width * scaleX).toString());
+                formData.append('cropH', Math.round(completedCrop.height * scaleY).toString());
             }
-      }
-      setIsProcessing(false);
-  };
+        }
 
-  const handleReset = () => {
-      setFiles([]);
-  };
+        try {
+            const response = await fetch('/api/compress', {
+                method: 'POST',
+                body: formData,
+            });
 
-  const comparingFile = files.find(f => f.id === comparingFileId);
-  const previewingFile = files.find(f => f.id === previewFileId);
+            if (!response.ok) throw new Error('Resize failed');
 
-  /* Added handleReprocess function */
-  const handleReprocess = async (fileId: string, newFit: string) => {
-      const fileToProcess = files.find(f => f.id === fileId);
-      if (!fileToProcess) return;
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
 
-      // Update status to processing
-      setFiles(prev => prev.map(f => f.id === fileId ? { ...f, status: 'processing' } : f));
+            setFile(prev => prev ? {
+                ...prev,
+                status: 'done',
+                compressedSize: blob.size,
+                blobUrl: url
+            } : null);
+        } catch (error) {
+            console.error(error);
+            setFile(prev => prev ? { ...prev, status: 'error' } : null);
+        } finally {
+            setIsProcessing(false);
+        }
+    };
 
-      const formData = new FormData();
-      formData.append('file', fileToProcess.fileRaw);
-      formData.append('level', 'lossless');
-      if (resizeWidth) formData.append('width', resizeWidth);
-      if (resizeHeight) formData.append('height', resizeHeight);
-      formData.append('fit', newFit);
-      
-      try {
-          const response = await fetch('/api/compress', {
-              method: 'POST',
-              body: formData,
-          });
+    const previewStyle = useMemo(() => {
+        const w = parseInt(resizeWidth) || 800;
+        const h = parseInt(resizeHeight) || 600;
+        return {
+            aspectRatio: `${w} / ${h}`,
+            width: '100%',
+            maxWidth: '100%',
+            maxHeight: '500px',
+            margin: '0 auto'
+        };
+    }, [resizeWidth, resizeHeight]);
 
-          if (!response.ok) throw new Error('Resize failed');
+    const formatSize = (bytes: number) => {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
 
-          const blob = await response.blob();
-          const url = URL.createObjectURL(blob);
+    return (
+        <div className="min-h-screen relative overflow-hidden bg-background">
+            <BackgroundGlow color="primary" />
+            <Navbar />
 
-          setFiles(prev => prev.map(f => f.id === fileId ? { 
-              ...f, 
-              status: 'done',
-              compressedSize: blob.size,
-              blobUrl: url
-          } : f));
+            <main className="container mx-auto px-6 pt-32 pb-20">
+                <PageHeader 
+                    title={<>Advanced <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">Interactive Resizer.</span></>}
+                />
 
-      } catch (error) {
-          console.error(error);
-           setFiles(prev => prev.map(f => f.id === fileId ? { 
-              ...f, 
-              status: 'error',
-              error: 'Failed'
-          } : f));
-      }
-  };
-
-  return (
-    <div className="min-h-screen relative overflow-hidden bg-center">
-      {/* Background Glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary opacity-[0.08] blur-[120px] rounded-full pointer-events-none z-[-1]"></div>
-      
-      <Navbar />
-
-      <main className="container mx-auto px-6 pt-32 pb-20">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-foreground">
-            Resize images with <br />
-             <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">perfect precision.</span>
-          </h1>
-
-             {/* Resize Settings Panel */}
-            <div className="max-w-xl mx-auto mb-16">
-                 <div className="bg-surface backdrop-blur-md border border-border rounded-2xl p-6 relative overflow-hidden group animate-[fadeIn_0.3s_ease-out]">
-                     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-
-                     <div className="relative z-10 flex flex-col gap-6">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-foreground font-medium flex items-center gap-2">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><polyline points="11 3 11 11 14 8 17 11 17 3"/></svg>
-                                Resize & Crop
-                            </h3>
-                        </div>
-
-                        <div className="grid gap-6">
-                            <div className="flex flex-col gap-4">
-                                <div className="flex gap-4">
-                                    <div className="flex-1">
-                                        <label className="text-xs text-subtle mb-2 block uppercase tracking-wider font-semibold">Width</label>
-                                        <div className="relative">
-                                            <input
-                                                type="number"
-                                                value={resizeWidth}
-                                                onChange={(e) => setResizeWidth(e.target.value)}
-                                                placeholder="Auto"
-                                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
-                                            />
-                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted pointer-events-none">PX</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-end pb-3">
-                                        <button 
-                                            onClick={() => setLockAspectRatio(!lockAspectRatio)}
-                                            className={`p-2 rounded-lg transition-all ${lockAspectRatio ? 'text-primary bg-primary/10' : 'text-muted hover:text-foreground hover:bg-surface'}`}
-                                            title={lockAspectRatio ? "Unlink Aspect Ratio" : "Link Aspect Ratio"}
-                                        >
-                                            {lockAspectRatio ? (
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 7h10v10H7z"/><path d="M16 21v-2a4 4 0 0 0-4-4H9"/><path d="M7 21v-2a4 4 0 0 1 4-4h3"/></svg>
-                                            ) : (
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zM15 5.88l2.88 2.88"/><path d="M13.88 4.75l2.25 2.25"/><path d="M16.12 7l2.25 2.25"/></svg>
-                                            )}
-                                        </button>
-                                    </div>
-                                    <div className="flex-1">
-                                        <label className="text-xs text-subtle mb-2 block uppercase tracking-wider font-semibold">Height</label>
-                                        <div className="relative">
-                                            <input
-                                                type="number"
-                                                value={resizeHeight}
-                                                onChange={(e) => setResizeHeight(e.target.value)}
-                                                placeholder="Auto"
-                                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
-                                            />
-                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted pointer-events-none">PX</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className={`transition-all duration-300 overflow-hidden ${resizeWidth && resizeHeight ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                                <label className="text-xs text-subtle mb-2 block uppercase tracking-wider font-semibold">Fit Mode</label>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                    {(['cover', 'contain', 'fill', 'inside'] as const).map((mode) => (
-                                        <button
-                                            key={mode}
-                                            onClick={() => setResizeFit(mode)}
-                                            className={`py-2 px-2 rounded-lg text-xs font-medium transition-all duration-200 border capitalize ${
-                                                resizeFit === mode 
-                                                    ? 'bg-primary/20 text-primary border-primary' 
-                                                    : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-foreground'
-                                            }`}
-                                        >
-                                            {mode}
-                                        </button>
-                                    ))}
-                                </div>
-                                <p className="text-xs text-subtle mt-2">
-                                    {resizeFit === 'cover' && 'Crops to fill dimensions. Aspect ratio preserved.'}
-                                    {resizeFit === 'contain' && 'Fits within dimensions. Letterboxing may occur.'}
-                                    {resizeFit === 'fill' && 'Stretches to exact dimensions. Retains no aspect ratio.'}
-                                    {resizeFit === 'inside' && 'Resizes to be as large as possible while staying within dimensions.'}
-                                </p>
-                            </div>
-
-                            {/* Aspect Ratio Hint */}
-                            {((resizeWidth && !resizeHeight) || (!resizeWidth && resizeHeight)) && (
-                                <div className="text-xs text-muted italic flex items-center gap-2 animate-[fadeIn_0.3s_ease-out]">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                                    Aspect ratio will be automatically preserved
-                                </div>
-                            )}
-
-                            {/* Social Media Presets */}
-                            <div className="pt-4 border-t border-border/50">
-                                <label className="text-xs text-subtle mb-3 block uppercase tracking-wider font-semibold">Social Media Presets</label>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                    {SOCIAL_PRESETS.map((preset) => (
-                                        <button
-                                            key={preset.label}
-                                            onClick={() => applyPreset(preset.width, preset.height)}
-                                            className="flex items-center gap-2 p-2 rounded-lg bg-surface/50 border border-border hover:border-primary/50 hover:bg-surface-hover transition-all text-xs font-medium text-foreground group"
-                                        >
-                                            <span className="text-base group-hover:scale-110 transition-transform">{preset.icon}</span>
-                                            <div className="flex flex-col items-start overflow-hidden">
-                                                <span className="truncate w-full text-left">{preset.label}</span>
-                                                <span className="text-[10px] text-muted">{preset.width}x{preset.height}</span>
-                                            </div>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+                {!file ? (
+                    <div className="max-w-4xl mx-auto">
+                        <Dropzone onFileSelect={handleFileSelect} isCompressing={false} message="Drop an image to start high-precision resizing" />
                     </div>
-                     
-                     {/* Action Button for Resize Tab */}
-                     {/* Show this button ALWAYS if there are waiting files, unlike old page where it was conditional on tab */}
-                     {files.some(f => f.status === 'waiting') && (
-                         <div className="mt-6 flex flex-col items-end gap-2 animate-[fadeIn_0.3s_ease-out]">
-                            {(!resizeWidth && !resizeHeight) && (
-                                <span className="text-xs text-yellow-500 font-medium bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20">
-                                    ⚠️ Set width or height to start
-                                </span>
-                            )}
-                            <button
-                                onClick={handleProcessWaitingFiles}
-                                disabled={isProcesssing || (!resizeWidth && !resizeHeight)}
-                                className={`bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center gap-2 ${
-                                    (!resizeWidth && !resizeHeight) ? 'opacity-50 cursor-not-allowed grayscale' : ''
-                                }`}
-                            >
-                                {isProcesssing ? (
-                                    <>
-                                        <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-                                        Processing...
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                                        Resize {files.filter(f => f.status === 'waiting').length} Images
-                                    </>
-                                )}
-                            </button>
-                         </div>
-                     )}
-                 </div>
-            </div>
-
-        </div>
-
-        {/* Dropzone / Result Area */}
-        <div className="mb-32">
-            {files.length === 0 ? (
-                 <Dropzone onFileSelect={handleFilesSelect} isCompressing={isProcesssing} />
-            ) : (
-                <div className="w-full max-w-4xl mx-auto space-y-4">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold text-foreground">Your Resized Images</h2>
-                        <div className="flex items-center gap-4">
-                            {files.filter((f: CompressedFile) => f.status === 'done').length > 1 && (
-                                <button 
-                                    onClick={downloadAllAsZip}
-                                    disabled={isZipping}
-                                    className="text-sm font-bold text-primary hover:text-primary/80 flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl transition-all"
-                                >
-                                    {isZipping ? (
-                                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                                    ) : (
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                    )}
-                                    Download All (ZIP)
-                                </button>
-                            )}
-                            <button 
-                                onClick={handleReset}
-                                className="text-sm text-muted hover:text-foreground underline underline-offset-4"
-                            >
-                                Start Over
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="grid gap-4">
-                        {files.map((file) => (
-                            <div key={file.id} className="bg-secondary border border-border rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 animate-[fadeIn_0.3s_ease-out]">
-                                <div className="flex items-center gap-4 w-full md:w-auto">
-                                    <div className="w-16 h-16 bg-background rounded-lg overflow-hidden flex items-center justify-center border border-border shrink-0">
-                                        {file.blobUrl ? (
-                                            <img src={file.blobUrl} alt="Preview" className="w-full h-full object-contain" />
-                                        ) : (
-                                            <div className="animate-pulse w-full h-full bg-surface"></div>
+                ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-[1600px] mx-auto animate-[fadeIn_0.4s_ease-out]">
+                        
+                        {/* Editor Sidebar */}
+                        <div className="lg:col-span-4 space-y-6">
+                            <GlassCard>
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-foreground font-bold flex items-center gap-2">
+                                            <Maximize2 size={18} className="text-primary" />
+                                            Output Dimensions
+                                        </h3>
+                                        {file.status === 'done' && (
+                                            <span className="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded-full border border-emerald-500/20 font-bold uppercase tracking-wider flex items-center gap-1">
+                                                <CheckCircle2 size={10} /> Ready
+                                            </span>
                                         )}
                                     </div>
-                                    <div className="min-w-0 flex-1">
-                                        <h3 className="text-foreground font-medium truncate max-w-[200px] sm:max-w-xs">{file.originalName}</h3>
-                                        <div className="flex items-center gap-3 text-xs mt-1">
-                                            {file.status === 'done' ? (
-                                                <>
-                                                    <span className="text-muted line-through">{formatSize(file.originalSize)}</span>
-                                                    <span className="text-foreground font-bold">New: {formatSize(file.compressedSize)}</span>
-                                                </>
-                                            ) : file.status === 'processing' ? (
-                                                <span className="text-primary flex items-center gap-1">
-                                                    <span className="block w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                                                    Processing...
-                                                </span>
-                                             ) : file.status === 'waiting' ? (
-                                                <span className="text-yellow-500 flex items-center gap-1">
-                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                                    Ready to resize
-                                                </span> 
-                                            ) : file.status === 'error' ? (
-                                                <span className="text-error">Error</span>
-                                            ) : (
-                                                 <span className="text-subtle">Pending...</span>
-                                            )}
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] text-subtle font-black uppercase tracking-widest">Width (px)</label>
+                                            <input 
+                                                type="number" 
+                                                value={resizeWidth}
+                                                onChange={(e) => {
+                                                    setResizeWidth(e.target.value);
+                                                    if (lockAspectRatio && aspectRatio) {
+                                                        setResizeHeight(Math.round(parseInt(e.target.value) / aspectRatio).toString());
+                                                    }
+                                                }}
+                                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground font-mono transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] text-subtle font-black uppercase tracking-widest">Height (px)</label>
+                                            <input 
+                                                type="number" 
+                                                value={resizeHeight}
+                                                onChange={(e) => {
+                                                    setResizeHeight(e.target.value);
+                                                    if (lockAspectRatio && aspectRatio) {
+                                                        setResizeWidth(Math.round(parseInt(e.target.value) * aspectRatio).toString());
+                                                    }
+                                                }}
+                                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground font-mono transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
+                                            />
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Controls Section */}
-                                <div className="flex items-center gap-3 w-full md:w-auto justify-end">
-                                    
-                                    {/* Fit Mode Switcher for Done Files - Only if dimensions allow */}
-                                    {file.status === 'done' && resizeWidth && resizeHeight && (
-                                        <div className="flex bg-black/40 rounded-lg p-1 border border-border">
-                                             {(['cover', 'contain', 'fill'] as const).map((mode) => (
+                                    <div className="flex items-center gap-4 py-2">
+                                        <button 
+                                            onClick={() => setLockAspectRatio(!lockAspectRatio)}
+                                            className={`flex items-center gap-2 text-xs font-bold transition-all p-2 rounded-lg ${lockAspectRatio ? 'text-primary bg-primary/10' : 'text-muted hover:text-foreground'}`}
+                                        >
+                                            {lockAspectRatio ? <Layout size={14} /> : <Maximize2 size={14} />}
+                                            {lockAspectRatio ? 'Aspect Ratio Locked' : 'Free Resize'}
+                                        </button>
+                                        {lockAspectRatio && (
+                                            <div className="h-px flex-1 bg-border/50"></div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] text-subtle font-black uppercase tracking-widest">Scaling Mode</label>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            {(['cover', 'contain', 'fill', 'inside'] as const).map(mode => (
                                                 <button
                                                     key={mode}
-                                                    onClick={() => handleReprocess(file.id, mode)}
-                                                    className={`px-2 py-1 rounded text-[10px] uppercase font-bold transition-all ${
-                                                        // We don't have per-file fit state, so we highlight based on global or just generic style
-                                                        // Ideally we should track "last used fit" per file, but for now just showing options is enough
-                                                        'text-muted hover:text-foreground hover:bg-surface-hover'
+                                                    onClick={() => setResizeFit(mode)}
+                                                    className={`py-2 px-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border ${
+                                                        resizeFit === mode 
+                                                            ? 'bg-primary/10 border-primary text-primary shadow-sm' 
+                                                            : 'bg-surface border-transparent text-muted hover:border-border hover:text-foreground'
                                                     }`}
-                                                    title={`Reprocess with ${mode}`}
                                                 >
                                                     {mode}
                                                 </button>
-                                             ))}
+                                            ))}
                                         </div>
-                                    )}
+                                        <p className="text-[10px] text-muted italic">
+                                            {resizeFit === 'cover' && 'Fills the box, cropping extra.'}
+                                            {resizeFit === 'contain' && 'Fits inside, adds letterboxing.'}
+                                            {resizeFit === 'fill' && 'Stretches image to fit.'}
+                                            {resizeFit === 'inside' && 'Max size within bounds.'}
+                                        </p>
+                                    </div>
 
-                                    <div className="flex items-center gap-2">
-                                        {file.status === 'done' && (
-                                            <>
+                                    <div className="pt-4 border-t border-border/50">
+                                        <label className="text-[10px] text-subtle font-black uppercase tracking-widest mb-3 block">Quick Presets</label>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {SOCIAL_PRESETS.map(preset => (
                                                 <button
-                                                    onClick={() => setComparingFileId(file.id)}
-                                                    className="bg-surface hover:bg-surface-hover text-foreground px-4 py-2 rounded-lg font-medium transition-colors text-sm flex items-center gap-2 border border-border"
+                                                    key={preset.label}
+                                                    onClick={() => applyPreset(preset.width, preset.height, preset.aspect)}
+                                                    className="flex flex-col items-center justify-center p-2 rounded-xl bg-surface/50 border border-border hover:border-primary/50 hover:bg-surface-hover transition-all group"
                                                 >
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                                                    <span className="hidden sm:inline">Compare</span>
+                                                    <span className="text-xl mb-1 group-hover:scale-110 transition-transform">{preset.icon}</span>
+                                                    <span className="text-[8px] font-black uppercase text-center leading-tight truncate w-full">{preset.label}</span>
                                                 </button>
-                                                <a 
-                                                    href={file.blobUrl} 
-                                                    download={`resized-${file.originalName}`}
-                                                    className="bg-primary/10 hover:bg-primary hover:text-white text-primary px-4 py-2 rounded-lg font-medium transition-colors text-sm flex items-center gap-2"
-                                                >
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                                    <span className="hidden sm:inline">Save</span>
-                                                </a>
-                                            </>
-                                        )}
-                                        {file.status === 'processing' && (
-                                            <div className="w-8 h-8 flex items-center justify-center">
-                                                <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                                            </div>
-                                        )}
-                                        {file.status === 'waiting' && (
-                                            <button
-                                                onClick={() => setPreviewFileId(file.id)}
-                                                className="bg-surface hover:bg-surface-hover text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-xs flex items-center gap-2 border border-border"
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-4 space-y-3">
+                                        <button
+                                            onClick={handleResize}
+                                            disabled={isProcessing}
+                                            className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black uppercase tracking-widest transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98]"
+                                        >
+                                            {isProcessing ? (
+                                                <RefreshCw size={20} className="animate-spin" />
+                                            ) : (
+                                                <>
+                                                    <Maximize2 size={20} />
+                                                    Process Resize
+                                                </>
+                                            )}
+                                        </button>
+                                        
+                                        {file.status === 'done' && (
+                                            <a
+                                                href={file.blobUrl}
+                                                download={`resized-${file.originalName}`}
+                                                className="w-full bg-surface border border-primary/30 text-primary hover:bg-primary/5 py-4 rounded-xl font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 shadow-sm"
                                             >
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                                                Preview
-                                            </button>
+                                                <Download size={20} />
+                                                Save Result
+                                            </a>
                                         )}
                                     </div>
                                 </div>
+                            </GlassCard>
+
+                            <button 
+                                onClick={() => setFile(null)} 
+                                className="w-full py-4 text-xs font-bold text-muted hover:text-red-500 transition-colors flex items-center justify-center gap-2"
+                            >
+                                <RefreshCw size={14} /> Start Fresh
+                            </button>
+                        </div>
+
+                        {/* Editor Preview Area */}
+                        <div className="lg:col-span-8 flex flex-col gap-6">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="space-y-1">
+                                    <h2 className="text-xl font-bold flex items-center gap-2 text-foreground uppercase tracking-tight">
+                                        Live Editor
+                                        {isCropMode && <span className="text-amber-500 text-[10px] bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">Crop Active</span>}
+                                    </h2>
+                                    <p className="text-xs text-muted">Original: {formatSize(file.originalSize)} • Result: {resizeWidth}x{resizeHeight}px</p>
+                                </div>
+                                <button
+                                    onClick={() => isCropMode ? applyCrop() : setIsCropMode(true)}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all border ${
+                                        isCropMode 
+                                            ? 'bg-amber-500 text-white border-amber-600 shadow-lg shadow-amber-500/20' 
+                                            : 'bg-surface border-border text-foreground hover:bg-surface-hover hover:border-primary/50'
+                                    }`}
+                                >
+                                    <Scissors size={14} />
+                                    {isCropMode ? 'Done Cropping' : 'Manual Crop'}
+                                </button>
                             </div>
-                        ))}
+
+                            <div className="relative flex-1 bg-black/40 rounded-[2rem] border border-border/50 overflow-hidden flex items-center justify-center p-8 backdrop-blur-sm shadow-inner group/preview">
+                                
+                                {/* Resizing Frame / Preview Container */}
+                                <div 
+                                    className={`relative z-10 border-2 border-dashed border-primary/30 rounded-2xl overflow-hidden transition-all duration-300 shadow-2xl bg-black/50 ${isCropMode ? 'opacity-30 blur-sm grayscale pointer-events-none' : ''}`}
+                                    style={previewStyle}
+                                >
+                                    <img 
+                                        src={cropPreviewUrl || file.originalBlobUrl!} 
+                                        alt="Preview" 
+                                        className="w-full h-full select-none"
+                                        style={{ 
+                                            objectFit: (resizeFit === 'inside' ? 'contain' : resizeFit) as any 
+                                        }}
+                                    />
+                                    
+                                    {/* Overlay Info */}
+                                    <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                                        Live Preview
+                                    </div>
+                                </div>
+
+                                {/* Manual Crop Layer (Visible only in Crop Mode) */}
+                                {isCropMode && (
+                                    <div className="absolute inset-0 z-20 flex items-center justify-center p-8 animate-[fadeIn_0.3s_ease-out]">
+                                        <div className="max-w-full max-h-full bg-background rounded-3xl p-6 shadow-2xl border border-white/10 ring-1 ring-black/50">
+                                            <ReactCrop 
+                                                crop={crop} 
+                                                onChange={c => setCrop(c)} 
+                                                onComplete={c => setCompletedCrop(c)}
+                                                aspect={aspectRatio}
+                                                className="max-h-[60vh]"
+                                            >
+                                                <img 
+                                                    ref={imgRef}
+                                                    src={file.originalBlobUrl!} 
+                                                    alt="Crop view" 
+                                                    onLoad={onImageLoad}
+                                                    className="max-w-full max-h-[60vh] object-contain"
+                                                />
+                                            </ReactCrop>
+                                            <div className="mt-4 flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted">
+                                                <span className="flex items-center gap-2">
+                                                    <Move size={14} /> Drag handles to crop
+                                                </span>
+                                                <button onClick={applyCrop} className="text-primary hover:text-primary-hover flex items-center gap-1">
+                                                    Apply Crop <ChevronRight size={14} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Hover Prompt */}
+                                {!isCropMode && !isProcessing && file.status !== 'done' && (
+                                    <div className="absolute bottom-12 left-1/2 -translate-x-1/2 opacity-0 group-hover/preview:opacity-100 transition-opacity flex flex-col items-center gap-2 pointer-events-none">
+                                        <div className="bg-primary/20 backdrop-blur-md border border-primary/30 text-primary px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg flex items-center gap-2 animate-bounce">
+                                            Ready to Process
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Status Info */}
+                            <GlassCard className="!p-4 bg-primary/5 border-primary/20">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                                        {isProcessing ? <RefreshCw className="animate-spin" /> : <AlertCircle size={24} />}
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-xs font-bold text-foreground">
+                                            {isProcessing ? "Enhancing your image pixels..." : isCropMode ? "Fine-tuning your focal point..." : "Interactive Preview Active"}
+                                        </p>
+                                        <p className="text-[10px] text-muted">Acknowledge: The live preview utilizes CSS logic to simulate resizing. The final download will be processed with industrial-grade algorithms.</p>
+                                    </div>
+                                </div>
+                            </GlassCard>
+                        </div>
                     </div>
-                     <div className='flex justify-center mt-8'>
-                        <Dropzone onFileSelect={handleFilesSelect} isCompressing={isProcesssing} />
-                     </div>
-                </div>
-            )}
+                )}
+            </main>
+
+            <Footer />
         </div>
-
-        {/* Comparison Modal */}
-        {comparingFile && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 animate-[fadeIn_0.2s_ease-out]">
-                <div 
-                    className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-                    onClick={() => setComparingFileId(null)}
-                ></div>
-                <div className="relative bg-background border border-border rounded-3xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col max-h-full">
-                    {/* Modal Header */}
-                    <div className="flex items-center justify-between p-6 border-b border-border">
-                        <div className="min-w-0">
-                            <h2 className="text-xl font-bold text-foreground truncate">{comparingFile.originalName}</h2>
-                            <p className="text-muted text-sm mt-0.5">
-                                {formatSize(comparingFile.originalSize)} → {formatSize(comparingFile.compressedSize)} 
-                                <span className="text-success ml-2">-{Math.round(((comparingFile.originalSize - comparingFile.compressedSize) / comparingFile.originalSize) * 100)}% saved</span>
-                            </p>
-                        </div>
-                        <button 
-                            onClick={() => setComparingFileId(null)}
-                            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 text-muted hover:text-foreground transition-colors"
-                        >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                        </button>
-                    </div>
-
-                    {/* Modal Content */}
-                    <div className="flex-1 overflow-auto p-6 flex items-center justify-center bg-black/40">
-                        {comparingFile.originalBlobUrl && (
-                            <ImageCompare 
-                                original={comparingFile.originalBlobUrl} 
-                                compressed={comparingFile.blobUrl} 
-                            />
-                        )}
-                    </div>
-
-                    {/* Modal Footer */}
-                    <div className="p-6 border-t border-border flex justify-end gap-3">
-                        <button 
-                            onClick={() => setComparingFileId(null)}
-                            className="px-6 py-2.5 rounded-xl font-medium text-muted hover:text-foreground transition-colors"
-                        >
-                            Close
-                        </button>
-                        <a 
-                            href={comparingFile.blobUrl} 
-                            download={`resized-${comparingFile.originalName}`}
-                            className="bg-primary hover:bg-primary/90 text-white px-8 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center gap-2"
-                        >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            Download Resized
-                        </a>
-                    </div>
-                </div>
-            </div>
-        )}
-        
-        {/* Preview Modal for Resize */}
-        {previewingFile && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 animate-[fadeIn_0.2s_ease-out]">
-                <div 
-                    className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-                    onClick={() => setPreviewFileId(null)}
-                ></div>
-                <div className="relative bg-background border border-border rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col">
-                    <div className="p-6 border-b border-border flex items-center justify-between">
-                         <h2 className="text-xl font-bold text-foreground">Resize Preview</h2>
-                         <button 
-                            onClick={() => setPreviewFileId(null)}
-                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-hover text-muted hover:text-foreground transition-colors"
-                        >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                        </button>
-                    </div>
-                    
-                    <div className="p-8 bg-black/40 flex flex-col items-center justify-center gap-4">
-                        <div className="relative border-2 border-dashed border-border rounded-lg overflow-hidden flex items-center justify-center bg-black/50 transition-all duration-300"
-                             style={{
-                                 width: resizeWidth ? `${Math.min(parseInt(resizeWidth), 400)}px` : 'auto',
-                                 height: resizeHeight ? `${Math.min(parseInt(resizeHeight), 400)}px` : 'auto',
-                                 maxWidth: '100%',
-                                 aspectRatio: (resizeWidth && resizeHeight) ? `${resizeWidth}/${resizeHeight}` : 'auto'
-                             }}
-                        >
-                             {/* Hint Text if Dimensions Missing */}
-                             {(!resizeWidth && !resizeHeight) && (
-                                 <div className="absolute inset-0 flex items-center justify-center text-xs text-center text-gray-500 p-4 pointer-events-none z-10">
-                                     Set width or height to see crop effect
-                                 </div>
-                             )}
-                             
-                             {previewingFile.originalBlobUrl && (
-                                <img 
-                                    src={previewingFile.originalBlobUrl} 
-                                    alt="Preview"
-                                    className="transition-all duration-300 max-w-full max-h-[60vh]"
-                                    style={{
-                                        width: resizeWidth ? '100%' : 'auto',
-                                        height: resizeHeight ? '100%' : 'auto',
-                                        objectFit: (resizeFit === 'inside' ? 'contain' : resizeFit) as any,
-                                    }}
-                                />
-                             )}
-                        </div>
-                        
-                        <div className="text-sm text-muted">
-                             Previewing: <span className="text-foreground font-mono">{resizeWidth || '?'} x {resizeHeight || '?'}</span> 
-                             <span className="mx-2">•</span>
-                             Mode: <span className="text-primary uppercase font-bold">{resizeFit}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )}
-
-      </main>
-      
-      <Footer />
-    </div>
-  );
+    );
 }
