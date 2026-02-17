@@ -1,29 +1,54 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
 import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
+import { Download, Move, Maximize2, Trash2, CheckCircle2 } from 'lucide-react';
 
 export default function GlassPage() {
     const [file, setFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
     const [isProcessing, setIsProcessing] = useState(false);
 
     // Glass States
-    const [blur, setBlur] = useState(20);
-    const [opacity, setOpacity] = useState(40);
+    const [blur, setBlur] = useState(30);
+    const [opacity, setOpacity] = useState(30);
     const [glowColor, setGlowColor] = useState('#10b981');
-    const [glowIntensity, setGlowIntensity] = useState(10);
+    const [glowIntensity, setGlowIntensity] = useState(15);
     const [borderWidth, setBorderWidth] = useState(1);
+
+    // Box Interaction States (Percentages)
+    const [boxPos, setBoxPos] = useState({ x: 25, y: 25 });
+    const [boxSize, setBoxSize] = useState({ w: 50, h: 50 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [isResizing, setIsResizing] = useState(false);
+    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+    const [initialBox, setInitialBox] = useState({ x: 0, y: 0, w: 0, h: 0 });
+
+    const containerRef = useRef<HTMLDivElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const handleFileSelect = (files: File[]) => {
         if (files.length > 0) {
-            setFile(files[0]);
-            setPreviewUrl(URL.createObjectURL(files[0]));
+            const f = files[0];
+            setFile(f);
+            const url = URL.createObjectURL(f);
+            setPreviewUrl(url);
+
+            const img = new Image();
+            img.onload = () => {
+                setImageSize({ width: img.width, height: img.height });
+            };
+            img.src = url;
+            
+            // Reset box to center
+            setBoxPos({ x: 25, y: 25 });
+            setBoxSize({ w: 50, h: 50 });
         }
     };
 
@@ -36,7 +61,7 @@ export default function GlassPage() {
         } else if (type === 'neon') {
             setBlur(10);
             setOpacity(60);
-            setGlowColor('#14b8a6'); // Teal
+            setGlowColor('#14b8a6');
             setGlowIntensity(30);
             setBorderWidth(2);
         } else if (type === 'soft') {
@@ -46,6 +71,123 @@ export default function GlassPage() {
             setBorderWidth(0);
         }
     };
+
+    const handleMouseDown = (e: React.MouseEvent, action: 'drag' | 'resize') => {
+        e.preventDefault();
+        if (action === 'drag') setIsDragging(true);
+        else setIsResizing(true);
+
+        setDragStart({ x: e.clientX, y: e.clientY });
+        setInitialBox({ ...boxPos, ...boxSize });
+    };
+
+    const handleMouseMove = useCallback((e: MouseEvent) => {
+        if (!isDragging && !isResizing) return;
+        if (!containerRef.current) return;
+
+        const rect = containerRef.current.getBoundingClientRect();
+        const dx = ((e.clientX - dragStart.x) / rect.width) * 100;
+        const dy = ((e.clientY - dragStart.y) / rect.height) * 100;
+
+        if (isDragging) {
+            setBoxPos({
+                x: Math.max(0, Math.min(100 - initialBox.w, initialBox.x + dx)),
+                y: Math.max(0, Math.min(100 - initialBox.h, initialBox.y + dy))
+            });
+        } else if (isResizing) {
+            setBoxSize({
+                w: Math.max(10, Math.min(100 - initialBox.x, initialBox.w + dx)),
+                h: Math.max(10, Math.min(100 - initialBox.y, initialBox.h + dy))
+            });
+        }
+    }, [isDragging, isResizing, dragStart, initialBox]);
+
+    const handleMouseUp = useCallback(() => {
+        setIsDragging(false);
+        setIsResizing(false);
+    }, []);
+
+    useEffect(() => {
+        if (isDragging || isResizing) {
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+        }
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isDragging, isResizing, handleMouseMove, handleMouseUp]);
+
+    const downloadResult = async () => {
+        if (!file || !previewUrl || !canvasRef.current) return;
+        setIsProcessing(true);
+
+        const img = new Image();
+        img.src = previewUrl;
+        await new Promise(r => img.onload = r);
+
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Ensure canvas matches high-res image
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        // 1. Draw original image
+        ctx.drawImage(img, 0, 0);
+
+        // 2. Prepare for Glass Box
+        const bx = (boxPos.x / 100) * img.width;
+        const by = (boxPos.y / 100) * img.height;
+        const bw = (boxSize.w / 100) * img.width;
+        const bh = (boxSize.h / 100) * img.height;
+
+        // 3. Create blurred region
+        // Note: Canvas filter is supported in modern browsers for blur
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = img.width;
+        tempCanvas.height = img.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        if (tempCtx) {
+            tempCtx.filter = `blur(${blur}px)`;
+            tempCtx.drawImage(img, 0, 0);
+            
+            // Draw blurred section into main canvas using clipping
+            ctx.save();
+            ctx.beginPath();
+            ctx.roundRect(bx, by, bw, bh, (16 / rectToPx(containerRef.current)) * img.width); // Rough rounded corner approximation
+            ctx.clip();
+            ctx.drawImage(tempCanvas, 0, 0);
+            ctx.restore();
+        }
+
+        // 4. Draw glass surface
+        ctx.fillStyle = `rgba(255, 255, 255, ${opacity / 1000})`;
+        ctx.fillRect(bx, by, bw, bh);
+
+        // 5. Draw border
+        ctx.strokeStyle = `rgba(255, 255, 255, ${(opacity / 500)})`;
+        ctx.lineWidth = (borderWidth / rectToPx(containerRef.current)) * img.width;
+        ctx.strokeRect(bx, by, bw, bh);
+
+        // 6. Draw "glow" (simplified as overlay for export)
+        if (glowIntensity > 0) {
+            ctx.shadowBlur = (glowIntensity / rectToPx(containerRef.current)) * img.width;
+            ctx.shadowColor = glowColor;
+            ctx.strokeRect(bx, by, bw, bh);
+        }
+
+        const link = document.createElement('a');
+        link.download = `glassmorphism-${file.name}`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        setIsProcessing(false);
+    };
+
+    function rectToPx(el: HTMLElement | null) {
+        return el ? el.getBoundingClientRect().width : 800; // fallback
+    }
 
     return (
         <div className="min-h-screen relative overflow-hidden bg-background">
@@ -99,45 +241,103 @@ export default function GlassPage() {
                                 </div>
                             </div>
                         </GlassCard>
+
+                        {file && (
+                            <button
+                                onClick={downloadResult}
+                                disabled={isProcessing}
+                                className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+                            >
+                                {isProcessing ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        Exporting...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Download size={20} />
+                                        Download Final PNG
+                                    </>
+                                )}
+                            </button>
+                        )}
                     </div>
 
                     {/* Preview Area */}
-                    <div className="lg:col-span-2">
+                    <div className="lg:col-span-2 space-y-6">
                         {!file ? (
                             <Dropzone onFileSelect={handleFileSelect} isCompressing={false} message="Upload image to design backgrounds" />
                         ) : (
-                            <div className="space-y-8 animate-[fadeIn_0.4s_ease-out]">
-                                <div className="relative aspect-video rounded-3xl overflow-hidden border border-border group bg-black/50">
+                            <div className="space-y-6 animate-[fadeIn_0.4s_ease-out]">
+                                <div className="text-center">
+                                    <p className="text-xs text-muted">Original: {imageSize.width}x{imageSize.height}px • <span className="text-primary font-bold">Drag to move, corner to resize</span></p>
+                                </div>
+
+                                <div 
+                                    ref={containerRef}
+                                    className="relative rounded-3xl overflow-hidden border border-border group bg-black/50 select-none shadow-2xl"
+                                    style={{
+                                        aspectRatio: `${imageSize.width} / ${imageSize.height}`,
+                                        maxHeight: '600px',
+                                        width: '100%',
+                                        margin: '0 auto'
+                                    }}
+                                >
                                     {/* Base Image */}
-                                    <img src={previewUrl!} alt="Base" className="absolute inset-0 w-full h-full object-cover" />
+                                    <img src={previewUrl!} alt="Base" className="absolute inset-0 w-full h-full object-contain bg-[#121212]" draggable={false} />
                                     
-                                    {/* Glass Overlay */}
-                                    <div className="absolute inset-0 flex items-center justify-center p-12">
+                                    {/* Glass Overlay Wrapper */}
+                                    <div className="absolute inset-0">
                                         <div 
-                                            className="w-full h-full rounded-2xl border transition-all duration-300 relative group/card"
+                                            className={`absolute cursor-move rounded-2xl border group/card pointer-events-auto shadow-2xl ${(!isDragging && !isResizing) ? 'transition-all duration-300' : ''}`}
+                                            onMouseDown={(e) => handleMouseDown(e, 'drag')}
                                             style={{
+                                                top: `${boxPos.y}%`,
+                                                left: `${boxPos.x}%`,
+                                                width: `${boxSize.w}%`,
+                                                height: `${boxSize.h}%`,
                                                 backdropFilter: `blur(${blur}px)`,
                                                 backgroundColor: `rgba(255, 255, 255, ${opacity / 1000})`,
                                                 borderColor: `rgba(255, 255, 255, ${opacity / 500})`,
                                                 borderWidth: `${borderWidth}px`,
-                                                boxShadow: `0 0 ${glowIntensity}px rgba(${hexToRgb(glowColor)}, 0.3), inset 0 0 ${glowIntensity/2}px rgba(${hexToRgb(glowColor)}, 0.2)`
+                                                boxShadow: `0 0 ${glowIntensity}px rgba(${hexToRgb(glowColor)}, 0.3), inset 0 0 ${glowIntensity/2}px rgba(${hexToRgb(glowColor)}, 0.2)`,
+                                                willChange: 'top, left, width, height, backdrop-filter'
                                             }}
                                         >
+                                            {/* Indicators */}
+                                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity bg-black/10 pointer-events-none">
+                                                <Move className="text-white/50" size={32} />
+                                            </div>
+
+                                            {/* Resize Handle */}
+                                            <div 
+                                                className="absolute bottom-0 right-0 w-6 h-6 cursor-nwse-resize flex items-center justify-center"
+                                                onMouseDown={(e) => {
+                                                    e.stopPropagation();
+                                                    handleMouseDown(e, 'resize');
+                                                }}
+                                            >
+                                                <div className="w-2 h-2 bg-white rounded-full shadow-lg"></div>
+                                            </div>
+
                                             {/* Reflection highlight */}
                                             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none rounded-2xl"></div>
                                         </div>
                                     </div>
 
-                                    <div className="absolute bottom-6 right-6">
-                                        <button onClick={() => setFile(null)} className="bg-black/40 backdrop-blur-md text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-black/60 transition-all">Change Image</button>
+                                    <div className="absolute top-6 right-6 z-20">
+                                        <button onClick={() => setFile(null)} className="bg-black/40 backdrop-blur-md text-white p-2 rounded-xl hover:bg-red-500 transition-all shadow-lg border border-white/10" title="Remove Image">
+                                            <Trash2 size={20} />
+                                        </button>
                                     </div>
                                 </div>
 
                                 <div className="flex justify-center flex-col items-center gap-4 text-center">
-                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold animate-bounce">
-                                        ✨ Premium Aesthetic Achieved
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold animate-bounce shadow-sm">
+                                        <CheckCircle2 size={14} />
+                                        Interaction Enabled
                                     </div>
-                                    <p className="text-muted text-sm max-w-sm">Capture this look to use as a card style or hero section background in your UI projects.</p>
+                                    <p className="text-muted text-sm max-w-sm">Move and resize the glass box above. Your download will be high-resolution.</p>
                                 </div>
                             </div>
                         )}
@@ -145,6 +345,7 @@ export default function GlassPage() {
                 </div>
             </main>
 
+            <canvas ref={canvasRef} className="hidden" />
             <Footer />
         </div>
     );

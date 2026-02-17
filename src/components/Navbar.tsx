@@ -27,7 +27,6 @@ export default function Navbar() {
       links: [
         { href: "/filters", label: "Filters" },
         { href: "/glass", label: "Glass" },
-        { href: "/tracer", label: "Tracer" },
         { href: "/crop", label: "Smart Crop" },
       ]
     },
