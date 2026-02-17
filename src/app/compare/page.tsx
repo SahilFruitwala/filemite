@@ -39,7 +39,7 @@ export default function ComparePage() {
       {/* Feature Highlight Cards */}
       <div className="grid md:grid-cols-3 gap-6 mb-20">
         <div className="p-6 rounded-2xl bg-surface border border-border backdrop-blur-sm hover:bg-surface-hover transition-colors">
-          <div className="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-4">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
             <Shield size={24} />
           </div>
           <h3 className="text-xl font-semibold mb-2 text-foreground">Local-First Privacy</h3>
@@ -57,7 +57,7 @@ export default function ComparePage() {
           </p>
         </div>
         <div className="p-6 rounded-2xl bg-surface border border-border backdrop-blur-sm hover:bg-surface-hover transition-colors">
-          <div className="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-4">
+          <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-4">
             <Zap size={24} />
           </div>
           <h3 className="text-xl font-semibold mb-2 text-foreground">Hybrid Speed</h3>
@@ -162,8 +162,8 @@ export default function ComparePage() {
         </div>
 
         {/* Transparency Note */}
-        <div className="px-6 py-6 rounded-2xl bg-blue-500/5 border border-blue-500/10 flex gap-4 items-start">
-            <div className="shrink-0 mt-1 text-blue-400">
+        <div className="px-6 py-6 rounded-2xl bg-surface border border-border flex gap-4 items-start">
+            <div className="shrink-0 mt-1 text-primary">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
             </div>
             <div className="space-y-3">
@@ -174,7 +174,7 @@ export default function ComparePage() {
                 <p className="text-sm text-muted leading-relaxed">
                     Concerned about longevity or privacy? <strong>You don't have to rely on us.</strong> MicroPng is 100% Open Source. You can clone the repository and run your own private instance locally.
                 </p>
-                <a href="https://github.com/SahilFruitwala/MicroPng" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                <a href="https://github.com/SahilFruitwala/MicroPng" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary-hover font-medium transition-colors">
                     View on GitHub <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
                 </a>
             </div>

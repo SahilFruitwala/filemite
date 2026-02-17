@@ -31,11 +31,13 @@ export default function ResizePage() {
   const [resizeWidth, setResizeWidth] = useState<string>('');
   const [resizeHeight, setResizeHeight] = useState<string>('');
   const [resizeFit, setResizeFit] = useState<'cover' | 'contain' | 'fill' | 'inside'>('cover');
+  const [lockAspectRatio, setLockAspectRatio] = useState(true);
 
   const applyPreset = (width: string, height: string) => {
       setResizeWidth(width);
       setResizeHeight(height);
       setResizeFit('cover');
+      setLockAspectRatio(true);
   };
 
   const downloadAllAsZip = async () => {
@@ -218,31 +220,46 @@ export default function ResizePage() {
                         </div>
 
                         <div className="grid gap-6">
-                            <div className="flex gap-4">
-                                <div className="flex-1">
-                                    <label className="text-xs text-subtle mb-2 block uppercase tracking-wider font-semibold">Width</label>
-                                    <div className="relative">
-                                        <input
-                                            type="number"
-                                            value={resizeWidth}
-                                            onChange={(e) => setResizeWidth(e.target.value)}
-                                            placeholder="Auto"
-                                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
-                                        />
-                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted pointer-events-none">PX</span>
+                            <div className="flex flex-col gap-4">
+                                <div className="flex gap-4">
+                                    <div className="flex-1">
+                                        <label className="text-xs text-subtle mb-2 block uppercase tracking-wider font-semibold">Width</label>
+                                        <div className="relative">
+                                            <input
+                                                type="number"
+                                                value={resizeWidth}
+                                                onChange={(e) => setResizeWidth(e.target.value)}
+                                                placeholder="Auto"
+                                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
+                                            />
+                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted pointer-events-none">PX</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="flex-1">
-                                    <label className="text-xs text-subtle mb-2 block uppercase tracking-wider font-semibold">Height</label>
-                                    <div className="relative">
-                                        <input
-                                            type="number"
-                                            value={resizeHeight}
-                                            onChange={(e) => setResizeHeight(e.target.value)}
-                                            placeholder="Auto"
-                                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
-                                        />
-                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted pointer-events-none">PX</span>
+                                    <div className="flex items-end pb-3">
+                                        <button 
+                                            onClick={() => setLockAspectRatio(!lockAspectRatio)}
+                                            className={`p-2 rounded-lg transition-all ${lockAspectRatio ? 'text-primary bg-primary/10' : 'text-muted hover:text-foreground hover:bg-surface'}`}
+                                            title={lockAspectRatio ? "Unlink Aspect Ratio" : "Link Aspect Ratio"}
+                                        >
+                                            {lockAspectRatio ? (
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 7h10v10H7z"/><path d="M16 21v-2a4 4 0 0 0-4-4H9"/><path d="M7 21v-2a4 4 0 0 1 4-4h3"/></svg>
+                                            ) : (
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zM15 5.88l2.88 2.88"/><path d="M13.88 4.75l2.25 2.25"/><path d="M16.12 7l2.25 2.25"/></svg>
+                                            )}
+                                        </button>
+                                    </div>
+                                    <div className="flex-1">
+                                        <label className="text-xs text-subtle mb-2 block uppercase tracking-wider font-semibold">Height</label>
+                                        <div className="relative">
+                                            <input
+                                                type="number"
+                                                value={resizeHeight}
+                                                onChange={(e) => setResizeHeight(e.target.value)}
+                                                placeholder="Auto"
+                                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-mono"
+                                            />
+                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted pointer-events-none">PX</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
