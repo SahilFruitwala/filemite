@@ -137,13 +137,13 @@ export default function WatermarkPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-center">
-      <BackgroundGlow color="indigo" />
+      <BackgroundGlow color="teal" />
       
       <Navbar />
 
       <main className="container mx-auto px-6 pt-32 pb-20">
         <PageHeader 
-            title={<>Add Watermark <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Instantly.</span></>}
+            title={<>Add Watermark <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">Instantly.</span></>}
             description="Protect your images properly. Add logos or text watermarks with full control over opacity and positioning."
         />
 

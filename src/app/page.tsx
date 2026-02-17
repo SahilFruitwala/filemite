@@ -213,7 +213,7 @@ export default function Home() {
 
       <main className="container mx-auto px-6 pt-32 pb-20">
         <PageHeader 
-          title={<>Compress Images <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Flawlessly.</span></>}
+          title={<>Compress Images <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">Flawlessly.</span></>}
         />
 
             {/* Compression Settings Panel */}
@@ -243,12 +243,12 @@ export default function Home() {
                              </div>
 
                             {isMobile && processingMode === 'server' && (
-                                <div className="bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 flex gap-3 animate-in fade-in slide-in-from-top-2">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <div className="bg-teal-500/5 dark:bg-teal-500/10 border border-teal-500/20 rounded-xl p-3 flex gap-3 animate-in fade-in slide-in-from-top-2">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-600 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                     <div className="flex flex-col gap-0.5">
-                                        <span className="text-xs font-bold text-blue-700 uppercase tracking-tight">Mobile Optimization Active</span>
+                                        <span className="text-xs font-bold text-teal-700 uppercase tracking-tight">Mobile Optimization Active</span>
                                         <p className="text-xs text-foreground/80 leading-relaxed font-medium">
-                                            Browser-side compression is difficult on mobile devices due to CPU limits. We recommend sticking with <span className="text-foreground font-bold underline decoration-blue-500/30 underline-offset-2">Server Mode</span> for a smoother experience.
+                                            Browser-side compression is difficult on mobile devices due to CPU limits. We recommend sticking with <span className="text-foreground font-bold underline decoration-teal-500/30 underline-offset-2">Server Mode</span> for a smoother experience.
                                         </p>
                                     </div>
                                 </div>
@@ -261,8 +261,8 @@ export default function Home() {
                                         <span className="text-xs font-bold text-amber-700 uppercase tracking-tight">{isMobile ? "Warning: Performance Impact" : "Browser Mode Warning"}</span>
                                         <p className="text-xs text-foreground/90 leading-relaxed font-medium">
                                             {isMobile 
-                                                ? "Browser mode is very difficult for mobile hardware to handle. You may experience slow processing or browser crashes." 
-                                                : "In-browser compression might not always work as expected or produce the highest quality results."}
+                                                ? "Browser mode is very difficult on mobile. You may experience slow down." 
+                                                : "In-browser compression depends on your device capabilities."}
                                             <span className="text-foreground font-bold underline decoration-amber-500/30 underline-offset-2 ml-1"> Server Mode is recommended.</span>
                                         </p>
                                     </div>

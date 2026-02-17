@@ -114,7 +114,7 @@ export default function ScrubPage() {
 
       <main className="container mx-auto px-6 pt-32 pb-20">
         <PageHeader 
-            title={<>Privacy First. <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">Scrub Metadata.</span></>}
+            title={<>Privacy First. <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Scrub Metadata.</span></>}
             description="View hidden data in your photos (GPS, Model, Settings) and strip it clean before sharing."
         />
 
@@ -163,7 +163,7 @@ export default function ScrubPage() {
                 <GlassCard className="h-fit max-h-[800px] overflow-hidden flex flex-col p-6">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-xl font-bold flex items-center gap-2 text-foreground">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-400"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-400"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                             Metadata Report
                         </h2>
                     </div>
@@ -171,7 +171,7 @@ export default function ScrubPage() {
                     <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar mb-6">
                         {file.status === 'scanning' ? (
                             <div className="py-12 text-center">
-                                <div className="w-8 h-8 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin mx-auto mb-4"></div>
+                                <div className="w-8 h-8 rounded-full border-2 border-teal-500 border-t-transparent animate-spin mx-auto mb-4"></div>
                                 <p className="text-muted">Scanning image data...</p>
                             </div>
                         ) : file.metadata ? (
@@ -187,15 +187,15 @@ export default function ScrubPage() {
 
                     {file.status === 'scanned' && (
                         <div className="pt-6 border-t border-border animate-in fade-in slide-in-from-bottom-2">
-                             <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 mb-4">
-                                <p className="text-yellow-200 text-sm flex gap-2">
+                             <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-4">
+                                <p className="text-amber-200 text-sm flex gap-2">
                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                      Review the metadata above. Proceed to scrub to permanently remove this information.
                                 </p>
                              </div>
                              <button 
                                 onClick={handleScrub}
-                                className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 text-lg shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)]"
+                                className="w-full bg-teal-500 hover:bg-teal-400 text-black font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 text-lg shadow-[0_0_20px_rgba(20,184,166,0.3)] hover:shadow-[0_0_30px_rgba(20,184,166,0.5)]"
                              >
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                 Continue to Scrub Data

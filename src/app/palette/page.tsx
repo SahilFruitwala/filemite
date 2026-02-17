@@ -72,7 +72,7 @@ export default function PalettePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-center selection:bg-primary/30">
-      <BackgroundGlow color="blue" />
+      <BackgroundGlow color="teal" />
       <Navbar />
       
       <main className="container mx-auto px-6 pt-32 pb-20">
