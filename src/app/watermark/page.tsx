@@ -7,12 +7,14 @@ import Dropzone from '@/components/Dropzone';
 import WatermarkSettings, { WatermarkConfig } from '@/components/WatermarkSettings';
 import ResultCard from '@/components/ResultCard';
 import { CompressedFile } from '@/types';
+import { MAX_SERVER_IMAGES, LIMIT_REASONS } from '@/lib/constants';
 import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 
 export default function WatermarkPage() {
   const [files, setFiles] = useState<CompressedFile[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errorVisible, setError] = useState<string | null>(null);
   const [comparisons, setComparisons] = useState<Record<string, boolean>>({});
   const [watermarkConfig, setWatermarkConfig] = useState<WatermarkConfig>({
       type: 'text', // Default to text so it's obvious what to do
@@ -32,6 +34,11 @@ export default function WatermarkPage() {
   };
 
   const handleFilesSelect = async (selectedFiles: File[]) => {
+    if (selectedFiles.length > MAX_SERVER_IMAGES) {
+        setError(`Limit exceeded: Only ${MAX_SERVER_IMAGES} images can be processed at once.`);
+        selectedFiles = selectedFiles.slice(0, MAX_SERVER_IMAGES);
+    }
+
     // Initialize file states
     const newFiles: CompressedFile[] = selectedFiles.map(file => ({
         id: Math.random().toString(36).substr(2, 9),
@@ -147,14 +154,34 @@ export default function WatermarkPage() {
             description="Protect your images properly. Add logos or text watermarks with full control over opacity and positioning."
         />
 
-             {/* Watermark Settings Panel */}
-             <div className="max-w-xl mx-auto mb-16 px-4 sm:px-0">
+              {/* Watermark Settings Panel */}
+             <div className="max-w-xl mx-auto mb-16 px-4 sm:px-0 flex flex-col gap-6">
+                  <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 flex gap-3">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                      <div className="flex flex-col gap-0.5">
+                          <span className="text-xs font-bold text-primary uppercase tracking-tight">Bulk Upload Limits</span>
+                          <p className="text-[11px] text-foreground/80 leading-relaxed font-medium">
+                              {LIMIT_REASONS.SERVER}
+                          </p>
+                      </div>
+                  </div>
                   <WatermarkSettings config={watermarkConfig} onChange={setWatermarkConfig} />
              </div>
 
 
         {/* Dropzone / Result Area */}
         <div className="mb-32">
+            {errorVisible && (
+                <div className="max-w-xl mx-auto mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-2xl flex items-center justify-between text-destructive animate-in fade-in slide-in-from-top-4">
+                    <div className="flex items-center gap-3">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span className="text-sm font-bold">{errorVisible}</span>
+                    </div>
+                    <button onClick={() => setError(null)} className="hover:opacity-70">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            )}
             {files.length === 0 ? (
                  <Dropzone onFileSelect={handleFilesSelect} isCompressing={isProcessing} />
             ) : (

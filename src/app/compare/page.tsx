@@ -110,7 +110,7 @@ export default function ComparePage() {
         />
         <ComparisonRow 
           feature="Batch Processing"
-          micro="High Capacity"
+          micro="Up to 50 (Browser) / 20 (Server)"
           tiny="20 Images Max"
           isBetter={true}
         />

@@ -10,6 +10,7 @@ import JSZip from 'jszip';
 import Dropzone from '@/components/Dropzone';
 import ResultCard from '@/components/ResultCard';
 import { CompressedFile, CompressionLevel } from '@/types';
+import { MAX_SERVER_IMAGES, MAX_BROWSER_IMAGES, LIMIT_REASONS } from '@/lib/constants';
 
 import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
@@ -24,6 +25,7 @@ export default function Home() {
   const [comparisons, setComparisons] = useState<Record<string, boolean>>({}); // Track which files have comparison active
   const [targetSize, setTargetSize] = useState<string>(''); // in KB
   const [useTargetSize, setUseTargetSize] = useState(false);
+  const [errorVisible, setError] = useState<string | null>(null);
 
   const downloadAllAsZip = async () => {
       const doneFiles = files.filter((f: CompressedFile) => f.status === 'done' && (f.blobUrl || f.clientStats?.blobUrl));
@@ -84,6 +86,13 @@ export default function Home() {
   };
 
   const handleFilesSelect = async (selectedFiles: File[]) => {
+    const limit = processingMode === 'server' ? MAX_SERVER_IMAGES : MAX_BROWSER_IMAGES;
+    
+    if (selectedFiles.length > limit) {
+        setError(`Limit exceeded: Only ${limit} images can be processed at once in ${processingMode} mode.`);
+        selectedFiles = selectedFiles.slice(0, limit);
+    }
+
     // Initialize file states
     const newFiles: CompressedFile[] = selectedFiles.map(file => ({
         id: Math.random().toString(36).substr(2, 9),
@@ -304,6 +313,16 @@ export default function Home() {
                                 </div>
                             )}
 
+                            <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 flex gap-3">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <div className="flex flex-col gap-0.5">
+                                    <span className="text-xs font-bold text-primary uppercase tracking-tight">Bulk Upload Limits</span>
+                                    <p className="text-[11px] text-foreground/80 leading-relaxed font-medium">
+                                        {processingMode === 'server' ? LIMIT_REASONS.SERVER : LIMIT_REASONS.BROWSER}
+                                    </p>
+                                </div>
+                            </div>
+
                              <div className="relative">
                                  {/* Manual Quality Controls */}
                                  <div className={`transition-all duration-300 ${useTargetSize ? 'opacity-20 blur-sm pointer-events-none scale-95' : 'opacity-100 scale-100'}`}>
@@ -406,6 +425,17 @@ export default function Home() {
 
         {/* Dropzone / Result Area */}
         <div className="mb-32 container mx-auto px-6">
+            {errorVisible && (
+                <div className="max-w-xl mx-auto mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-2xl flex items-center justify-between text-destructive animate-in fade-in slide-in-from-top-4">
+                    <div className="flex items-center gap-3">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span className="text-sm font-bold">{errorVisible}</span>
+                    </div>
+                    <button onClick={() => setError(null)} className="hover:opacity-70">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            )}
             {files.length === 0 ? (
                  <Dropzone onFileSelect={handleFilesSelect} isCompressing={isProcesssing} />
             ) : (

@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
 import { PDFDocument, rgb } from 'pdf-lib';
 import * as pdfjsLib from 'pdfjs-dist';
+import { MAX_BROWSER_IMAGES, LIMIT_REASONS } from '@/lib/constants';
 import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
@@ -32,8 +33,11 @@ export default function PDFPage() {
     const [previewFile, setPreviewFile] = useState<ProcessedFile | null>(null);
 
     const handleFilesSelect = (selectedFiles: File[]) => {
+        if (files.length + selectedFiles.length > MAX_BROWSER_IMAGES) {
+            setError(`Limit exceeded: Only ${MAX_BROWSER_IMAGES} images can be processed at once.`);
+            selectedFiles = selectedFiles.slice(0, MAX_BROWSER_IMAGES - files.length);
+        }
         setFiles(prev => [...prev, ...selectedFiles]);
-        setError(null);
     };
 
     const handleReset = () => {
@@ -200,6 +204,16 @@ export default function PDFPage() {
                         >
                             PDF to Images
                         </button>
+                    </div>
+
+                    <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 flex gap-3 mb-8">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        <div className="flex flex-col gap-0.5">
+                            <span className="text-xs font-bold text-primary uppercase tracking-tight">Bulk Upload Limits</span>
+                            <p className="text-[11px] text-foreground/80 leading-relaxed font-medium">
+                                {LIMIT_REASONS.BROWSER}
+                            </p>
+                        </div>
                     </div>
 
                     <GlassCard>
