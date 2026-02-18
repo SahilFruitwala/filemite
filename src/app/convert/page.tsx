@@ -132,30 +132,30 @@ export default function ConvertPage() {
 
       <main className="container mx-auto px-6 pt-32 pb-20">
         <PageHeader 
-            title={<>Convert image formats <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">instantly and Lossless.</span></>}
+            title={<>Convert image formats <br /> <span className="text-muted">instantly and Lossless.</span></>}
         />
 
             <div className="max-w-xl mx-auto mb-16">
                  <GlassCard>
-                     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 transition-opacity pointer-events-none"></div>
+
 
                      <div className="relative z-10 flex flex-col gap-6">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between p-6">
                             <h3 className="text-foreground font-medium flex items-center gap-2">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M21 16v5h-5"/><path d="M3 16v5h5"/><path d="M7 21L21 7M7 3l14 14"/></svg>
                                 Target Format
                             </h3>
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-4 md:p-6">
                             {(['webp', 'png', 'jpeg', 'avif'] as const).map((format) => (
                                 <button
                                     key={format}
                                     onClick={() => setTargetFormat(format)}
-                                    className={`py-3 px-2 rounded-xl text-sm font-medium transition-all duration-200 border uppercase ${
+                                    className={`py-4 px-4 rounded-xl text-sm font-bold transition-all duration-200 border uppercase tracking-wider ${
                                         targetFormat === format 
                                             ? 'bg-primary text-white border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]' 
-                                            : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-foreground'
+                                            : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-white'
                                     }`}
                                 >
                                     {format}
@@ -230,14 +230,20 @@ export default function ConvertPage() {
                         {files.map((file) => (
                             <ResultCard 
                                 key={file.id} 
-                                file={file} 
-                                type="convert"
-                                onDownload={() => {
-                                    const link = document.createElement('a');
-                                    link.href = file.blobUrl || '';
-                                    link.download = `${file.originalName.replace(/\.[^/.]+$/, "")}.${targetFormat}`;
-                                    link.click();
+                                originalFile={file.fileRaw!}
+                                compressedUrl={file.blobUrl || ''}
+                                compressedSize={file.compressedSize}
+                                outputFormat={targetFormat}
+                                stats={{
+                                    originalSize: formatSize(file.originalSize),
+                                    compressedSize: formatSize(file.compressedSize),
+                                    compressionRatio: 'N/A',
+                                    reduction: file.compressedSize > 0 
+                                        ? `${Math.round(((file.originalSize - file.compressedSize) / file.originalSize) * 100)}%` 
+                                        : '0%',
+                                    timeTaken: "0ms" // Time not tracked in this flow currently
                                 }}
+                                onReset={handleReset}
                             />
                         ))}
                     </div>

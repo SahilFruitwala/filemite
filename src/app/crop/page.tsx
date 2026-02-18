@@ -86,14 +86,14 @@ export default function CropPage() {
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <PageHeader 
-                    title={<>Smart <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">AI-Powered Cropping.</span></>}
+                    title={<>Smart <br /> <span className="text-muted">AI-Powered Cropping.</span></>}
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
                     {/* Controls */}
                     <div className="lg:col-span-1 space-y-6">
                         <GlassCard>
-                            <div className="space-y-6">
+                            <div className="space-y-6 p-6">
                                 <h3 className="text-foreground font-medium flex items-center gap-2">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M6 2v20M18 2v20M2 6h20M2 18h20"/></svg>
                                     Focal Detection

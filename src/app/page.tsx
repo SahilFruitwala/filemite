@@ -248,19 +248,19 @@ export default function Home() {
 
       <main className="container mx-auto px-6 pt-32 pb-20">
         <PageHeader 
-          title={<>Compress Images <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">Flawlessly.</span></>}
+          title={<>Compress Images <span className="text-primary">Flawlessly.</span></>}
         />
 
             {/* Compression Settings Panel */}
             <div className="max-w-xl mx-auto mb-16">
                      <GlassCard>
-                         <div className="relative z-10 flex flex-col gap-6">
+                         <div className="relative z-10 flex flex-col gap-6 p-6">
                              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                                 <h3 className="text-foreground font-medium flex items-center gap-2">
-                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-                                     Compression Settings
+                                 <h3 className="text-foreground font-medium flex items-center gap-2 text-sm sm:text-base">
+                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary shrink-0"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                                     <span className="truncate">Compression Settings</span>
                                  </h3>
-                                 <div className="flex gap-2">
+                                 <div className="flex gap-2 w-full sm:w-auto justify-end">
                                      <div 
                                          className={`flex items-center gap-3 cursor-pointer group/mode-toggle transition-opacity duration-300`}
                                          onClick={() => {
@@ -270,7 +270,7 @@ export default function Home() {
                                      >
                                          <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${processingMode === 'client' ? 'text-primary' : 'text-muted'}`}>Browser</span>
                                          <div className={`w-10 h-5 rounded-full p-1 transition-all duration-300 relative ${processingMode === 'server' ? 'bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]' : 'bg-surface border border-border'}`}>
-                                             <div className={`w-3 h-3 bg-white rounded-full shadow-md transition-all duration-300 transform ${processingMode === 'server' ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                             <div className={`w-3 h-3 bg-primary rounded-full shadow-md transition-all duration-300 transform ${processingMode === 'server' ? 'bg-white translate-x-5' : 'translate-x-0'}`}></div>
                                          </div>
                                          <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${processingMode === 'server' ? 'text-primary' : 'text-muted'}`}>Server</span>
                                      </div>
@@ -308,13 +308,13 @@ export default function Home() {
                                  {/* Manual Quality Controls */}
                                  <div className={`transition-all duration-300 ${useTargetSize ? 'opacity-20 blur-sm pointer-events-none scale-95' : 'opacity-100 scale-100'}`}>
                                     <label className="text-sm text-muted mb-3 block">Quality Preset</label>
-                                    <div className="grid grid-cols-3 gap-2">
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                         {(['best', 'mid', 'low'] as const).map((level) => (
                                             <button
                                                 key={level}
                                                 onClick={() => !useTargetSize && setCompressionLevel(level)}
                                                 disabled={useTargetSize}
-                                                className={`py-3 px-2 rounded-xl text-sm font-medium transition-all duration-200 border ${
+                                                className={`py-3 sm:py-4 px-4 rounded-xl text-sm font-bold transition-all duration-200 border uppercase tracking-wider ${
                                                     compressionLevel === level 
                                                         ? 'bg-primary text-white border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]' 
                                                         : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-white'
@@ -332,17 +332,17 @@ export default function Home() {
                                  {processingMode === 'client' && (
                                      <div className="mt-4 p-3 bg-surface/50 border border-border/50 rounded-xl animate-in fade-in slide-in-from-top-2">
                                          <label className="text-xs font-bold text-muted uppercase tracking-wider mb-2 block">Output Format</label>
-                                         <div className="grid grid-cols-3 gap-2">
+                                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                              {(['original', 'webp', 'jpeg'] as const).map((format) => (
-                                                 <button
-                                                     key={format}
-                                                     onClick={() => setOutputFormat(format)}
-                                                     className={`py-2 px-1 rounded-lg text-xs font-bold uppercase tracking-tight transition-all duration-200 border ${
-                                                         outputFormat === format 
-                                                             ? 'bg-primary/20 text-primary border-primary/50' 
-                                                             : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-white'
-                                                     }`}
-                                                 >
+                                                  <button
+                                                      key={format}
+                                                      onClick={() => setOutputFormat(format)}
+                                                      className={`py-3 px-3 rounded-lg text-xs font-black uppercase tracking-widest transition-all duration-200 border ${
+                                                          outputFormat === format 
+                                                              ? 'bg-primary/20 text-primary border-primary/50' 
+                                                              : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-white'
+                                                      }`}
+                                                  >
                                                      {format === 'original' ? 'Original' : format.toUpperCase()}
                                                  </button>
                                              ))}
@@ -366,10 +366,10 @@ export default function Home() {
                                             }}
                                         >
                                             <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 relative ${useTargetSize ? 'bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]' : 'bg-surface border border-border'}`}>
-                                                <div className={`w-4 h-4 bg-white rounded-full shadow-md transition-all duration-300 transform ${useTargetSize ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                                <div className={`w-4 h-4 bg-primary rounded-full shadow-md transition-all duration-300 transform ${useTargetSize ? 'bg-white translate-x-5' : 'translate-x-0'}`}></div>
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className={`text-sm font-semibold transition-colors ${useTargetSize ? 'text-white' : 'text-muted group-hover/toggle:text-gray-300'}`}>Specify Target Size</span>
+                                                <span className={`text-sm font-semibold transition-colors ${useTargetSize ? 'text-gray-600' : 'text-muted group-hover/toggle:text-gray-400'}`}>Specify Target Size</span>
                                                 <span className="text-[10px] text-subtle uppercase tracking-widest font-bold">Priority over quality</span>
                                             </div>
                                         </div>
@@ -405,23 +405,23 @@ export default function Home() {
 
 
         {/* Dropzone / Result Area */}
-        <div className="mb-32">
+        <div className="mb-32 container mx-auto px-6">
             {files.length === 0 ? (
                  <Dropzone onFileSelect={handleFilesSelect} isCompressing={isProcesssing} />
             ) : (
                 <div className="w-full max-w-4xl mx-auto space-y-4">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold text-foreground">Your Optimized Images</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Your Optimized Images</h2>
                         <div className="flex items-center gap-4">
                             {files.filter((f: CompressedFile) => f.status === 'done').length > 1 && (
                                 <button 
                                     onClick={downloadAllAsZip}
 
                                     disabled={isZipping}
-                                    className="text-sm font-bold text-primary hover:text-primary/80 flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl transition-all"
+                                    className="text-sm font-bold text-primary hover:text-primary/80 flex items-center gap-2 bg-primary/10 px-4 py-2 border-2 border-primary hover:bg-primary hover:text-white transition-all shadow-[4px_4px_0px_0px_var(--color-primary)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                                 >
                                     {isZipping ? (
-                                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
                                     ) : (
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                     )}
@@ -430,7 +430,7 @@ export default function Home() {
                             )}
                             <button 
                                 onClick={handleReset}
-                                className="text-sm text-muted hover:text-foreground underline underline-offset-4"
+                                className="text-sm font-bold uppercase tracking-wide text-muted hover:text-foreground underline underline-offset-4"
                             >
                                 Start Over
                             </button>
@@ -438,18 +438,21 @@ export default function Home() {
                     </div>
 
                     <div className="grid gap-4">
-                        {files.map((file) => (
+                        {files.filter(f => f.status === 'done').map((file) => (
                             <ResultCard 
-                                key={file.id} 
-                                file={file} 
-                                type="compress"
-                                onDownload={() => {
-                                    const link = document.createElement('a');
-                                    link.href = file.blobUrl || file.clientStats?.blobUrl || '';
-                                    const extension = file.outputFormat || file.fileRaw?.name.split('.').pop() || 'webp';
-                                    link.download = `optimized-${file.originalName.replace(/\.[^/.]+$/, "")}.${extension}`;
-                                    link.click();
+                                key={file.id}
+                                originalFile={file.fileRaw!}
+                                compressedUrl={file.blobUrl || file.clientStats?.blobUrl || ''}
+                                compressedSize={file.compressedSize}
+                                outputFormat={file.outputFormat || 'webp'}
+                                stats={{
+                                    originalSize: formatSize(file.originalSize),
+                                    compressedSize: formatSize(file.compressedSize),
+                                    compressionRatio: 'N/A', // Computed inside? No, passed as prop implies outside. But reduction is passed.
+                                    reduction: `${Math.round(((file.originalSize - file.compressedSize) / file.originalSize) * 100)}%`,
+                                    timeTaken: `${(file.serverStats?.time || file.clientStats?.time || 0).toFixed(0)}ms`
                                 }}
+                                onReset={handleReset}
                             />
                         ))}
                     </div>

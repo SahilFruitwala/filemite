@@ -143,14 +143,14 @@ export default function WatermarkPage() {
 
       <main className="container mx-auto px-6 pt-32 pb-20">
         <PageHeader 
-            title={<>Add Watermark <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">Instantly.</span></>}
+            title={<>Add Watermark <span className="text-primary">Instantly.</span></>}
             description="Protect your images properly. Add logos or text watermarks with full control over opacity and positioning."
         />
 
              {/* Watermark Settings Panel */}
-            <div className="max-w-xl mx-auto mb-16">
-                 <WatermarkSettings config={watermarkConfig} onChange={setWatermarkConfig} />
-            </div>
+             <div className="max-w-xl mx-auto mb-16 px-4 sm:px-0">
+                  <WatermarkSettings config={watermarkConfig} onChange={setWatermarkConfig} />
+             </div>
 
 
         {/* Dropzone / Result Area */}
@@ -172,15 +172,19 @@ export default function WatermarkPage() {
                     <div className="grid gap-4">
                         {files.map((file) => (
                             <ResultCard 
-                                key={file.id} 
-                                file={file} 
-                                type="watermark"
-                                onDownload={() => {
-                                    const link = document.createElement('a');
-                                    link.href = file.serverStats?.blobUrl || '';
-                                    link.download = `watermark-${file.originalName}`;
-                                    link.click();
+                                key={file.id}
+                                originalFile={file.fileRaw!}
+                                compressedUrl={file.serverStats?.blobUrl || ''}
+                                compressedSize={file.serverStats?.size || 0}
+                                outputFormat={file.originalName.split('.').pop() || 'png'}
+                                stats={{
+                                    originalSize: formatSize(file.originalSize),
+                                    compressedSize: formatSize(file.serverStats?.size || 0),
+                                    compressionRatio: 'N/A',
+                                    reduction: '0%', // Watermarking usually adds size
+                                    timeTaken: `${(file.serverStats?.time || 0).toFixed(0)}ms`
                                 }}
+                                onReset={handleReset}
                             />
                         ))}
                     </div>

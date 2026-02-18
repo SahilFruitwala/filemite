@@ -56,7 +56,7 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
 
     return (
         <GlassCard className="mt-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 p-6">
                 <h3 className="text-foreground font-medium flex items-center gap-2">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                         <path d="M12 19L19 12L22 15L15 22L12 19Z" />
@@ -66,22 +66,22 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                     Watermark
                 </h3>
                 
-                <div className="flex bg-surface rounded-lg p-1 border border-border">
+                <div className="flex bg-surface rounded-lg p-1.5 border border-border">
                      <button
                         onClick={() => handleTypeChange(null)}
-                        className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${config.type === null ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-foreground'}`}
+                        className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${config.type === null ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-foreground'}`}
                     >
                         None
                     </button>
                     <button
                         onClick={() => handleTypeChange('text')}
-                        className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${config.type === 'text' ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-foreground'}`}
+                        className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${config.type === 'text' ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-foreground'}`}
                     >
                         Text
                     </button>
                     <button
                         onClick={() => handleTypeChange('image')}
-                        className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${config.type === 'image' ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-foreground'}`}
+                        className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${config.type === 'image' ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-foreground'}`}
                     >
                         Image
                     </button>
@@ -89,7 +89,7 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
             </div>
 
             {config.type && (
-                <div className="space-y-6">
+                <div className="space-y-6 p-6">
                     {/* Content Section */}
                     <div className="bg-surface rounded-xl p-4 border border-border">
                         <label className="text-sm text-subtle mb-2 block font-medium">Content</label>
@@ -159,16 +159,16 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                              <label className="text-sm text-subtle font-medium mb-3 block">Position</label>
                              <div className="grid grid-cols-3 gap-2">
                                 {positions.map((pos) => (
-                                    <button
-                                        key={pos.id}
-                                        onClick={() => handlePositionChange(pos.id)}
-                                        className={`h-10 rounded-lg border flex items-center justify-center transition-all ${
-                                            config.position === pos.id 
-                                                ? 'bg-primary/20 border-primary text-primary' 
-                                                : 'bg-surface border-transparent text-subtle hover:bg-surface-hover hover:text-foreground'
-                                        }`}
-                                        title={pos.label}
-                                    >
+                                     <button
+                                         key={pos.id}
+                                         onClick={() => handlePositionChange(pos.id)}
+                                         className={`h-12 rounded-lg border-2 flex items-center justify-center transition-all ${
+                                             config.position === pos.id 
+                                                 ? 'bg-primary/20 border-primary text-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.2)]' 
+                                                 : 'bg-surface border-transparent text-subtle hover:bg-surface-hover hover:text-foreground'
+                                         }`}
+                                         title={pos.label}
+                                     >
                                         <div className="w-5 h-5 flex items-center justify-center">
                                             {pos.icon}
                                         </div>
@@ -180,7 +180,7 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                 </div>
             )}
             {/* Privacy Note */}
-            <div className="flex items-center justify-center gap-2 pt-6 opacity-40 hover:opacity-100 transition-opacity border-t border-border mt-6">
+            <div className="flex items-center justify-center gap-2 pt-6 opacity-40 hover:opacity-100 transition-opacity border-t border-border mt-6 p-6">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 <span className="text-[10px] text-muted font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
             </div>

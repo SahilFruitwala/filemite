@@ -1,18 +1,25 @@
-import React from 'react';
+import React from "react";
 
 interface GlassCardProps {
   children: React.ReactNode;
   className?: string;
-  animate?: boolean;
+  hoverEffect?: boolean;
 }
 
-export default function GlassCard({ children, className = '', animate = true }: GlassCardProps) {
+export default function GlassCard({
+  children,
+  className = "",
+  hoverEffect = true,
+}: GlassCardProps) {
   return (
-    <div className={`bg-surface backdrop-blur-md border border-border rounded-2xl p-6 relative overflow-hidden group ${animate ? 'animate-[fadeIn_0.3s_ease-out]' : ''} ${className}`}>
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-      <div className="relative z-10">
-        {children}
-      </div>
+    <div
+      className={`relative bg-surface border-2 border-border shadow-[4px_4px_0px_0px_var(--color-border)] max-w-full ${
+        hoverEffect
+          ? "group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200"
+          : ""
+      } ${className}`}
+    >
+      <div className="relative z-10">{children}</div>
     </div>
   );
 }

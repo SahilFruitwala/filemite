@@ -108,14 +108,14 @@ export default function FiltersPage() {
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <PageHeader 
-                    title={<>Aesthetic <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">Filters & Fine-tuning.</span></>}
+                    title={<>Aesthetic <br /> <span className="text-muted">Filters & Fine-tuning.</span></>}
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
                     {/* Controls */}
                     <div className="lg:col-span-1 space-y-6">
                         <GlassCard>
-                            <div className="space-y-6">
+                            <div className="space-y-6 p-6">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-foreground font-medium flex items-center gap-2">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/><circle cx="12" cy="12" r="3"/><path d="m3 3 18 18"/></svg>

@@ -1,9 +1,21 @@
 import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
+import { ThemeProvider } from "@/components/ThemeProvider";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://micropng.sahilfruitwala.com"), // Replace with your production domain
+  metadataBase: new URL("https://micropng.sahilfruitwala.com"), 
   title: {
     default: "MicroPng - Professional Image Compression",
     template: "%s | MicroPng",
@@ -26,7 +38,7 @@ export const metadata: Metadata = {
     title: "MicroPng - Professional Image Compression",
     description:
       "Fast, secure, and professional-grade image compression directly in your browser.",
-    url: "https://micropng.sahilfruitwala.com", // Replace with production URL
+    url: "https://micropng.sahilfruitwala.com", 
     siteName: "MicroPng",
     locale: "en_US",
     type: "website",
@@ -40,15 +52,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/icon.png",
-    apple: "/icon.png", // Next.js will automatically handle this if icon.png is in public
+    apple: "/icon.png", 
   },
   robots: {
     index: true,
     follow: true,
   },
 };
-
-import { ThemeProvider } from "@/components/ThemeProvider";
 
 export default function RootLayout({
   children,
@@ -57,7 +67,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

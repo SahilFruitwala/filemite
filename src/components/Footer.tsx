@@ -5,8 +5,6 @@ import { Github, Heart, ShieldCheck, Zap, Terminal } from 'lucide-react';
 export default function Footer() {
   return (
     <footer className="py-16 border-t border-border mt-20 relative overflow-hidden">
-      {/* Background Decorative Element */}
-      <div className="absolute bottom-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] rounded-full pointer-events-none"></div>
       
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">

@@ -71,7 +71,7 @@ export default function TracerPage() {
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <PageHeader 
-                    title={<>SVG <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">Tracer & Vectorizer.</span></>}
+                    title={<>SVG <br /> <span className="text-muted">Tracer & Vectorizer.</span></>}
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">

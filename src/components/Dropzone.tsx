@@ -51,22 +51,21 @@ export default function Dropzone({
 
   return (
     <div
-      className={`relative w-full max-w-3xl mx-auto min-h-[320px] rounded-[2.5rem] border border-dashed transition-all duration-500 overflow-hidden flex flex-col items-center justify-center p-8 sm:p-12 group cursor-pointer
-        ${isDragging 
-          ? 'border-primary/50 bg-primary/10 shadow-[0_0_80px_rgba(var(--primary-rgb),0.15)] scale-[1.02]' 
-          : 'border-border/60 bg-surface hover:bg-surface-hover hover:border-primary/30'
+      className={`relative group cursor-pointer transition-all duration-300 w-full max-w-xl mx-auto
+        min-h-[260px] flex flex-col items-center justify-center text-center p-10 sm:p-14
+        border-4 ${
+          isDragging
+            ? "border-primary bg-primary/5"
+            : "border-border border-dashed hover:border-primary hover:bg-surface"
         }
+        ${isCompressing ? "opacity-50 pointer-events-none" : ""}
+        shadow-[8px_8px_0px_0px_var(--color-border)]
       `}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       onClick={handleClick}
     >
-      {/* Dynamic Background Pattern */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.1)_0,transparent_70%)] group-hover:scale-110 transition-transform duration-700"></div>
-      </div>
-
       <input 
         type="file" 
         ref={fileInputRef} 
@@ -108,8 +107,8 @@ export default function Dropzone({
 
                 <div className="flex flex-wrap justify-center gap-3">
                     {displayFormats.map((format) => (
-                        <div key={format} className='px-4 py-1.5 rounded-full bg-surface border border-border text-[10px] sm:text-xs font-bold text-muted tracking-wider flex items-center gap-2 group-hover:border-border transition-colors'>
-                            <div className="w-1.5 h-1.5 rounded-full bg-subtle"></div>
+                        <div key={format} className='px-4 py-1.5 rounded-full bg-accent border border-border text-[10px] sm:text-xs font-bold text-muted tracking-wider flex items-center gap-2 group-hover:border-border transition-colors'>
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
                             {format}
                         </div>
                     ))}

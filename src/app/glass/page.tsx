@@ -196,14 +196,14 @@ export default function GlassPage() {
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <PageHeader 
-                    title={<>Glassmorphism <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">UI Background Designer.</span></>}
+                    title={<>Glassmorphism <br /> <span className="text-muted">UI Background Designer.</span></>}
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
                     {/* Controls */}
                     <div className="lg:col-span-1 space-y-6">
                         <GlassCard>
-                            <div className="space-y-6">
+                            <div className="space-y-6 p-6">
                                 <h3 className="text-foreground font-medium flex items-center gap-2">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M7 11V7h4"/><path d="M11 17h4v-4"/></svg>
                                     Glass Styles
@@ -332,7 +332,7 @@ export default function GlassPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex justify-center flex-col items-center gap-4 text-center">
+                                <div className="flex justify-center flex-col items-center gap-4 text-center mt-6">
                                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold animate-bounce shadow-sm">
                                         <CheckCircle2 size={14} />
                                         Interaction Enabled

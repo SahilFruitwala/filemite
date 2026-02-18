@@ -1,65 +1,45 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #059669;
-  --color-primary-hover: #047857;
-  --color-secondary: var(--color-secondary);
-  --color-accent: #f59e0b;
-  --color-success: #10b981;
-  --color-error: #ef4444;
-
-  /* Semantic Theme Variables mapped to CSS variables */
+  --color-primary: #FF4500; /* International Orange */
+  --color-primary-hover: #CC3700;
+  
   --color-surface: var(--color-surface);
-  --color-surface-hover: var(--color-surface-hover);
   --color-border: var(--color-border);
 
   --color-muted: var(--color-muted);
-  --color-subtle: var(--color-subtle);
-  --color-dim: var(--color-dim);
-
-  --color-info: #14b8a6;
-  --color-warning: #f59e0b;
-
+  
   --color-foreground: var(--foreground);
   --color-background: var(--background);
 
-  --font-sans:
-    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --radius: 0px;
+  --shadow-hard: 4px 4px 0px 0px var(--color-border);
+  --shadow-hard-hover: 6px 6px 0px 0px var(--color-border);
 }
 
 :root {
-  --background: #fafafa; /* ZINC-50 */
-  --foreground: #18181b; /* ZINC-900 */
-  --glass: rgba(255, 255, 255, 0.6);
-  --glass-border: rgba(0, 0, 0, 0.05);
+  --background: #FFFFFF;
+  --foreground: #000000;
+  
+  --color-surface: #FFFFFF;
+  --color-border: #000000;
+  --color-muted: #52525b;
 
-  --color-secondary: #f4f4f5; /* ZINC-100 */
-  --color-surface: rgba(0, 0, 0, 0.03);
-  --color-surface-hover: rgba(0, 0, 0, 0.06);
-  --color-border: rgba(5, 150, 105, 0.1);
-
-  --color-muted: #52525b; /* ZINC-600 */
-  --color-subtle: #a1a1aa; /* ZINC-400 */
-  --color-dim: #d4d4d8; /* ZINC-300 */
-  --primary-rgb: 5, 150, 105;
+  --primary-rgb: 255, 69, 0;
 }
 
 .dark {
-  --background: #09090b; /* ZINC-950 */
-  --foreground: #fafafa; /* ZINC-50 */
-  --glass: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --background: #000000;
+  --foreground: #FFFFFF;
+  
+  --color-surface: #000000;
+  --color-border: #FFFFFF;
+  --color-muted: #a1a1aa;
 
-  --color-secondary: #18181b; /* ZINC-900 */
-  --color-surface: rgba(255, 255, 255, 0.05);
-  --color-surface-hover: rgba(255, 255, 255, 0.08);
-  --color-border: rgba(5, 150, 105, 0.15);
-
-  --color-muted: #a1a1aa; /* ZINC-400 */
-  --color-subtle: #71717a; /* ZINC-500 */
-  --color-dim: #52525b; /* ZINC-600 */
-  --primary-rgb: 5, 150, 105;
+  --primary-rgb: 255, 69, 0;
 }
 
 body {
@@ -67,12 +47,56 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  
+  /* Grid Background Pattern */
+  background-image: 
+    linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center top;
 }
 
-a,
-button {
+/* Make grid lines subtle */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: var(--background);
+  opacity: 0.94; /* High opacity to make grid lines very faint */
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Brutalist Utilities */
+.brutal-border {
+  border: 2px solid var(--color-border);
+}
+
+.brutal-shadow {
+  box-shadow: 4px 4px 0px 0px var(--color-border);
+}
+
+.brutal-shadow-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px var(--color-border);
+}
+
+.brutal-shadow-active:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px var(--color-border);
+}
+
+a, button {
   cursor: pointer;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }

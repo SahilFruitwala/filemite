@@ -28,7 +28,7 @@ export default function ComparePage() {
           <Shield size={14} />
           <span>Transparency & Privacy First</span>
         </div>
-        <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-muted">
+        <h1 className="text-4xl md:text-6xl font-bold text-foreground">
           MicroPng vs TinyPNG
         </h1>
         <p className="text-xl text-muted max-w-2xl mx-auto">
@@ -182,7 +182,7 @@ export default function ComparePage() {
       </div>
 
       {/* Final CTA */}
-      <div className="text-center bg-gradient-to-b from-surface to-transparent p-12 rounded-3xl border border-border">
+      <div className="text-center bg-surface p-12 rounded-3xl border border-border">
         <h2 className="text-3xl font-bold mb-6">Ready to compress without limits?</h2>
         <Link 
           href="/" 

@@ -128,7 +128,7 @@ export default function FaviconPage() {
 
     return (
         <div className="min-h-screen relative overflow-hidden bg-center">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary opacity-[0.08] blur-[120px] rounded-full pointer-events-none z-[-1]"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary opacity-[0.03] blur-[150px] rounded-full pointer-events-none z-[-1]"></div>
 
             <Navbar />
 
@@ -136,7 +136,7 @@ export default function FaviconPage() {
                 <div className="text-center mb-16">
                     <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-foreground">
                         Favicon Generator <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">for all devices.</span>
+                        <span className="text-muted">for all devices.</span>
                     </h1>
                     <p className="text-muted max-w-2xl mx-auto text-lg">
                         Generate web, mobile, and legacy .ico icons from a single upload.

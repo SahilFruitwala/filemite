@@ -114,7 +114,7 @@ export default function ScrubPage() {
 
       <main className="container mx-auto px-6 pt-32 pb-20">
         <PageHeader 
-            title={<>Privacy First. <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Scrub Metadata.</span></>}
+            title={<>Privacy First. <span className="text-primary">Scrub Metadata.</span></>}
             description="View hidden data in your photos (GPS, Model, Settings) and strip it clean before sharing."
         />
 

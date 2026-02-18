@@ -217,7 +217,7 @@ export default function ResizePage() {
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <PageHeader 
-                    title={<>Advanced <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">Interactive Resizer.</span></>}
+                    title={<>Advanced <br /> <span className="text-muted">Interactive Resizer.</span></>}
                 />
 
                 {!file ? (
@@ -230,7 +230,7 @@ export default function ResizePage() {
                         {/* Editor Sidebar */}
                         <div className="lg:col-span-4 space-y-6">
                             <GlassCard>
-                                <div className="space-y-6">
+                                <div className="space-y-6 p-6">
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-foreground font-bold flex items-center gap-2">
                                             <Maximize2 size={18} className="text-primary" />
@@ -314,7 +314,7 @@ export default function ResizePage() {
 
                                     <div className="pt-4 border-t border-border/50">
                                         <label className="text-[10px] text-subtle font-black uppercase tracking-widest mb-3 block">Quick Presets</label>
-                                        <div className="grid grid-cols-3 gap-2">
+                                        <div className="grid grid-cols-3 sm:grid-cols-3 gap-2">
                                             {SOCIAL_PRESETS.map(preset => (
                                                 <button
                                                     key={preset.label}

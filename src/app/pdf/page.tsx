@@ -183,7 +183,7 @@ export default function PDFPage() {
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <PageHeader 
-                    title={<>PDF Tools <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted">Convert between Images and PDF.</span></>}
+                    title={<>PDF Tools <br /> <span className="text-muted">Convert between Images and PDF.</span></>}
                 />
 
                 <div className="max-w-xl mx-auto mb-12">
@@ -204,7 +204,7 @@ export default function PDFPage() {
 
                     <GlassCard>
                         <div className="space-y-6">
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between p-6">
                                 <h3 className="text-foreground font-medium flex items-center gap-2">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                                     {tab === 'image-to-pdf' ? 'Add Images' : 'Add PDF'}

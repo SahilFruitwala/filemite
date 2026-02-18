@@ -1,158 +1,134 @@
-"use client";
-
-import React, { useState } from 'react';
-import ImageCompare from './ImageCompare';
-import { CompressedFile } from '@/types';
+import React, { useState } from "react";
+import Image from "next/image";
+import { Download, Check, Files, RefreshCw } from "lucide-react";
+import GlassCard from "@/components/ui/GlassCard";
+import BrutalButton from "@/components/ui/BrutalButton";
 
 interface ResultCardProps {
-    file: CompressedFile;
-    type: 'compress' | 'convert' | 'watermark';
-    onDownload: () => void;
+  originalFile: File;
+  compressedUrl: string;
+  compressedSize: number;
+  outputFormat: string;
+  stats: {
+    originalSize: string;
+    compressedSize: string;
+    compressionRatio: string;
+    reduction: string;
+    timeTaken: string;
+  };
+  onReset: () => void;
 }
 
-export default function ResultCard({ file, type, onDownload }: ResultCardProps) {
-    const [isComparing, setIsComparing] = useState(false);
+export default function ResultCard({
+  originalFile,
+  compressedUrl,
+  compressedSize,
+  outputFormat,
+  stats,
+  onReset,
+}: ResultCardProps) {
+  const [downloaded, setDownloaded] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-    // Determine what to show based on type and status
-    // Common Logic:
-    // - Original Blob: file.originalBlobUrl
-    // - Result Blob: 
-    //   - Compress: file.clientStats?.blobUrl (using client for now as main result)
-    //   - Convert: file.blobUrl
-    //   - Watermark: file.serverStats?.blobUrl (watermark is server only)
-    
-    let resultBlobUrl = '';
-    let resultSize = 0;
-    let resultTime = 0;
-    let status = 'pending';
-    let rightLabel = 'Result';
+  const handleDownload = () => {
+    const a = document.createElement("a");
+    a.href = compressedUrl;
+    a.download = `min_${originalFile.name.replace(/\.[^/.]+$/, "")}.${outputFormat}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setDownloaded(true);
+    setTimeout(() => setDownloaded(false), 2000);
+  };
 
-    switch (type) {
-        case 'compress':
-            if (file.serverStatus && file.serverStatus !== 'pending') {
-                resultBlobUrl = file.serverStats?.blobUrl || '';
-                resultSize = file.serverStats?.size || 0;
-                resultTime = file.serverStats?.time || 0;
-                status = file.serverStatus;
-            } else {
-                resultBlobUrl = file.clientStats?.blobUrl || '';
-                resultSize = file.clientStats?.size || 0;
-                resultTime = file.clientStats?.time || 0;
-                status = file.clientStatus || 'pending';
-            }
-            rightLabel = 'Compressed';
-            break;
-        case 'convert':
-            resultBlobUrl = file.blobUrl || '';
-            resultSize = file.compressedSize || 0;
-            // Convert page doesn't track time in same way in struct, strictly speaking?
-            // Page logic: setFiles... compressedSize: blob.size
-            status = file.status;
-            rightLabel = 'Converted';
-            break;
-        case 'watermark':
-            resultBlobUrl = file.serverStats?.blobUrl || '';
-            resultSize = file.serverStats?.size || 0;
-            resultTime = file.serverStats?.time || 0;
-            status = file.serverStatus || 'pending';
-            rightLabel = 'Watermarked';
-            break;
+  const handleCopy = async () => {
+    try {
+      const response = await fetch(compressedUrl);
+      const blob = await response.blob();
+      const item = new ClipboardItem({
+        [blob.type]: blob
+      });
+      await navigator.clipboard.write([item]);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy image:', err);
     }
+  };
 
-    const formatSize = (bytes: number) => {
-        if (bytes === 0) return '0 B';
-        const k = 1024;
-        const sizes = ['B', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    };
+  return (
+    <GlassCard className="w-full max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700" hoverEffect={false}>
+      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        {/* Preview Section */}
+        <div className="space-y-6">
+          <div className="relative aspect-square w-full bg-repeating-conic border-2 border-border shadow-[4px_4px_0px_0px_var(--color-border)] overflow-hidden group">
+            <Image
+              src={compressedUrl}
+              alt="Compressed preview"
+              fill
+              className="object-contain p-4"
+              unoptimized
+            />
+            <div className="absolute top-4 left-4 bg-primary text-white text-xs font-black uppercase px-2 py-1 border-2 border-border">
+              Processing: {stats.timeTaken}
+            </div>
+          </div>
+        </div>
 
-    return (
-        <div className="bg-secondary border border-border rounded-2xl p-3 sm:p-4 animate-[fadeIn_0.3s_ease-out]">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 mb-4">
-                {/* Thumbnail / Compare Toggle */}
-                <div className="w-full sm:w-16 h-32 sm:h-16 bg-background rounded-lg overflow-hidden flex items-center justify-center border border-border shrink-0 relative group">
-                    {resultBlobUrl || file.originalBlobUrl ? (
-                        <img 
-                            src={resultBlobUrl || file.originalBlobUrl} 
-                            alt="Preview" 
-                            className="w-full h-full object-cover cursor-pointer"
-                            onClick={() => resultBlobUrl && setIsComparing(!isComparing)}
-                        />
-                    ) : (
-                        <div className="animate-pulse w-full h-full bg-surface"></div>
-                    )}
-                    
-                    {/* Hover Overlay for Compare */}
-                    {resultBlobUrl && (
-                         <div 
-                            className="absolute inset-0 bg-background/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer pointer-events-none"
-                        >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-foreground scale-75">
-                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                        </div>
-                    )}
-                </div>
-
-                <div className="min-w-0 flex-1 text-center sm:text-left">
-                    <h3 className="text-foreground font-medium truncate max-w-full sm:max-w-xs">{file.originalName}</h3>
-                    
-                    {/* Stats Row */}
-                    <div className="flex items-center justify-center sm:justify-start gap-3 text-xs mt-1">
-                        {status === 'done' ? (
-                            <>
-                                <span className="text-muted">{formatSize(file.originalSize)}</span>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-success"><polyline points="20 6 9 17 4 12"/></svg>
-                                <span className="text-foreground font-bold">{formatSize(resultSize)}</span>
-                                {type !== 'convert' && resultTime > 0 && <span className="bg-surface text-foreground px-1.5 py-0.5 rounded text-[10px]">{resultTime.toFixed(0)}ms</span>}
-                            </>
-                        ) : status === 'processing' ? (
-                            <span className="text-primary flex items-center gap-1">
-                                <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                                Processing...
-                            </span>
-                         ) : status === 'error' ? (
-                             <span className="text-red-400">Failed</span>
-                         ) : (
-                            <span className="text-subtle">Pending...</span> 
-                        )}
-                    </div>
-                </div>
-
-                {/* Main Actions */}
-                 {status === 'done' && (
-                    <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                         <button 
-                            onClick={onDownload}
-                            className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-lg shadow-primary/20"
-                        >
-                            Download
-                        </button>
-                        <button 
-                            onClick={() => setIsComparing(!isComparing)}
-                            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${isComparing ? 'bg-foreground text-background border-primary/20' : 'bg-transparent text-muted border-border hover:text-foreground hover:border-primary/30'}`}
-                        >
-                            {isComparing ? 'Close' : 'Compare'}
-                        </button>
-                    </div>
-                )}
+        {/* Stats Section */}
+        <div className="space-y-8">
+            <div>
+                <h3 className="text-3xl font-black uppercase tracking-tighter mb-2">Success!</h3>
+                <p className="text-muted font-mono text-sm border-l-4 border-primary pl-4">
+                    {originalFile.name} successfully compressed.
+                </p>
             </div>
 
-            {/* Comparison View */}
-            {isComparing && status === 'done' && resultBlobUrl && (
-                <div className="mt-4 animate-[fadeIn_0.3s_ease-out] border-t border-border pt-4">
-                    <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-background/50">
-                        <ImageCompare 
-                            original={file.originalBlobUrl || ''} 
-                            compressed={resultBlobUrl}
-                            leftLabel="Original"
-                            rightLabel={rightLabel}
-                        />
-                    </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-4 bg-surface border-2 border-border shadow-[4px_4px_0px_0px_var(--color-border)]">
+              <p className="text-xs font-black uppercase text-muted mb-1">Original</p>
+              <p className="text-xl font-black">{stats.originalSize}</p>
+            </div>
+            <div className="p-4 bg-primary text-white border-2 border-border shadow-[4px_4px_0px_0px_var(--color-border)]">
+              <p className="text-xs font-black uppercase text-white/80 mb-1">New Size</p>
+              <p className="text-xl font-black">{stats.compressedSize}</p>
+            </div>
+            <div className="p-4 bg-surface border-2 border-border shadow-[4px_4px_0px_0px_var(--color-border)]">
+              <p className="text-xs font-black uppercase text-muted mb-1">Savings</p>
+              <p className="text-xl font-black text-primary">{stats.reduction}</p>
+            </div>
+             <div className="p-4 bg-surface border-2 border-border shadow-[4px_4px_0px_0px_var(--color-border)]">
+              <p className="text-xs font-black uppercase text-muted mb-1">Format</p>
+              <p className="text-xl font-black uppercase">{outputFormat}</p>
+            </div>
+          </div>
+
+            <div className="flex flex-col gap-3">
+                <BrutalButton onClick={handleDownload} fullWidth size="lg">
+                    {downloaded ? (
+                        <>
+                        <Check size={20} className="mr-2" /> Downloaded
+                        </>
+                    ) : (
+                        <>
+                        <Download size={20} className="mr-2" /> Download Image
+                        </>
+                    )}
+                </BrutalButton>
+                
+                <div className="flex gap-3">
+                    <BrutalButton variant="secondary" onClick={handleCopy} className="flex-1">
+                        {copied ? <Check size={18} className="mr-2" /> : <Files size={18} className="mr-2" />}
+                        {copied ? "Copied" : "Copy"}
+                    </BrutalButton>
+                    <BrutalButton variant="outline" onClick={onReset} className="flex-1">
+                        <RefreshCw size={18} className="mr-2" />
+                        New
+                    </BrutalButton>
                 </div>
-            )}
+            </div>
         </div>
-    );
+      </div>
+    </GlassCard>
+  );
 }
