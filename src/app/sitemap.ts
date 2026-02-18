@@ -6,10 +6,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
     '',
     '/convert',
-    '/favicon',
-    '/scrub',
-    '/palette',
+    '/pdf',
+    '/resize',
+    '/crop',
+    '/filters',
+    '/glass',
+    '/tracer',
     '/watermark',
+    '/palette',
+    '/scrub',
     '/compare',
   ];
 

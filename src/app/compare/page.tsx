@@ -7,16 +7,32 @@ export const metadata: Metadata = {
   title: "MicroPng vs TinyPNG - Why Local Compression is Better",
   description:
     "Compare MicroPng with TinyPNG. Discover why local-first image compression offers better privacy, efficiency, and flexibility compared to traditional cloud-based alternatives.",
+  keywords: ["micropng vs tinypng", "image compression comparison", "local vs cloud compression", "privacy focused image compressor"],
   openGraph: {
     title: "MicroPng vs TinyPNG - The Privacy-First Alternative",
     description:
       "Stop uploading your images to the cloud. MicroPng offers secure, instant, and high-capacity compression directly in your browser.",
   },
+  alternates: {
+    canonical: "https://micropng.sahilfruitwala.com/compare",
+  }
 };
+
+import JsonLd from "@/components/JsonLd";
 
 export default function ComparePage() {
   return (
     <main className="min-h-screen pt-24 pb-12 px-6 max-w-7xl mx-auto">
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "MicroPng vs TinyPNG",
+        "description": "A detailed comparison between MicroPng (Local-First) and TinyPNG (Cloud-Based).",
+        "mainEntity": {
+          "@type": "Table",
+          "about": "Image Compression Tool Comparison"
+        }
+      }} />
       {/* Hero Section */}
       <div className="text-center mb-16 space-y-4 relative">
         <Link href="/" className="absolute left-0 top-0 inline-flex items-center gap-2 text-muted hover:text-foreground transition-colors md:absolute md:left-0 md:top-2">
