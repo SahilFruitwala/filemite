@@ -263,7 +263,8 @@ export default function HomeClient() {
 
 
         {/* Dropzone / Result Area */}
-        <div className="mb-16 container mx-auto px-6">
+        <div className="flex flex-col lg:flex-row gap-4 items-start mb-16">
+            <div className="w-full lg:flex-1 min-w-0">
             {errorVisible && (
                 <div className="max-w-xl mx-auto mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-2xl flex items-center justify-between text-destructive animate-in fade-in slide-in-from-top-4">
                     <div className="flex items-center gap-3">
@@ -278,7 +279,7 @@ export default function HomeClient() {
             {files.length === 0 ? (
                  <Dropzone onFileSelect={handleFilesSelect} isCompressing={isProcesssing} />
             ) : (
-                <div className="w-full max-w-4xl mx-auto space-y-4">
+                <div className="w-full space-y-4">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Your Optimized Images</h2>
                         <div className="flex items-center gap-4">
@@ -330,10 +331,10 @@ export default function HomeClient() {
                      </div>
                 </div>
             )}
-        </div>
+            </div>
 
-        {/* Compression Settings Panel */}
-            <div className="max-w-xl mx-auto mb-16">
+            {/* Compression Settings Panel */}
+            <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 sticky top-8">
                      <GlassCard>
                          <div className="relative z-10 flex flex-col gap-6 p-6">
                              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -492,6 +493,7 @@ export default function HomeClient() {
 
 
             </div>
+        </div>
 
         {/* Comparison Modal - Simplified to just use Client version for now or hide if complicated */}
         {/* We can re-enable detailed comparison if needed, but benchmarking is the main goal right now. */}

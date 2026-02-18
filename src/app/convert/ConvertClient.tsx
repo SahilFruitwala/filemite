@@ -134,8 +134,72 @@ export default function ConvertClient() {
             title={<>Convert image formats <br /> <span className="text-muted">instantly and Lossless.</span></>}
         />
 
-            <div className="max-w-xl mx-auto mb-16">
+        <div className="flex flex-col lg:flex-row gap-8 items-start mb-16">
+            <div className="w-full lg:flex-1 min-w-0">
+                  <div className="mb-32">
+                  {files.length === 0 ? (
+                       <Dropzone onFileSelect={handleFilesSelect} isCompressing={isProcesssing} />
+                  ) : (
+                      <div className="w-full max-w-4xl mx-auto space-y-4">
+                          <div className="flex justify-between items-center mb-6">
+                              <h2 className="text-2xl font-bold text-foreground">Converted Images</h2>
+                              <div className="flex items-center gap-4">
+                                  {files.filter((f: CompressedFile) => f.status === 'done').length > 1 && (
+                                      <button 
+                                          onClick={downloadAllAsZip}
+                                          disabled={isZipping}
+      
+                                          className="text-sm font-bold text-primary hover:text-primary/80 flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl transition-all"
+                                      >
+                                          {isZipping ? (
+                                              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                          ) : (
+                                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                          )}
+                                          Download All (ZIP)
+                                      </button>
+                                  )}
+                                  <button 
+                                      onClick={handleReset}
+                                      className="text-sm text-muted hover:text-foreground underline underline-offset-4"
+                                  >
+                                      Start Over
+                                  </button>
+                              </div>
+                          </div>
+      
+                          <div className="grid gap-4">
+                              {files.map((file) => (
+                                  <ResultCard 
+                                      key={file.id} 
+                                      originalFile={file.fileRaw!}
+                                      compressedUrl={file.blobUrl || ''}
+                                      compressedSize={file.compressedSize}
+                                      outputFormat={targetFormat}
+                                      stats={{
+                                          originalSize: formatSize(file.originalSize),
+                                          compressedSize: formatSize(file.compressedSize),
+                                          compressionRatio: 'N/A',
+                                          reduction: file.compressedSize > 0 
+                                              ? `${Math.round(((file.originalSize - file.compressedSize) / file.originalSize) * 100)}%` 
+                                              : '0%',
+                                          timeTaken: "0ms" // Time not tracked in this flow currently
+                                      }}
+                                      onReset={handleReset}
+                                  />
+                              ))}
+                          </div>
+                           <div className='flex justify-center mt-8'>
+                              <Dropzone onFileSelect={handleFilesSelect} isCompressing={isProcesssing} />
+                           </div>
+                      </div>
+                  )}
+                  </div>
+            </div>
+
+            <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 sticky top-8">
                  <GlassCard>
+
 
 
                      <div className="relative z-10 flex flex-col gap-6">
@@ -185,72 +249,12 @@ export default function ConvertClient() {
                         )}
                       </div>
                       {/* Privacy Note */}
-                       <div className="flex items-center justify-center gap-2 pt-6 opacity-40 hover:opacity-100 transition-opacity border-t border-border mt-6">
+                       <div className="flex items-center justify-center gap-2 p-6 opacity-40 hover:opacity-100 transition-opacity border-t border-border mt-6">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         <span className="text-[10px] text-muted font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
-                      </div>
-                  </GlassCard>
-            </div>
-
-
-        <div className="mb-32">
-            {files.length === 0 ? (
-                 <Dropzone onFileSelect={handleFilesSelect} isCompressing={isProcesssing} />
-            ) : (
-                <div className="w-full max-w-4xl mx-auto space-y-4">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold text-foreground">Converted Images</h2>
-                        <div className="flex items-center gap-4">
-                            {files.filter((f: CompressedFile) => f.status === 'done').length > 1 && (
-                                <button 
-                                    onClick={downloadAllAsZip}
-                                    disabled={isZipping}
-
-                                    className="text-sm font-bold text-primary hover:text-primary/80 flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl transition-all"
-                                >
-                                    {isZipping ? (
-                                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                                    ) : (
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                    )}
-                                    Download All (ZIP)
-                                </button>
-                            )}
-                            <button 
-                                onClick={handleReset}
-                                className="text-sm text-muted hover:text-foreground underline underline-offset-4"
-                            >
-                                Start Over
-                            </button>
                         </div>
-                    </div>
-
-                    <div className="grid gap-4">
-                        {files.map((file) => (
-                            <ResultCard 
-                                key={file.id} 
-                                originalFile={file.fileRaw!}
-                                compressedUrl={file.blobUrl || ''}
-                                compressedSize={file.compressedSize}
-                                outputFormat={targetFormat}
-                                stats={{
-                                    originalSize: formatSize(file.originalSize),
-                                    compressedSize: formatSize(file.compressedSize),
-                                    compressionRatio: 'N/A',
-                                    reduction: file.compressedSize > 0 
-                                        ? `${Math.round(((file.originalSize - file.compressedSize) / file.originalSize) * 100)}%` 
-                                        : '0%',
-                                    timeTaken: "0ms" // Time not tracked in this flow currently
-                                }}
-                                onReset={handleReset}
-                            />
-                        ))}
-                    </div>
-                     <div className='flex justify-center mt-8'>
-                        <Dropzone onFileSelect={handleFilesSelect} isCompressing={isProcesssing} />
-                     </div>
-                </div>
-            )}
+                 </GlassCard>
+            </div>
         </div>
       </main>
       
