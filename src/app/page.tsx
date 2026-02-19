@@ -9,6 +9,17 @@ export const metadata: Metadata = {
   keywords: ["image compressor", "compress png", "reduce image size", "optimize images", "lossless compression", "tiny png", "image optimizer"],
   alternates: {
     canonical: "https://micropng.sahilfruitwala.com",
+  },
+  openGraph: {
+    title: "Free Online Image Compressor - PNG, JPEG, WebP",
+    description: "Compress images up to 90% without losing quality. Secure client-side and server-side image compression.",
+    images: [{ url: "/opengraph.webp", width: 1200, height: 630, alt: "MicroPng Banner" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Free Online Image Compressor - PNG, JPEG, WebP",
+    description: "Compress images up to 90% without losing quality. Secure client-side and server-side image compression.",
+    images: ["/opengraph.webp"],
   }
 };
 
@@ -31,7 +42,8 @@ export default function Home() {
           "@type": "AggregateRating",
           "ratingValue": "4.8",
           "ratingCount": "1250"
-        }
+        },
+        "screenshot": "https://micropng.sahilfruitwala.com/opengraph.webp"
       }} />
       <HomeClient />
     </>

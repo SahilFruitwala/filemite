@@ -42,6 +42,14 @@ export const metadata: Metadata = {
     siteName: "MicroPng",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/opengraph.webp",
+        width: 1200,
+        height: 630,
+        alt: "MicroPng Banner",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -49,6 +57,7 @@ export const metadata: Metadata = {
     description:
       "Fast, secure, and professional-grade image compression directly in your browser.",
     creator: "@micropng",
+    images: ["/opengraph.webp"],
   },
   icons: {
     icon: "/icon.webp",
