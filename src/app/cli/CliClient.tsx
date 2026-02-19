@@ -37,8 +37,8 @@ const CodeBlock = ({ code, label }: { code: string, label?: string }) => {
           {label}
         </div>
       )}
-      <div className="bg-black/40 backdrop-blur-md border border-border/50 rounded-xl p-3 sm:p-4 font-mono text-xs sm:text-sm group-hover:border-primary/30 transition-colors flex items-center justify-between gap-3 sm:gap-4 overflow-hidden w-full max-w-[calc(100vw-2rem)] sm:max-w-none">
-        <code className="text-secondary-foreground overflow-x-auto whitespace-nowrap scrollbar-hide flex-1 min-w-0">
+      <div className="bg-zinc-900 border border-border/50 rounded-xl p-3 sm:p-4 font-mono text-xs sm:text-sm group-hover:border-primary/30 transition-colors flex items-center justify-between gap-3 sm:gap-4 overflow-hidden w-full max-w-[calc(100vw-2rem)] sm:max-w-none">
+        <code className="text-zinc-100 overflow-x-auto whitespace-nowrap scrollbar-hide flex-1 min-w-0">
           <span className="text-primary mr-2 font-bold select-none">$</span>
           {code}
         </code>
@@ -144,7 +144,9 @@ export default function CliClient() {
     { opt: "--quality", alias: "-q", desc: "Compression quality (1-100)" },
     { opt: "--format", alias: "-f", desc: "Output format (webp, jpeg, avif, png)" },
     { opt: "--concurrency", alias: "-c", desc: "Max simultaneous tasks" },
-    { opt: "--ignore", alias: "-i", desc: "Glob patterns to skip" }
+    { opt: "--ignore", alias: "-i", desc: "Glob patterns to skip" },
+    { opt: "--size", alias: "-s", desc: "Target file size (e.g., 500kb)" },
+    { opt: "--keep-metadata", alias: "", desc: "Preserve EXIF/GPS data" }
   ];
 
   return (
@@ -182,8 +184,8 @@ export default function CliClient() {
           
           <div className="relative">
             <div className="absolute -inset-4 bg-primary/20 blur-3xl opacity-20 -z-10 animate-pulse"></div>
-            <GlassCard className="border-primary/10 bg-black/40 overflow-hidden" hoverEffect={false}>
-              <div className="bg-white/5 px-4 py-3 flex items-center gap-2 border-b border-white/5">
+            <GlassCard className="border-primary/10 bg-zinc-950 overflow-hidden shadow-2xl" hoverEffect={false}>
+              <div className="bg-zinc-900 px-4 py-3 flex items-center gap-2 border-b border-white/5">
                 <div className="flex gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-400/50"></div>
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/50"></div>
@@ -197,30 +199,30 @@ export default function CliClient() {
                 </div>
               </div>
               <div className="p-4 sm:p-6 font-mono text-[10px] sm:text-xs md:text-sm leading-relaxed whitespace-pre-wrap break-all sm:break-words">
-                <div className="text-muted-foreground mb-2"># Processing 148 images recursively...</div>
+                <div className="text-zinc-500 mb-2"># Processing 148 images recursively...</div>
                 <div className="flex flex-wrap gap-x-2 gap-y-1">
                   <span className="text-primary font-bold">➜</span>
                   <span className="text-emerald-400">SUCCESS</span>
-                  <span className="text-white break-all">Optimized image-24.png</span>
-                  <span className="text-muted-foreground whitespace-nowrap">Saved 42% (1.2 MB)</span>
+                  <span className="text-zinc-100 break-all">Optimized image-24.png</span>
+                  <span className="text-zinc-500 whitespace-nowrap">Saved 42% (1.2 MB)</span>
                 </div>
                 <div className="flex flex-wrap gap-x-2 gap-y-1">
                   <span className="text-primary font-bold">➜</span>
                   <span className="text-emerald-400">SUCCESS</span>
-                  <span className="text-white break-all">banner-large.webp</span>
-                  <span className="text-muted-foreground whitespace-nowrap">Saved 68% (4.5 MB)</span>
+                  <span className="text-zinc-100 break-all">banner-large.webp</span>
+                  <span className="text-zinc-500 whitespace-nowrap">Saved 68% (4.5 MB)</span>
                 </div>
                 <div className="flex flex-wrap gap-x-2 gap-y-1">
                   <span className="text-primary font-bold shrink-0">➜</span>
                   <span className="text-emerald-400 shrink-0">SUCCESS</span>
-                  <span className="text-white break-all">logo-transparent.png</span>
-                  <span className="text-muted-foreground shrink-0 whitespace-nowrap">Saved 12% (15 KB)</span>
+                  <span className="text-zinc-100 break-all">logo-transparent.png</span>
+                  <span className="text-zinc-500 shrink-0 whitespace-nowrap">Saved 12% (15 KB)</span>
                 </div>
                 <div className="mt-4 pt-4 border-t border-white/5 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                   <div className="text-primary font-bold mb-1 sm:col-span-2">Total Stats:</div>
-                  <div className="text-white">Files Processed: 148</div>
-                  <div className="text-white">Time Taken: 4.2s</div>
-                  <div className="text-white sm:col-span-2">Total Space Saved: <span className="text-emerald-400 font-bold underline decoration-emerald-400/30 underline-offset-2">124.5 MB</span></div>
+                  <div className="text-zinc-100">Files Processed: 148</div>
+                  <div className="text-zinc-100">Time Taken: 4.2s</div>
+                  <div className="text-zinc-100 sm:col-span-2">Total Space Saved: <span className="text-emerald-400 font-bold underline decoration-emerald-400/30 underline-offset-2">124.5 MB</span></div>
                 </div>
               </div>
             </GlassCard>

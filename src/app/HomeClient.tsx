@@ -14,6 +14,8 @@ import { MAX_SERVER_IMAGES, MAX_BROWSER_IMAGES, LIMIT_REASONS } from '@/lib/cons
 
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
+import { Terminal, ArrowRight, Github } from 'lucide-react';
+import Link from 'next/link';
 
 export default function HomeClient() {
   const [files, setFiles] = useState<CompressedFile[]>([]);
@@ -498,7 +500,76 @@ export default function HomeClient() {
         {/* We can re-enable detailed comparison if needed, but benchmarking is the main goal right now. */}
         {/* Keeping it simple: clicking compare button was removed in the grid, so this modal code is currently unreachable, which is fine for the temporary benchmark view. */}
 
+
+        {/* CLI Promotion Section */}
+        {files.length === 0 && (
+          <section className="mt-32 mb-16 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest">
+                  <Terminal size={12} />
+                  Developer Ready
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                  Prefer the <span className="text-primary">Terminal?</span>
+                </h2>
+                <p className="text-muted-foreground leading-relaxed max-w-md">
+                  We've built a high-performance CLI for bulk processing, recursive directory optimization, and automated workflows. No browser, just pure speed.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <Link 
+                    href="/cli" 
+                    className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl font-bold text-sm flex items-center gap-2 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20"
+                  >
+                    Explore CLI
+                    <ArrowRight size={16} />
+                  </Link>
+                  <a 
+                    href="https://github.com/SahilFruitwala/micropng-cli" 
+                    target="_blank"
+                    className="px-6 py-2.5 bg-secondary text-foreground rounded-xl font-bold text-sm flex items-center gap-2 border border-border/50 hover:bg-secondary/80 hover:scale-105 active:scale-95 transition-all"
+                  >
+                    <Github size={16} />
+                    GitHub
+                  </a>
+                </div>
+              </div>
+
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 blur shadow-2xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                <GlassCard className="border-primary/10 bg-zinc-950 overflow-hidden relative shadow-2xl" hoverEffect={false}>
+                  <div className="bg-zinc-900 px-4 py-2 flex items-center justify-between border-b border-white/5">
+                    <div className="flex gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full bg-red-400/50"></div>
+                      <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/50"></div>
+                      <div className="w-2.5 h-2.5 rounded-full bg-green-400/50"></div>
+                    </div>
+                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">终端 micropng-cli</span>
+                  </div>
+                  <div className="p-6 font-mono text-xs sm:text-sm text-zinc-100 space-y-2">
+                    <div className="flex gap-2">
+                      <span className="text-primary select-none font-bold">$</span>
+                      <span>npm install -g micropng-cli</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="text-primary select-none font-bold">$</span>
+                      <span>micropng-cli ./assets --recursive --replace</span>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-white/5 text-zinc-500 italic">
+                      # Scanning 428 images...
+                    </div>
+                    <div className="text-emerald-400 font-bold">
+                      SUCCESS: 428 images optimized (Saved 142MB)
+                    </div>
+                  </div>
+                </GlassCard>
+              </div>
+            </div>
+          </section>
+        )}
+
       </main>
+
       
       <Footer />
     </div>
