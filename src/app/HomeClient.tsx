@@ -310,6 +310,7 @@ export default function HomeClient() {
                             <ResultCard 
                                 key={file.id}
                                 originalFile={file.fileRaw!}
+                                originalUrl={file.originalBlobUrl}
                                 compressedUrl={file.blobUrl || file.clientStats?.blobUrl || ''}
                                 compressedSize={file.compressedSize}
                                 outputFormat={file.outputFormat || 'webp'}
