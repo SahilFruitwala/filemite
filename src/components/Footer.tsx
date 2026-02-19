@@ -38,6 +38,10 @@ export default function Footer() {
              <div className="flex flex-col gap-2">
                  <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">Privacy</Link>
                  <Link href="/terms" className="text-muted-foreground hover:text-primary transition-colors">Terms</Link>
+                 <Link href="/cli" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 focus-visible:outline-none">
+                    <Terminal size={12} />
+                    CLI Tool
+                 </Link>
                  <a href="https://github.com/SahilFruitwala/micropng" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">GitHub</a>
              </div>
           </div>

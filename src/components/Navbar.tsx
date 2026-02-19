@@ -39,6 +39,7 @@ export default function Navbar() {
       name: "Development",
       icon: <FileText size={16} />,
       links: [
+        { href: "/cli", label: "CLI" },
         { href: "/favicon", label: "Favicon" },
         { href: "/scrub", label: "Scrub" },
         { href: "/palette", label: "Palette" },

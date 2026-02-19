@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/palette',
     '/scrub',
     '/compare',
+    '/cli',
   ];
 
   return routes.map((route) => ({
