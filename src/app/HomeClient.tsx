@@ -12,7 +12,6 @@ import ResultCard from '@/components/ResultCard';
 import { CompressedFile, CompressionLevel } from '@/types';
 import { MAX_SERVER_IMAGES, MAX_BROWSER_IMAGES, LIMIT_REASONS } from '@/lib/constants';
 
-import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
 
@@ -249,15 +248,14 @@ export default function HomeClient() {
   const comparingFile = files.find(f => f.id === comparingFileId);
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-center">
-      <BackgroundGlow color="primary" />
-
+    <div className="min-h-screen relative overflow-hidden bg-background">
       
       <Navbar />
 
       <main className="container mx-auto px-6 pt-32 pb-20">
         <PageHeader 
           title={<>Compress Images <span className="text-primary">Flawlessly.</span></>}
+          description="Reduce image size without compromising quality. Fast, secure, and client-side processing."
         />
 
 
@@ -281,17 +279,17 @@ export default function HomeClient() {
             ) : (
                 <div className="w-full space-y-4">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Your Optimized Images</h2>
+                        <h2 className="text-xl font-bold tracking-tight text-foreground">Your Optimized Images</h2>
                         <div className="flex items-center gap-4">
                             {files.filter((f: CompressedFile) => f.status === 'done').length > 1 && (
                                 <button 
                                     onClick={downloadAllAsZip}
 
                                     disabled={isZipping}
-                                    className="text-sm font-bold text-primary hover:text-primary/80 flex items-center gap-2 bg-primary/10 px-4 py-2 border-2 border-primary hover:bg-primary hover:text-white transition-all shadow-[4px_4px_0px_0px_var(--color-primary)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+                                    className="text-sm font-semibold text-primary hover:text-primary/80 flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl transition-all hover:bg-primary/20"
                                 >
                                     {isZipping ? (
-                                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                                        <div className="w-4 h-4 border border-current border-t-transparent rounded-full animate-spin"></div>
                                     ) : (
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                     )}
@@ -300,7 +298,7 @@ export default function HomeClient() {
                             )}
                             <button 
                                 onClick={handleReset}
-                                className="text-sm font-bold uppercase tracking-wide text-muted hover:text-foreground underline underline-offset-4"
+                                className="text-sm font-semibold text-muted-foreground hover:text-foreground underline underline-offset-4"
                             >
                                 Start Over
                             </button>
@@ -350,46 +348,46 @@ export default function HomeClient() {
                                          }}
                                          title={isMobile && processingMode === 'server' ? "Browser compression is not recommended on mobile but can be enabled" : ""}
                                      >
-                                         <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${processingMode === 'client' ? 'text-primary' : 'text-muted'}`}>Browser</span>
-                                         <div className={`w-10 h-5 rounded-full p-1 transition-all duration-300 relative ${processingMode === 'server' ? 'bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]' : 'bg-surface border border-border'}`}>
-                                             <div className={`w-3 h-3 bg-primary rounded-full shadow-md transition-all duration-300 transform ${processingMode === 'server' ? 'bg-white translate-x-5' : 'translate-x-0'}`}></div>
+                                         <span className={`text-xs font-semibold uppercase tracking-wider transition-colors ${processingMode === 'client' ? 'text-primary' : 'text-muted-foreground'}`}>Browser</span>
+                                         <div className={`w-10 h-5 rounded-full p-1 transition-all duration-300 relative ${processingMode === 'server' ? 'bg-primary' : 'bg-secondary'}`}>
+                                             <div className={`w-3 h-3 bg-background rounded-full shadow-sm transition-all duration-300 transform ${processingMode === 'server' ? 'translate-x-5' : 'translate-x-0'}`}></div>
                                          </div>
-                                         <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${processingMode === 'server' ? 'text-primary' : 'text-muted'}`}>Server</span>
+                                         <span className={`text-xs font-semibold uppercase tracking-wider transition-colors ${processingMode === 'server' ? 'text-primary' : 'text-muted-foreground'}`}>Server</span>
                                      </div>
                                  </div>
                              </div>
 
                             {isMobile && processingMode === 'server' && (
-                                <div className="bg-teal-500/5 dark:bg-teal-500/10 border border-teal-500/20 rounded-xl p-3 flex gap-3 animate-in fade-in slide-in-from-top-2">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-600 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 flex gap-3 animate-in fade-in slide-in-from-top-2">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                     <div className="flex flex-col gap-0.5">
-                                        <span className="text-xs font-bold text-teal-700 uppercase tracking-tight">Mobile Optimization Active</span>
+                                        <span className="text-xs font-bold text-primary uppercase tracking-tight">Mobile Optimization Active</span>
                                         <p className="text-xs text-foreground/80 leading-relaxed font-medium">
-                                            Browser-side compression is difficult on mobile devices due to CPU limits. We recommend sticking with <span className="text-foreground font-bold underline decoration-teal-500/30 underline-offset-2">Server Mode</span> for a smoother experience.
+                                            Browser-side compression is difficult on mobile devices due to CPU limits. We recommend sticking with <span className="text-foreground font-bold underline decoration-primary/30 underline-offset-2">Server Mode</span> for a smoother experience.
                                         </p>
                                     </div>
                                 </div>
                             )}
 
                             {processingMode === 'client' && (
-                                <div className="bg-amber-500/5 dark:bg-amber-500/10 border border-amber-500/10 dark:border-amber-500/20 rounded-xl p-3 flex gap-3 animate-in fade-in slide-in-from-top-2">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600 shrink-0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                <div className="bg-destructive/5 border border-destructive/20 rounded-xl p-3 flex gap-3 animate-in fade-in slide-in-from-top-2">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-destructive shrink-0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                     <div className="flex flex-col gap-0.5">
-                                        <span className="text-xs font-bold text-amber-700 uppercase tracking-tight">{isMobile ? "Warning: Performance Impact" : "Browser Mode Warning"}</span>
+                                        <span className="text-xs font-bold text-destructive uppercase tracking-tight">{isMobile ? "Warning: Performance Impact" : "Browser Mode Warning"}</span>
                                         <p className="text-xs text-foreground/90 leading-relaxed font-medium">
                                             {isMobile 
                                                 ? "Browser mode is very difficult on mobile. You may experience slow down." 
                                                 : "In-browser compression depends on your device capabilities."}
-                                            <span className="text-foreground font-bold underline decoration-amber-500/30 underline-offset-2 ml-1"> Server Mode is recommended.</span>
+                                            <span className="text-foreground font-bold underline decoration-destructive/30 underline-offset-2 ml-1"> Server Mode is recommended.</span>
                                         </p>
                                     </div>
                                 </div>
                             )}
 
-                            <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 flex gap-3">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            <div className="bg-secondary/50 border border-border/50 rounded-xl p-3 flex gap-3">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                 <div className="flex flex-col gap-0.5">
-                                    <span className="text-xs font-bold text-primary uppercase tracking-tight">Bulk Upload Limits</span>
+                                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-tight">Bulk Upload Limits</span>
                                     <p className="text-[11px] text-foreground/80 leading-relaxed font-medium">
                                         {processingMode === 'server' ? LIMIT_REASONS.SERVER : LIMIT_REASONS.BROWSER}
                                     </p>
@@ -399,17 +397,17 @@ export default function HomeClient() {
                              <div className="relative">
                                  {/* Manual Quality Controls */}
                                  <div className={`transition-all duration-300 ${useTargetSize ? 'opacity-20 blur-sm pointer-events-none scale-95' : 'opacity-100 scale-100'}`}>
-                                    <label className="text-sm text-muted mb-3 block">Quality Preset</label>
+                                    <label className="text-sm text-muted-foreground mb-3 block">Quality Preset</label>
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                         {(['best', 'mid', 'low'] as const).map((level) => (
                                             <button
                                                 key={level}
                                                 onClick={() => !useTargetSize && setCompressionLevel(level)}
                                                 disabled={useTargetSize}
-                                                className={`py-3 sm:py-4 px-4 rounded-xl text-sm font-bold transition-all duration-200 border uppercase tracking-wider ${
+                                                className={`py-3 sm:py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-200 border ${
                                                     compressionLevel === level 
-                                                        ? 'bg-primary text-white border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]' 
-                                                        : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-white'
+                                                        ? 'bg-primary text-primary-foreground border-primary shadow-md' 
+                                                        : 'bg-background text-muted-foreground border-transparent hover:bg-accent'
                                                 }`}
                                             >
                                                 {level === 'best' && 'Best'}
@@ -423,16 +421,16 @@ export default function HomeClient() {
                                  {/* Format Selection - Only for Browser Mode */}
                                  {processingMode === 'client' && (
                                      <div className="mt-4 p-3 bg-surface/50 border border-border/50 rounded-xl animate-in fade-in slide-in-from-top-2">
-                                         <label className="text-xs font-bold text-muted uppercase tracking-wider mb-2 block">Output Format</label>
+                                         <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block">Output Format</label>
                                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                              {(['original', 'webp', 'jpeg'] as const).map((format) => (
                                                   <button
                                                       key={format}
                                                       onClick={() => setOutputFormat(format)}
-                                                      className={`py-3 px-3 rounded-lg text-xs font-black uppercase tracking-widest transition-all duration-200 border ${
+                                                      className={`py-2 px-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
                                                           outputFormat === format 
-                                                              ? 'bg-primary/20 text-primary border-primary/50' 
-                                                              : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-white'
+                                                              ? 'bg-primary/10 text-primary border-primary/20' 
+                                                              : 'bg-background text-muted-foreground border-transparent hover:bg-accent'
                                                       }`}
                                                   >
                                                      {format === 'original' ? 'Original' : format.toUpperCase()}
@@ -457,12 +455,12 @@ export default function HomeClient() {
                                                 if (!useTargetSize) setTargetSize('');
                                             }}
                                         >
-                                            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 relative ${useTargetSize ? 'bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]' : 'bg-surface border border-border'}`}>
-                                                <div className={`w-4 h-4 bg-primary rounded-full shadow-md transition-all duration-300 transform ${useTargetSize ? 'bg-white translate-x-5' : 'translate-x-0'}`}></div>
+                                            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 relative ${useTargetSize ? 'bg-primary' : 'bg-secondary'}`}>
+                                                <div className={`w-4 h-4 bg-background rounded-full shadow-md transition-all duration-300 transform ${useTargetSize ? 'translate-x-5' : 'translate-x-0'}`}></div>
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className={`text-sm font-semibold transition-colors ${useTargetSize ? 'text-gray-600' : 'text-muted group-hover/toggle:text-gray-400'}`}>Specify Target Size</span>
-                                                <span className="text-[10px] text-subtle uppercase tracking-widest font-bold">Priority over quality</span>
+                                                <span className={`text-sm font-semibold transition-colors ${useTargetSize ? 'text-foreground' : 'text-muted-foreground group-hover/toggle:text-foreground'}`}>Specify Target Size</span>
+                                                <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Priority over quality</span>
                                             </div>
                                         </div>
                                         

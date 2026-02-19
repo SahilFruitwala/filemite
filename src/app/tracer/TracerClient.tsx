@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
-import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
 import ImageTracer from 'imagetracerjs';
@@ -66,12 +65,11 @@ export default function TracerClient() {
 
     return (
         <div className="min-h-screen relative overflow-hidden bg-background">
-            <BackgroundGlow color="teal" />
             <Navbar />
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <PageHeader 
-                    title={<>SVG <br /> <span className="text-muted">Tracer & Vectorizer.</span></>}
+                    title={<>SVG <br /> <span className="text-muted-foreground">Tracer & Vectorizer.</span></>}
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
@@ -98,7 +96,7 @@ export default function TracerClient() {
                                             onChange={(e) => setColors(parseInt(e.target.value))}
                                             className="w-full accent-primary h-1.5 bg-border rounded-lg appearance-none cursor-pointer"
                                         />
-                                        <p className="text-[10px] text-muted mt-1">Lower = more "stylized" look, Higher = more detail.</p>
+                                        <p className="text-[10px] text-muted-foreground mt-1">Lower = more "stylized" look, Higher = more detail.</p>
                                     </div>
 
                                     <div>
@@ -127,7 +125,7 @@ export default function TracerClient() {
                                         >
                                             {isProcessing ? (
                                                 <>
-                                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                    <div className="w-5 h-5 border border-white/30 border-t-white rounded-full animate-spin"></div>
                                                     Tracing...
                                                 </>
                                             ) : (
@@ -172,7 +170,7 @@ export default function TracerClient() {
                                                 dangerouslySetInnerHTML={{ __html: svgOutput }}
                                             />
                                         ) : (
-                                            <div className="text-muted text-sm text-center italic">
+                                            <div className="text-muted-foreground text-sm text-center italic">
                                                 {isProcessing ? "Tracing paths..." : "Initial raster displayed below. Click 'Vectorize' to generate paths."}
                                             </div>
                                         )}

@@ -7,7 +7,6 @@ import Dropzone from '@/components/Dropzone';
 import { PDFDocument, rgb } from 'pdf-lib';
 import * as pdfjsLib from 'pdfjs-dist';
 import { MAX_BROWSER_IMAGES, LIMIT_REASONS } from '@/lib/constants';
-import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
 
@@ -182,25 +181,24 @@ export default function PdfClient() {
 
     return (
         <div className="min-h-screen relative overflow-hidden bg-background">
-            <BackgroundGlow color="primary" />
             <Navbar />
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <PageHeader 
-                    title={<>PDF Tools <br /> <span className="text-muted">Convert between Images and PDF.</span></>}
+                    title={<>PDF Tools <br /> <span className="text-muted-foreground">Convert between Images and PDF.</span></>}
                 />
 
                 <div className="max-w-xl mx-auto mb-12">
                     <div className="flex bg-surface/50 backdrop-blur-sm p-1 rounded-2xl border border-border/50 mb-8">
                         <button 
                             onClick={() => { setTab('image-to-pdf'); handleReset(); }}
-                            className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all ${tab === 'image-to-pdf' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted hover:text-foreground'}`}
+                            className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all ${tab === 'image-to-pdf' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:text-foreground'}`}
                         >
                             Images to PDF
                         </button>
                         <button 
                             onClick={() => { setTab('pdf-to-image'); handleReset(); }}
-                            className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all ${tab === 'pdf-to-image' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted hover:text-foreground'}`}
+                            className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all ${tab === 'pdf-to-image' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:text-foreground'}`}
                         >
                             PDF to Images
                         </button>
@@ -226,7 +224,7 @@ export default function PdfClient() {
                                 {files.length > 0 && (
                                     <button 
                                         onClick={handleReset}
-                                        className="text-xs text-muted hover:text-destructive transition-colors underline underline-offset-4"
+                                        className="text-xs text-muted-foreground hover:text-destructive transition-colors underline underline-offset-4"
                                     >
                                         Clear Files
                                     </button>
@@ -243,12 +241,12 @@ export default function PdfClient() {
                             {files.length > 0 && !isProcessing && results.length === 0 && (
                                 <div className="flex flex-col gap-4 animate-[fadeIn_0.3s_ease-out]">
                                     <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
-                                        <p className="text-xs text-muted mb-2 uppercase tracking-wider font-semibold">Selected Files ({files.length})</p>
+                                        <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider font-semibold">Selected Files ({files.length})</p>
                                         <div className="max-h-40 overflow-y-auto space-y-2">
                                             {files.map((f, i) => (
                                                 <div key={i} className="flex items-center justify-between text-sm py-1">
                                                     <span className="truncate text-foreground/80 max-w-[70%]">{f.name}</span>
-                                                    <span className="text-xs text-muted">{formatSize(f.size)}</span>
+                                                    <span className="text-xs text-muted-foreground">{formatSize(f.size)}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -267,7 +265,7 @@ export default function PdfClient() {
                             {isProcessing && (
                                 <div className="flex flex-col items-center justify-center py-12 space-y-4 animate-pulse">
                                     <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                                    <p className="text-sm text-muted font-medium">Processing your files...</p>
+                                    <p className="text-sm text-muted-foreground font-medium">Processing your files...</p>
                                 </div>
                             )}
 
@@ -285,7 +283,7 @@ export default function PdfClient() {
                     <div className="max-w-4xl mx-auto animate-[fadeInUp_0.5s_ease-out]">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-bold text-foreground">Generated Results</h2>
-                            <button onClick={handleReset} className="text-sm text-muted hover:text-foreground underline underline-offset-4">Reset</button>
+                            <button onClick={handleReset} className="text-sm text-muted-foreground hover:text-foreground underline underline-offset-4">Reset</button>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {results.map((res) => (
@@ -308,7 +306,7 @@ export default function PdfClient() {
                                             >
                                                 {res.name}
                                             </span>
-                                            <span className="text-xs text-muted">{formatSize(res.size)}</span>
+                                            <span className="text-xs text-muted-foreground">{formatSize(res.size)}</span>
                                         </div>
                                     </div>
                                     <a 
@@ -336,11 +334,11 @@ export default function PdfClient() {
                         <div className="flex items-center justify-between p-6 border-b border-border">
                             <div className="min-w-0">
                                 <h2 className="text-xl font-bold text-foreground truncate">{previewFile.name}</h2>
-                                <p className="text-muted text-sm">{formatSize(previewFile.size)}</p>
+                                <p className="text-muted-foreground text-sm">{formatSize(previewFile.size)}</p>
                             </div>
                             <button 
                                 onClick={() => setPreviewFile(null)}
-                                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-hover text-muted hover:text-foreground transition-colors"
+                                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-hover text-muted-foreground hover:text-foreground transition-colors"
                             >
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                             </button>

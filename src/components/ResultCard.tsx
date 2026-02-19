@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Download, Check, Files, RefreshCw } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
-import BrutalButton from "@/components/ui/BrutalButton";
+import Button from "@/components/ui/Button";
 
 interface ResultCardProps {
   originalFile: File;
@@ -58,19 +58,19 @@ export default function ResultCard({
 
   return (
     <GlassCard className="w-full max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700" hoverEffect={false}>
-      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center p-6">
         {/* Preview Section */}
         <div className="space-y-6">
-          <div className="relative aspect-square w-full bg-repeating-conic border-2 border-border shadow-[4px_4px_0px_0px_var(--color-border)] overflow-hidden group">
+          <div className="relative aspect-square w-full bg-repeating-conic border border-border/50 rounded-2xl overflow-hidden group shadow-inner">
             <Image
               src={compressedUrl}
               alt="Compressed preview"
               fill
-              className="object-contain p-4"
+              className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
               unoptimized
             />
-            <div className="absolute top-4 left-4 bg-primary text-white text-xs font-black uppercase px-2 py-1 border-2 border-border">
-              Processing: {stats.timeTaken}
+            <div className="absolute top-4 left-4 bg-background/90 backdrop-blur text-foreground text-xs font-medium px-2 py-1 rounded-md border border-border shadow-sm">
+              {stats.timeTaken}
             </div>
           </div>
         </div>
@@ -78,33 +78,33 @@ export default function ResultCard({
         {/* Stats Section */}
         <div className="space-y-8">
             <div>
-                <h3 className="text-3xl font-black uppercase tracking-tighter mb-2">Success!</h3>
-                <p className="text-muted font-mono text-sm border-l-4 border-primary pl-4">
+                <h3 className="text-2xl font-bold tracking-tight mb-2 text-foreground">Success!</h3>
+                <p className="text-muted-foreground text-sm border-l-2 border-primary pl-4">
                     {originalFile.name} successfully compressed.
                 </p>
             </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-surface border-2 border-border shadow-[4px_4px_0px_0px_var(--color-border)]">
-              <p className="text-xs font-black uppercase text-muted mb-1">Original</p>
-              <p className="text-xl font-black">{stats.originalSize}</p>
+            <div className="p-4 bg-secondary/50 rounded-xl border border-border/50">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Original</p>
+              <p className="text-lg font-bold text-foreground">{stats.originalSize}</p>
             </div>
-            <div className="p-4 bg-primary text-white border-2 border-border shadow-[4px_4px_0px_0px_var(--color-border)]">
-              <p className="text-xs font-black uppercase text-white/80 mb-1">New Size</p>
-              <p className="text-xl font-black">{stats.compressedSize}</p>
+            <div className="p-4 bg-primary/10 rounded-xl border border-primary/20">
+              <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">New Size</p>
+              <p className="text-lg font-bold text-foreground">{stats.compressedSize}</p>
             </div>
-            <div className="p-4 bg-surface border-2 border-border shadow-[4px_4px_0px_0px_var(--color-border)]">
-              <p className="text-xs font-black uppercase text-muted mb-1">Savings</p>
-              <p className="text-xl font-black text-primary">{stats.reduction}</p>
+            <div className="p-4 bg-secondary/50 rounded-xl border border-border/50">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Savings</p>
+              <p className="text-lg font-bold text-foreground">{stats.reduction}</p>
             </div>
-             <div className="p-4 bg-surface border-2 border-border shadow-[4px_4px_0px_0px_var(--color-border)]">
-              <p className="text-xs font-black uppercase text-muted mb-1">Format</p>
-              <p className="text-xl font-black uppercase">{outputFormat}</p>
+             <div className="p-4 bg-secondary/50 rounded-xl border border-border/50">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Format</p>
+              <p className="text-lg font-bold text-foreground uppercase">{outputFormat}</p>
             </div>
           </div>
 
             <div className="flex flex-col gap-3">
-                <BrutalButton onClick={handleDownload} fullWidth size="lg">
+                <Button onClick={handleDownload} fullWidth size="lg" className="rounded-xl shadow-lg shadow-primary/20">
                     {downloaded ? (
                         <>
                         <Check size={20} className="mr-2" /> Downloaded
@@ -114,17 +114,17 @@ export default function ResultCard({
                         <Download size={20} className="mr-2" /> Download Image
                         </>
                     )}
-                </BrutalButton>
+                </Button>
                 
                 <div className="flex gap-3">
-                    <BrutalButton variant="secondary" onClick={handleCopy} className="flex-1">
+                    <Button variant="secondary" onClick={handleCopy} className="flex-1 rounded-xl">
                         {copied ? <Check size={18} className="mr-2" /> : <Files size={18} className="mr-2" />}
                         {copied ? "Copied" : "Copy"}
-                    </BrutalButton>
-                    <BrutalButton variant="outline" onClick={onReset} className="flex-1">
+                    </Button>
+                    <Button variant="outline" onClick={onReset} className="flex-1 rounded-xl border-dashed">
                         <RefreshCw size={18} className="mr-2" />
                         New
-                    </BrutalButton>
+                    </Button>
                 </div>
             </div>
         </div>

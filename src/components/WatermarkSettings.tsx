@@ -69,19 +69,19 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                 <div className="flex bg-surface rounded-lg p-1.5 border border-border">
                      <button
                         onClick={() => handleTypeChange(null)}
-                        className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${config.type === null ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-foreground'}`}
+                        className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${config.type === null ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
                     >
                         None
                     </button>
                     <button
                         onClick={() => handleTypeChange('text')}
-                        className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${config.type === 'text' ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-foreground'}`}
+                        className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${config.type === 'text' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
                     >
                         Text
                     </button>
                     <button
                         onClick={() => handleTypeChange('image')}
-                        className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${config.type === 'image' ? 'bg-primary text-white shadow-lg' : 'text-muted hover:text-foreground'}`}
+                        className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${config.type === 'image' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
                     >
                         Image
                     </button>
@@ -100,7 +100,7 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                                 value={config.text}
                                 onChange={handleTextChange}
                                 placeholder="Enter watermark text..."
-                                className="w-full bg-background border border-border rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all placeholder:text-muted/50"
+                                className="w-full bg-background border border-border rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all placeholder:text-muted-foreground/50"
                             />
                         )}
 
@@ -113,7 +113,7 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                                     {config.imageUrl ? (
                                         <img src={config.imageUrl} alt="Watermark" className="w-full h-full object-contain" />
                                     ) : (
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted group-hover:text-primary transition-colors"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground group-hover:text-primary transition-colors"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                                     )}
                                 </div>
                                 <div className="flex-1">
@@ -123,7 +123,7 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
                                     >
                                         Upload Logo
                                     </button>
-                                    <p className="text-xs text-muted mt-1">PNG with transparency recommended</p>
+                                    <p className="text-xs text-muted-foreground mt-1">PNG with transparency recommended</p>
                                     <input 
                                         type="file" 
                                         ref={fileInputRef} 
@@ -181,8 +181,8 @@ export default function WatermarkSettings({ config, onChange }: WatermarkSetting
             )}
             {/* Privacy Note */}
             <div className="flex items-center justify-center gap-2 pt-6 opacity-40 hover:opacity-100 transition-opacity border-t border-border mt-6 p-6">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span className="text-[10px] text-muted font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
             </div>
         </GlassCard>
     );

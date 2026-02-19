@@ -22,7 +22,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className="p-2 rounded-lg bg-surface border border-border text-muted hover:text-foreground transition-all flex items-center justify-center"
+      className="p-2 rounded-lg bg-surface border border-border text-muted-foreground hover:text-foreground transition-all flex items-center justify-center"
       title="Toggle theme"
     >
       {theme === "light" ? (

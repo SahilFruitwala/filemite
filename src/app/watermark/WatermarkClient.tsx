@@ -8,7 +8,6 @@ import WatermarkSettings, { WatermarkConfig } from '@/components/WatermarkSettin
 import ResultCard from '@/components/ResultCard';
 import { CompressedFile } from '@/types';
 import { MAX_SERVER_IMAGES, LIMIT_REASONS } from '@/lib/constants';
-import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
 
@@ -145,7 +144,6 @@ export default function WatermarkClient() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-center">
-      <BackgroundGlow color="teal" />
       
       <Navbar />
 

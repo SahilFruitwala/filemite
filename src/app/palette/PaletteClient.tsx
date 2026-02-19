@@ -5,7 +5,6 @@ import Dropzone from "@/components/Dropzone";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ColorThief from "colorthief";
-import BackgroundGlow from "@/components/ui/BackgroundGlow";
 import PageHeader from "@/components/ui/PageHeader";
 import GlassCard from "@/components/ui/GlassCard";
 
@@ -72,7 +71,6 @@ export default function PaletteClient() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-center selection:bg-primary/30">
-      <BackgroundGlow color="teal" />
       <Navbar />
       
       <main className="container mx-auto px-6 pt-32 pb-20">
@@ -99,60 +97,114 @@ export default function PaletteClient() {
                       onLoad={extractColors}
                       crossOrigin="anonymous" 
                    />
-                   <button 
+                     <button 
+ 
                      onClick={() => {
+ 
                         setUploadedImage(null);
+ 
                         setColors([]);
+ 
                      }}
-                     className="absolute top-4 right-4 bg-background/60 hover:bg-red-500/80 text-foreground p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
+ 
+                     className="absolute top-4 right-4 bg-background/60 hover:bg-destructive/80 text-foreground p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
+ 
                      title="Remove image"
+ 
                    >
+ 
                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ 
                         <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+ 
                         <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+ 
                      </svg>
+ 
                    </button>
+ 
                 </GlassCard>
-
+ 
+ 
+ 
                 {/* Palette Display */}
+ 
                 <div>
+ 
                     <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
+ 
                         <span className="w-2 h-8 bg-primary rounded-full"></span>
+ 
                         Dominant Colors
+ 
                     </h3>
+ 
                     
+ 
                     {colors.length === 0 && isExtracting && (
+ 
                          <div className="flex gap-2 mb-6">
+ 
                             {[1, 2, 3, 4, 5].map((i) => (
+ 
                                 <div key={i} className="h-20 w-full rounded-xl bg-surface animate-pulse"></div>
+ 
                             ))}
+ 
                          </div>
+ 
                     )}
-
+ 
+ 
+ 
                     <div className="space-y-4">
+ 
                         {colors.map((color, index) => (
+ 
                             <div 
+ 
                                 key={index}
+ 
                                 onClick={() => copyToClipboard(color)}
+ 
                                 className="group flex items-center justify-between p-4 rounded-xl bg-surface border border-border hover:border-primary/20 hover:bg-surface-hover transition-all cursor-pointer"
+ 
                             >
+ 
                                 <div className="flex items-center gap-4">
+ 
                                     <div 
+ 
                                         className="w-16 h-16 rounded-lg shadow-lg border border-border transition-transform group-hover:scale-105" 
+ 
                                         style={{ backgroundColor: color }}
+ 
                                     ></div>
+ 
                                     <div>
+ 
                                         <p className="text-xl font-mono font-bold tracking-wider text-foreground">{color}</p>
-                                        <p className="text-sm text-muted">HEX</p>
+ 
+                                        <p className="text-sm text-muted-foreground">HEX</p>
+ 
                                     </div>
+ 
                                 </div>
+ 
                                 <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <span className={`text-sm font-medium px-3 py-1 rounded-full ${copyFeedback === color ? 'bg-green-500/20 text-green-400' : 'bg-surface text-muted'}`}>
+ 
+                                    <span className={`text-sm font-medium px-3 py-1 rounded-full ${copyFeedback === color ? 'bg-primary/20 text-primary' : 'bg-surface text-muted-foreground'}`}>
+ 
                                         {copyFeedback === color ? 'Copied!': 'Copy'}
+ 
                                     </span>
+ 
                                 </div>
+ 
                             </div>
+ 
                         ))}
+ 
                     </div>
                     
                     {colors.length > 0 && (

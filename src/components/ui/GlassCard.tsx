@@ -13,9 +13,9 @@ export default function GlassCard({
 }: GlassCardProps) {
   return (
     <div
-      className={`relative bg-surface border-2 border-border shadow-[4px_4px_0px_0px_var(--color-border)] max-w-full ${
+      className={`relative bg-surface border border-border/50 shadow-sm rounded-2xl overflow-hidden max-w-full ${
         hoverEffect
-          ? "group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200"
+          ? "group hover:shadow-md transition-all duration-300 hover:border-border"
           : ""
       } ${className}`}
     >

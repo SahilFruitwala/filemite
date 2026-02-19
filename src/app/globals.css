@@ -1,102 +1,133 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #FF4500; /* International Orange */
-  --color-primary-hover: #CC3700;
-  
-  --color-surface: var(--color-surface);
-  --color-border: var(--color-border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
 
-  --color-muted: var(--color-muted);
-  
-  --color-foreground: var(--foreground);
   --color-background: var(--background);
+  --color-foreground: var(--foreground);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--card);
+  --color-surface-hover: var(--card-hover);
+  --color-surface-foreground: var(--card-foreground);
+  
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
 
-  --radius: 0px;
-  --shadow-hard: 4px 4px 0px 0px var(--color-border);
-  --shadow-hard-hover: 6px 6px 0px 0px var(--color-border);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-ring: var(--ring);
+
+  --radius: 0.75rem;
+  
+  /* Soft shadows for professional look */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
+/* Fallback for components still using CSS variables directly */
 :root {
-  --background: #FFFFFF;
-  --foreground: #000000;
-  
-  --color-surface: #FFFFFF;
-  --color-border: #000000;
-  --color-muted: #52525b;
+  /* Light Mode - Orange/Zinc */
+  --background: #ffffff;
+  --foreground: #18181b; /* Zinc-950 */
 
-  --primary-rgb: 255, 69, 0;
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  --card-hover: #f4f4f5; /* Zinc-100 */
+
+  --popover: #ffffff;
+  --popover-foreground: #18181b;
+
+  --primary: #ea580c; /* Orange-600 */
+  --primary-foreground: #ffffff;
+  --primary-hover: #c2410c; /* Orange-700 */
+
+  --secondary: #f4f4f5; /* Zinc-100 */
+  --secondary-foreground: #18181b;
+
+  --muted: #f4f4f5; /* Zinc-100 */
+  --muted-foreground: #71717a; /* Zinc-500 */
+
+  --accent: #f4f4f5; /* Zinc-100 */
+  --accent-foreground: #18181b;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #e4e4e7; /* Zinc-200 */
+  --input: #e4e4e7;
+  --ring: #f97316;
+
+  --radius: 0.75rem;
 }
 
 .dark {
-  --background: #000000;
-  --foreground: #FFFFFF;
-  
-  --color-surface: #000000;
-  --color-border: #FFFFFF;
-  --color-muted: #a1a1aa;
+  /* Dark Mode - Zinc */
+  --background: #09090b; /* Zinc-950 */
+  --foreground: #fafafa; /* Zinc-50 */
 
-  --primary-rgb: 255, 69, 0;
+  --card: #09090b;
+  --card-foreground: #fafafa;
+  --card-hover: #18181b; /* Zinc-900 */
+
+  --popover: #09090b;
+  --popover-foreground: #fafafa;
+
+  --primary: #f97316; /* Orange-500 */
+  --primary-foreground: #ffffff;
+  --primary-hover: #ea580c;
+
+  --secondary: #27272a; /* Zinc-800 */
+  --secondary-foreground: #fafafa;
+
+  --muted: #27272a; /* Zinc-800 */
+  --muted-foreground: #a1a1aa; /* Zinc-400 */
+
+  --accent: #27272a; /* Zinc-800 */
+  --accent-foreground: #fafafa;
+
+  --destructive: #7f1d1d;
+  --destructive-foreground: #fafafa;
+
+  --border: #27272a; /* Zinc-800 */
+  --input: #27272a;
+  --ring: #f97316;
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  
-  /* Grid Background Pattern */
-  background-image: 
-    linear-gradient(to right, var(--color-border) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: center top;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
 }
 
-/* Make grid lines subtle */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: var(--background);
-  opacity: 0.94; /* High opacity to make grid lines very faint */
-  z-index: -1;
-  pointer-events: none;
+/* Utility for repeating conic gradient if used, but made subtle */
+.bg-repeating-conic {
+  background-image: repeating-conic-gradient(#0000 0% 25%, #00000005 0% 50%);
+  background-position: 0 0, 16px 16px;
+  background-size: 32px 32px;
 }
 
-/* Brutalist Utilities */
-.brutal-border {
-  border: 2px solid var(--color-border);
+.dark .bg-repeating-conic {
+  background-image: repeating-conic-gradient(#0000 0% 25%, #ffffff05 0% 50%);
 }
 
-.brutal-shadow {
-  box-shadow: 4px 4px 0px 0px var(--color-border);
-}
-
-.brutal-shadow-hover:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px var(--color-border);
-}
-
-.brutal-shadow-active:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px 0px var(--color-border);
-}
-
-a, button {
+button, a {
   cursor: pointer;
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
 }

@@ -136,9 +136,9 @@ export default function FaviconPage() {
                 <div className="text-center mb-16">
                     <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-foreground">
                         Favicon Generator <br />
-                        <span className="text-muted">for all devices.</span>
+                        <span className="text-muted-foreground">for all devices.</span>
                     </h1>
-                    <p className="text-muted max-w-2xl mx-auto text-lg">
+                    <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
                         Generate web, mobile, and legacy .ico icons from a single upload.
                     </p>
                 </div>
@@ -160,7 +160,7 @@ export default function FaviconPage() {
                                 </div>
                                 <div className="flex-1 text-center md:text-left">
                                     <h3 className="text-2xl font-bold text-foreground mb-2">{originalFile.name}</h3>
-                                    <p className="text-muted mb-6 font-medium">Now generates Apple Touch Icon and favicon.ico</p>
+                                    <p className="text-muted-foreground mb-6 font-medium">Now generates Apple Touch Icon and favicon.ico</p>
                                     <button
                                         onClick={generateFavicons}
                                         disabled={isGenerating || generatedFiles.length > 0}
@@ -170,7 +170,7 @@ export default function FaviconPage() {
                                     >
                                         {isGenerating ? (
                                             <>
-                                                <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+                                                <div className="w-5 h-5 border border-primary/30 border-t-primary rounded-full animate-spin"></div>
                                                 Generating Assets...
                                             </>
                                         ) : generatedFiles.length > 0 ? (
@@ -203,7 +203,7 @@ export default function FaviconPage() {
 
                                     {/* Web Category */}
                                     <section>
-                                        <h3 className="text-muted text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-2">
+                                        <h3 className="text-muted-foreground text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-2">
                                             <span className="w-8 h-[1px] bg-border"></span> Standard Web Icons
                                         </h3>
                                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
@@ -212,7 +212,7 @@ export default function FaviconPage() {
                                                     <div className="w-12 h-12 flex items-center justify-center bg-black rounded-lg border border-border overflow-hidden">
                                                         <img src={file.url} alt={`${file.size}x${file.size}`} className="max-w-full max-h-full" />
                                                     </div>
-                                                    <span className="text-xs font-mono text-muted">{file.size}x{file.size}</span>
+                                                    <span className="text-xs font-mono text-muted-foreground">{file.size}x{file.size}</span>
                                                     <a 
                                                         href={file.url} 
                                                         download={`favicon-${file.size}x${file.size}.png`}
@@ -239,7 +239,7 @@ export default function FaviconPage() {
                                                         </div>
                                                         <div className="flex-1">
                                                             <p className="text-foreground font-bold">Apple Touch Icon</p>
-                                                            <p className="text-muted text-sm">180x180 px • PNG</p>
+                                                            <p className="text-muted-foreground text-sm">180x180 px • PNG</p>
                                                             <a 
                                                                 href={file.url} 
                                                                 download="apple-touch-icon.png"

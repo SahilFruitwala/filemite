@@ -6,7 +6,6 @@ import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
 import { CompressedFile } from '@/types';
 import JSZip from 'jszip';
-import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
 import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
@@ -212,12 +211,11 @@ export default function ResizeClient() {
 
     return (
         <div className="min-h-screen relative overflow-hidden bg-background">
-            <BackgroundGlow color="primary" />
             <Navbar />
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <PageHeader 
-                    title={<>Advanced <br /> <span className="text-muted">Interactive Resizer.</span></>}
+                    title={<>Advanced <br /> <span className="text-muted-foreground">Interactive Resizer.</span></>}
                 />
 
                 {!file ? (
@@ -237,7 +235,7 @@ export default function ResizeClient() {
                                             Output Dimensions
                                         </h3>
                                         {file.status === 'done' && (
-                                            <span className="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded-full border border-emerald-500/20 font-bold uppercase tracking-wider flex items-center gap-1">
+                                            <span className="text-[10px] bg-primary/10 text-primary px-2 py-1 rounded-full border border-primary/20 font-bold uppercase tracking-wider flex items-center gap-1">
                                                 <CheckCircle2 size={10} /> Ready
                                             </span>
                                         )}
@@ -245,7 +243,7 @@ export default function ResizeClient() {
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <label className="text-[10px] text-subtle font-black uppercase tracking-widest">Width (px)</label>
+                                            <label className="text-[10px] text-subtle font-bold uppercase tracking-widest">Width (px)</label>
                                             <input 
                                                 type="number" 
                                                 value={resizeWidth}
@@ -259,7 +257,7 @@ export default function ResizeClient() {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-[10px] text-subtle font-black uppercase tracking-widest">Height (px)</label>
+                                            <label className="text-[10px] text-subtle font-bold uppercase tracking-widest">Height (px)</label>
                                             <input 
                                                 type="number" 
                                                 value={resizeHeight}
@@ -277,7 +275,7 @@ export default function ResizeClient() {
                                     <div className="flex items-center gap-4 py-2">
                                         <button 
                                             onClick={() => setLockAspectRatio(!lockAspectRatio)}
-                                            className={`flex items-center gap-2 text-xs font-bold transition-all p-2 rounded-lg ${lockAspectRatio ? 'text-primary bg-primary/10' : 'text-muted hover:text-foreground'}`}
+                                            className={`flex items-center gap-2 text-xs font-bold transition-all p-2 rounded-lg ${lockAspectRatio ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}`}
                                         >
                                             {lockAspectRatio ? <Layout size={14} /> : <Maximize2 size={14} />}
                                             {lockAspectRatio ? 'Aspect Ratio Locked' : 'Free Resize'}
@@ -288,23 +286,23 @@ export default function ResizeClient() {
                                     </div>
 
                                     <div className="space-y-3">
-                                        <label className="text-[10px] text-subtle font-black uppercase tracking-widest">Scaling Mode</label>
+                                        <label className="text-[10px] text-subtle font-bold uppercase tracking-widest">Scaling Mode</label>
                                         <div className="grid grid-cols-2 gap-2">
                                             {(['cover', 'contain', 'fill', 'inside'] as const).map(mode => (
                                                 <button
                                                     key={mode}
                                                     onClick={() => setResizeFit(mode)}
-                                                    className={`py-2 px-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border ${
+                                                    className={`py-2 px-3 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all border ${
                                                         resizeFit === mode 
                                                             ? 'bg-primary/10 border-primary text-primary shadow-sm' 
-                                                            : 'bg-surface border-transparent text-muted hover:border-border hover:text-foreground'
+                                                            : 'bg-surface border-transparent text-muted-foreground hover:border-border hover:text-foreground'
                                                     }`}
                                                 >
                                                     {mode}
                                                 </button>
                                             ))}
                                         </div>
-                                        <p className="text-[10px] text-muted italic">
+                                        <p className="text-[10px] text-muted-foreground italic">
                                             {resizeFit === 'cover' && 'Fills the box, cropping extra.'}
                                             {resizeFit === 'contain' && 'Fits inside, adds letterboxing.'}
                                             {resizeFit === 'fill' && 'Stretches image to fit.'}
@@ -313,7 +311,7 @@ export default function ResizeClient() {
                                     </div>
 
                                     <div className="pt-4 border-t border-border/50">
-                                        <label className="text-[10px] text-subtle font-black uppercase tracking-widest mb-3 block">Quick Presets</label>
+                                        <label className="text-[10px] text-subtle font-bold uppercase tracking-widest mb-3 block">Quick Presets</label>
                                         <div className="grid grid-cols-3 sm:grid-cols-3 gap-2">
                                             {SOCIAL_PRESETS.map(preset => (
                                                 <button
@@ -322,7 +320,7 @@ export default function ResizeClient() {
                                                     className="flex flex-col items-center justify-center p-2 rounded-xl bg-surface/50 border border-border hover:border-primary/50 hover:bg-surface-hover transition-all group"
                                                 >
                                                     <span className="text-xl mb-1 group-hover:scale-110 transition-transform">{preset.icon}</span>
-                                                    <span className="text-[8px] font-black uppercase text-center leading-tight truncate w-full">{preset.label}</span>
+                                                    <span className="text-[8px] font-bold uppercase text-center leading-tight truncate w-full">{preset.label}</span>
                                                 </button>
                                             ))}
                                         </div>
@@ -332,7 +330,7 @@ export default function ResizeClient() {
                                         <button
                                             onClick={handleResize}
                                             disabled={isProcessing}
-                                            className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black uppercase tracking-widest transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98]"
+                                            className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-bold uppercase tracking-widest transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98]"
                                         >
                                             {isProcessing ? (
                                                 <RefreshCw size={20} className="animate-spin" />
@@ -348,7 +346,7 @@ export default function ResizeClient() {
                                             <a
                                                 href={file.blobUrl}
                                                 download={`resized-${file.originalName}`}
-                                                className="w-full bg-surface border border-primary/30 text-primary hover:bg-primary/5 py-4 rounded-xl font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 shadow-sm"
+                                                className="w-full bg-surface border border-primary/30 text-primary hover:bg-primary/5 py-4 rounded-xl font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-3 shadow-sm"
                                             >
                                                 <Download size={20} />
                                                 Save Result
@@ -360,7 +358,7 @@ export default function ResizeClient() {
 
                             <button 
                                 onClick={() => setFile(null)} 
-                                className="w-full py-4 text-xs font-bold text-muted hover:text-red-500 transition-colors flex items-center justify-center gap-2"
+                                className="w-full py-4 text-xs font-bold text-muted-foreground hover:text-destructive transition-colors flex items-center justify-center gap-2"
                             >
                                 <RefreshCw size={14} /> Start Fresh
                             </button>
@@ -372,15 +370,15 @@ export default function ResizeClient() {
                                 <div className="space-y-1">
                                     <h2 className="text-xl font-bold flex items-center gap-2 text-foreground uppercase tracking-tight">
                                         Live Editor
-                                        {isCropMode && <span className="text-amber-500 text-[10px] bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">Crop Active</span>}
+                                        {isCropMode && <span className="text-primary text-[10px] bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">Crop Active</span>}
                                     </h2>
-                                    <p className="text-xs text-muted">Original: {formatSize(file.originalSize)} • Result: {resizeWidth}x{resizeHeight}px</p>
+                                    <p className="text-xs text-muted-foreground">Original: {formatSize(file.originalSize)} • Result: {resizeWidth}x{resizeHeight}px</p>
                                 </div>
                                 <button
                                     onClick={() => isCropMode ? applyCrop() : setIsCropMode(true)}
                                     className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all border ${
                                         isCropMode 
-                                            ? 'bg-amber-500 text-white border-amber-600 shadow-lg shadow-amber-500/20' 
+                                            ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' 
                                             : 'bg-surface border-border text-foreground hover:bg-surface-hover hover:border-primary/50'
                                     }`}
                                 >
@@ -393,7 +391,7 @@ export default function ResizeClient() {
                                 
                                 {/* Resizing Frame / Preview Container */}
                                 <div 
-                                    className={`relative z-10 border-2 border-dashed border-primary/30 rounded-2xl overflow-hidden transition-all duration-300 shadow-2xl bg-black/50 ${isCropMode ? 'opacity-30 blur-sm grayscale pointer-events-none' : ''}`}
+                                    className={`relative z-10 border border-dashed border-primary/30 rounded-2xl overflow-hidden transition-all duration-300 shadow-2xl bg-black/50 ${isCropMode ? 'opacity-30 blur-sm grayscale pointer-events-none' : ''}`}
                                     style={previewStyle}
                                 >
                                     <img 
@@ -431,7 +429,7 @@ export default function ResizeClient() {
                                                     className="max-w-full max-h-[60vh] object-contain"
                                                 />
                                             </ReactCrop>
-                                            <div className="mt-4 flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted">
+                                            <div className="mt-4 flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted-foreground">
                                                 <span className="flex items-center gap-2">
                                                     <Move size={14} /> Drag handles to crop
                                                 </span>
@@ -446,7 +444,7 @@ export default function ResizeClient() {
                                 {/* Hover Prompt */}
                                 {!isCropMode && !isProcessing && file.status !== 'done' && (
                                     <div className="absolute bottom-12 left-1/2 -translate-x-1/2 opacity-0 group-hover/preview:opacity-100 transition-opacity flex flex-col items-center gap-2 pointer-events-none">
-                                        <div className="bg-primary/20 backdrop-blur-md border border-primary/30 text-primary px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg flex items-center gap-2 animate-bounce">
+                                        <div className="bg-primary/20 backdrop-blur-md border border-primary/30 text-primary px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg flex items-center gap-2 animate-bounce">
                                             Ready to Process
                                         </div>
                                     </div>
@@ -463,7 +461,7 @@ export default function ResizeClient() {
                                         <p className="text-xs font-bold text-foreground">
                                             {isProcessing ? "Enhancing your image pixels..." : isCropMode ? "Fine-tuning your focal point..." : "Interactive Preview Active"}
                                         </p>
-                                        <p className="text-[10px] text-muted">Acknowledge: The live preview utilizes CSS logic to simulate resizing. The final download will be processed with industrial-grade algorithms.</p>
+                                        <p className="text-[10px] text-muted-foreground">Acknowledge: The live preview utilizes CSS logic to simulate resizing. The final download will be processed with industrial-grade algorithms.</p>
                                     </div>
                                 </div>
                             </GlassCard>

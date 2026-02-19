@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
-import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
 
@@ -103,12 +102,11 @@ export default function FiltersClient() {
 
     return (
         <div className="min-h-screen relative overflow-hidden bg-background">
-            <BackgroundGlow color="zinc" />
             <Navbar />
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <PageHeader 
-                    title={<>Aesthetic <br /> <span className="text-muted">Filters & Fine-tuning.</span></>}
+                    title={<>Aesthetic <br /> <span className="text-muted-foreground">Filters & Fine-tuning.</span></>}
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
@@ -121,7 +119,7 @@ export default function FiltersClient() {
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/><circle cx="12" cy="12" r="3"/><path d="m3 3 18 18"/></svg>
                                         Adjustments
                                     </h3>
-                                    <button onClick={resetFilters} className="text-xs text-muted hover:text-foreground underline">Reset</button>
+                                    <button onClick={resetFilters} className="text-xs text-muted-foreground hover:text-foreground underline">Reset</button>
                                 </div>
 
                                 <div className="space-y-4">
@@ -183,7 +181,7 @@ export default function FiltersClient() {
                                             </div>
                                             <div>
                                                 <p className="text-sm font-bold text-foreground">Filter Applied!</p>
-                                                <p className="text-xs text-muted">Ready to download</p>
+                                                <p className="text-xs text-muted-foreground">Ready to download</p>
                                             </div>
                                         </div>
                                         <a 
@@ -230,7 +228,7 @@ function PresetButton({ label, onClick }: { label: string, onClick: () => void }
     return (
         <button 
             onClick={onClick}
-            className="py-2 px-1 rounded-lg bg-background border border-border hover:border-primary hover:text-primary transition-all text-[10px] uppercase font-bold text-muted"
+            className="py-2 px-1 rounded-lg bg-background border border-border hover:border-primary hover:text-primary transition-all text-[10px] uppercase font-bold text-muted-foreground"
         >
             {label}
         </button>

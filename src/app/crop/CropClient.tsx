@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
-import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
 import smartcrop from 'smartcrop';
@@ -81,12 +80,11 @@ export default function CropClient() {
 
     return (
         <div className="min-h-screen relative overflow-hidden bg-background">
-            <BackgroundGlow color="amber" />
             <Navbar />
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <PageHeader 
-                    title={<>Smart <br /> <span className="text-muted">AI-Powered Cropping.</span></>}
+                    title={<>Smart <br /> <span className="text-muted-foreground">AI-Powered Cropping.</span></>}
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
@@ -104,15 +102,15 @@ export default function CropClient() {
                                 </p>
 
                                 <div className="space-y-3">
-                                    <div className="flex items-center gap-2 text-xs font-bold text-muted uppercase">
+                                    <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase">
                                         <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
                                         Instagram Square (1:1)
                                     </div>
-                                    <div className="flex items-center gap-2 text-xs font-bold text-muted uppercase">
+                                    <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase">
                                         <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
                                         Instagram Story (9:16)
                                     </div>
-                                    <div className="flex items-center gap-2 text-xs font-bold text-muted uppercase">
+                                    <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase">
                                         <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
                                         FB / Twitter (1.91:1)
                                     </div>

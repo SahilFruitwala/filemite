@@ -4,10 +4,9 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Dropzone from '@/components/Dropzone';
-import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
-import { Download, Move, Maximize2, Trash2, CheckCircle2 } from 'lucide-react';
+import { Download, Move, Maximize2, Trash2, CheckCircle2, Plus } from 'lucide-react';
 
 export default function GlassClient() {
     const [file, setFile] = useState<File | null>(null);
@@ -18,7 +17,7 @@ export default function GlassClient() {
     // Glass States
     const [blur, setBlur] = useState(30);
     const [opacity, setOpacity] = useState(30);
-    const [glowColor, setGlowColor] = useState('#10b981');
+    const [glowColor, setGlowColor] = useState('#f97316');
     const [glowIntensity, setGlowIntensity] = useState(15);
     const [borderWidth, setBorderWidth] = useState(1);
 
@@ -61,7 +60,7 @@ export default function GlassClient() {
         } else if (type === 'neon') {
             setBlur(10);
             setOpacity(60);
-            setGlowColor('#14b8a6');
+            setGlowColor('#f97316');
             setGlowIntensity(30);
             setBorderWidth(2);
         } else if (type === 'soft') {
@@ -191,12 +190,11 @@ export default function GlassClient() {
 
     return (
         <div className="min-h-screen relative overflow-hidden bg-background">
-            <BackgroundGlow color="primary" />
             <Navbar />
 
             <main className="container mx-auto px-6 pt-32 pb-20">
                 <PageHeader 
-                    title={<>Glassmorphism <br /> <span className="text-muted">UI Background Designer.</span></>}
+                    title={<>Glassmorphism <br /> <span className="text-muted-foreground">UI Background Designer.</span></>}
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
@@ -215,16 +213,31 @@ export default function GlassClient() {
                                     <SliderControl label="Border Width" value={borderWidth} max={10} onChange={setBorderWidth} />
                                     
                                     <div>
-                                        <label className="text-xs text-subtle uppercase tracking-wider font-semibold mb-2 block">Glow Color</label>
-                                        <div className="flex gap-2">
-                                            {['#10b981', '#14b8a6', '#22c55e', '#eab308', '#ffffff'].map(c => (
+                                        <label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-2 block">Glow Color</label>
+                                        <div className="flex gap-2 items-center flex-wrap">
+                                            {['#f97316', '#ea580c', '#fb923c', '#fdba74', '#ffffff'].map(c => (
                                                 <button 
                                                     key={c}
                                                     onClick={() => setGlowColor(c)}
-                                                    className={`w-8 h-8 rounded-full border-2 transition-all ${glowColor === c ? 'border-primary' : 'border-transparent hover:scale-110'}`}
+                                                    className={`w-8 h-8 rounded-full border-2 transition-all ${glowColor === c ? 'border-primary scale-110 shadow-sm' : 'border-border hover:border-primary/50 hover:scale-110'}`}
                                                     style={{ backgroundColor: c }}
+                                                    title={c === '#ffffff' ? 'White Glow' : 'Orange Glow'}
                                                 />
                                             ))}
+                                            
+                                            {/* Custom Color Selector */}
+                                            <div className="relative group">
+                                                <input 
+                                                    type="color"
+                                                    value={glowColor}
+                                                    onChange={(e) => setGlowColor(e.target.value)}
+                                                    className="absolute inset-0 opacity-0 w-8 h-8 cursor-pointer z-10"
+                                                    title="Custom Color"
+                                                />
+                                                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${!['#f97316', '#ea580c', '#fb923c', '#fdba74', '#ffffff'].includes(glowColor) ? 'border-primary bg-surface' : 'border-border bg-secondary group-hover:border-primary/50'}`}>
+                                                    <Plus size={14} className="text-muted-foreground" />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -250,7 +263,7 @@ export default function GlassClient() {
                             >
                                 {isProcessing ? (
                                     <>
-                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        <div className="w-5 h-5 border border-white/30 border-t-white rounded-full animate-spin"></div>
                                         Exporting...
                                     </>
                                 ) : (
@@ -270,7 +283,7 @@ export default function GlassClient() {
                         ) : (
                             <div className="space-y-6 animate-[fadeIn_0.4s_ease-out]">
                                 <div className="text-center">
-                                    <p className="text-xs text-muted">Original: {imageSize.width}x{imageSize.height}px • <span className="text-primary font-bold">Drag to move, corner to resize</span></p>
+                                    <p className="text-xs text-muted-foreground">Original: {imageSize.width}x{imageSize.height}px • <span className="text-primary font-bold">Drag to move, corner to resize</span></p>
                                 </div>
 
                                 <div 
@@ -326,7 +339,7 @@ export default function GlassClient() {
                                     </div>
 
                                     <div className="absolute top-6 right-6 z-20">
-                                        <button onClick={() => setFile(null)} className="bg-black/40 backdrop-blur-md text-white p-2 rounded-xl hover:bg-red-500 transition-all shadow-lg border border-white/10" title="Remove Image">
+                                        <button onClick={() => setFile(null)} className="bg-black/40 backdrop-blur-md text-white p-2 rounded-xl hover:bg-destructive transition-all shadow-lg border border-white/10" title="Remove Image">
                                             <Trash2 size={20} />
                                         </button>
                                     </div>
@@ -337,7 +350,7 @@ export default function GlassClient() {
                                         <CheckCircle2 size={14} />
                                         Interaction Enabled
                                     </div>
-                                    <p className="text-muted text-sm max-w-sm">Move and resize the glass box above. Your download will be high-resolution.</p>
+                                    <p className="text-muted-foreground text-sm max-w-sm">Move and resize the glass box above. Your download will be high-resolution.</p>
                                 </div>
                             </div>
                         )}

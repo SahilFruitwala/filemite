@@ -51,15 +51,15 @@ export default function Dropzone({
 
   return (
     <div
-      className={`relative group cursor-pointer transition-all duration-300 w-full max-w-xl mx-auto
-        min-h-[260px] flex flex-col items-center justify-center text-center p-10 sm:p-14
-        border-4 ${
+      className={`relative group cursor-pointer transition-all duration-300 w-full max-w-2xl mx-auto
+        min-h-[300px] flex flex-col items-center justify-center text-center p-10
+        border-2 border-dashed rounded-3xl
+        ${
           isDragging
-            ? "border-primary bg-primary/5"
-            : "border-border border-dashed hover:border-primary hover:bg-surface"
+            ? "border-primary bg-primary/5 scale-[1.02]"
+            : "border-border hover:border-primary/50 hover:bg-muted/30"
         }
         ${isCompressing ? "opacity-50 pointer-events-none" : ""}
-        shadow-[8px_8px_0px_0px_var(--color-border)]
       `}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -76,43 +76,35 @@ export default function Dropzone({
       />
 
       {isCompressing ? (
-        <div className="flex flex-col items-center text-center">
-           <div className="relative mb-6">
-                <div className="w-16 h-16 rounded-2xl border-4 border-primary/20 border-t-primary animate-spin"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-6 h-6 bg-primary/20 rounded-full animate-pulse"></div>
-                </div>
+        <div className="flex flex-col items-center text-center space-y-4">
+           <div className="relative">
+                <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
            </div>
-           <h3 className="text-xl font-bold text-foreground mb-2">Processing your files</h3>
-           <p className="text-muted text-sm max-w-[240px]">We're handling your request with professional-grade logic...</p>
+           <div>
+               <h3 className="text-xl font-semibold text-foreground">Processing</h3>
+               <p className="text-muted-foreground text-sm">Optimizing your images...</p>
+           </div>
         </div>
       ) : (
         <>
-            <div className={`mb-8 p-6 rounded-3xl bg-surface border border-border/50 shadow-xl transition-all duration-500 ${isDragging ? 'scale-110 -translate-y-2 bg-primary/20 border-primary/30' : 'group-hover:scale-110 group-hover:-translate-y-1 group-hover:bg-surface-hover'}`}>
+            <div className={`mb-6 p-5 rounded-2xl bg-background shadow-sm border border-border transition-transform duration-300 ${isDragging ? 'scale-110 rotate-3' : 'group-hover:scale-110 group-hover:-rotate-3'}`}>
                 {isDragging ? (
-                    <Upload className="w-10 h-10 text-primary animate-bounce" />
+                    <Upload className="w-10 h-10 text-primary" />
                 ) : (
-                    <ImageIcon className="w-10 h-10 text-muted group-hover:text-primary transition-colors" />
+                    <ImageIcon className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
                 )}
             </div>
           
-            <div className="text-center relative z-10">
-                <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
-                    {isDragging ? 'Drop it here!' : message}
+            <div className="space-y-2 relative z-10 max-w-sm">
+                <h3 className="text-2xl font-bold text-foreground">
+                    {isDragging ? 'Drop it like it\'s hot!' : message}
                 </h3>
-                <p className="text-muted mb-10 text-center max-w-sm mx-auto text-sm sm:text-base leading-relaxed">
-                    or <span className="text-primary font-semibold hover:underline">click to browse</span> from your device.
+                <p className="text-muted-foreground text-base">
+                    or <span className="text-primary font-medium hover:underline">click to browse</span>
+                </p>
+                <p className="text-xs text-muted-foreground pt-4">
                     Supports {displayFormats.join(', ')} up to 25MB.
                 </p>
-
-                <div className="flex flex-wrap justify-center gap-3">
-                    {displayFormats.map((format) => (
-                        <div key={format} className='px-4 py-1.5 rounded-full bg-accent border border-border text-[10px] sm:text-xs font-bold text-muted tracking-wider flex items-center gap-2 group-hover:border-border transition-colors'>
-                            <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
-                            {format}
-                        </div>
-                    ))}
-                </div>
             </div>
         </>
       )}

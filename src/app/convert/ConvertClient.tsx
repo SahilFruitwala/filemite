@@ -7,7 +7,6 @@ import Dropzone from '@/components/Dropzone';
 import ResultCard from '@/components/ResultCard';
 import { CompressedFile } from '@/types';
 import JSZip from 'jszip';
-import BackgroundGlow from '@/components/ui/BackgroundGlow';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
 
@@ -125,13 +124,12 @@ export default function ConvertClient() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-center">
-      <BackgroundGlow color="primary" />
       
       <Navbar />
 
       <main className="container mx-auto px-6 pt-32 pb-20">
         <PageHeader 
-            title={<>Convert image formats <br /> <span className="text-muted">instantly and Lossless.</span></>}
+            title={<>Convert image formats <br /> <span className="text-muted-foreground">instantly and Lossless.</span></>}
         />
 
         <div className="flex flex-col lg:flex-row gap-8 items-start mb-16">
@@ -152,7 +150,7 @@ export default function ConvertClient() {
                                           className="text-sm font-bold text-primary hover:text-primary/80 flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl transition-all"
                                       >
                                           {isZipping ? (
-                                              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                              <div className="w-4 h-4 border border-primary border-t-transparent rounded-full animate-spin"></div>
                                           ) : (
                                               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                           )}
@@ -161,7 +159,7 @@ export default function ConvertClient() {
                                   )}
                                   <button 
                                       onClick={handleReset}
-                                      className="text-sm text-muted hover:text-foreground underline underline-offset-4"
+                                      className="text-sm text-muted-foreground hover:text-foreground underline underline-offset-4"
                                   >
                                       Start Over
                                   </button>
@@ -217,8 +215,8 @@ export default function ConvertClient() {
                                     onClick={() => setTargetFormat(format)}
                                     className={`py-4 px-4 rounded-xl text-sm font-bold transition-all duration-200 border uppercase tracking-wider ${
                                         targetFormat === format 
-                                            ? 'bg-primary text-white border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]' 
-                                            : 'bg-surface text-muted border-transparent hover:bg-surface-hover hover:text-white'
+                                            ? 'bg-primary text-white border-primary shadow-sm' 
+                                            : 'bg-surface text-muted-foreground border-transparent hover:bg-surface-hover hover:text-white'
                                     }`}
                                 >
                                     {format}
@@ -235,7 +233,7 @@ export default function ConvertClient() {
                                 >
                                     {isProcesssing ? (
                                         <>
-                                            <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+                                            <div className="w-5 h-5 border border-primary/30 border-t-primary rounded-full animate-spin"></div>
                                             Converting...
                                         </>
                                     ) : (
@@ -250,8 +248,8 @@ export default function ConvertClient() {
                       </div>
                       {/* Privacy Note */}
                        <div className="flex items-center justify-center gap-2 p-6 opacity-40 hover:opacity-100 transition-opacity border-t border-border mt-6">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span className="text-[10px] text-muted font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Images are processed in-memory and never stored.</span>
                         </div>
                  </GlassCard>
             </div>
