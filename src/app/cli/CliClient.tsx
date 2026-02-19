@@ -145,7 +145,6 @@ export default function CliClient() {
     { opt: "--format", alias: "-f", desc: "Output format (webp, jpeg, avif, png)" },
     { opt: "--concurrency", alias: "-c", desc: "Max simultaneous tasks" },
     { opt: "--ignore", alias: "-i", desc: "Glob patterns to skip" },
-    { opt: "--size", alias: "-s", desc: "Target file size (e.g., 500kb)" },
     { opt: "--keep-metadata", alias: "", desc: "Preserve EXIF/GPS data" }
   ];
 

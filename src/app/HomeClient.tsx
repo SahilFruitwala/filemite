@@ -24,8 +24,6 @@ export default function HomeClient() {
   const [compressionLevel, setCompressionLevel] = useState<CompressionLevel>('mid');
   const [comparingFileId, setComparingFileId] = useState<string | null>(null);
   const [comparisons, setComparisons] = useState<Record<string, boolean>>({}); // Track which files have comparison active
-  const [targetSize, setTargetSize] = useState<string>(''); // in KB
-  const [useTargetSize, setUseTargetSize] = useState(false);
   const [errorVisible, setError] = useState<string | null>(null);
 
   const downloadAllAsZip = async () => {
@@ -126,10 +124,6 @@ export default function HomeClient() {
             const processClient = async () => {
                 const start = performance.now();
                 const options = {
-                    maxSizeMB: useTargetSize && targetSize ? parseFloat(targetSize) / 1024 : undefined,
-                    maxWidthOrHeight: 1920,
-                    useWebWorker: true,
-                    fileType: outputFormat === 'webp' ? 'image/webp' : outputFormat === 'jpeg' ? 'image/jpeg' : file.type,
                     initialQuality: compressionLevel === 'best' ? 0.95 : compressionLevel === 'mid' ? 0.8 : 0.6,
                     maxIteration: 10,
                 };
@@ -150,9 +144,6 @@ export default function HomeClient() {
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('level', compressionLevel);
-                if (useTargetSize && targetSize) {
-                    formData.append('targetSize', (parseFloat(targetSize) * 1024).toString());
-                }
 
                 const response = await fetch('/api/compress', {
                     method: 'POST',
@@ -399,14 +390,13 @@ export default function HomeClient() {
 
                              <div className="relative">
                                  {/* Manual Quality Controls */}
-                                 <div className={`transition-all duration-300 ${useTargetSize ? 'opacity-20 blur-sm pointer-events-none scale-95' : 'opacity-100 scale-100'}`}>
+                                 <div className={`transition-all duration-300`}>
                                     <label className="text-sm text-muted-foreground mb-3 block">Quality Preset</label>
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                         {(['best', 'mid', 'low'] as const).map((level) => (
                                             <button
                                                 key={level}
-                                                onClick={() => !useTargetSize && setCompressionLevel(level)}
-                                                disabled={useTargetSize}
+                                                onClick={() => setCompressionLevel(level)}
                                                 className={`py-3 sm:py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-200 border ${
                                                     compressionLevel === level 
                                                         ? 'bg-primary text-primary-foreground border-primary shadow-md' 
@@ -448,40 +438,7 @@ export default function HomeClient() {
                                      </div>
                                  )}
 
-                                 {/* Target Size Toggle Section */}
-                                 <div className={`mt-6 pt-6 border-t border-border/50 transition-all duration-300`}>
-                                    <div className="flex items-center justify-between gap-4">
-                                        <div 
-                                            className="flex items-center gap-4 cursor-pointer group/toggle"
-                                            onClick={() => {
-                                                setUseTargetSize(!useTargetSize);
-                                                if (!useTargetSize) setTargetSize('');
-                                            }}
-                                        >
-                                            <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 relative ${useTargetSize ? 'bg-primary' : 'bg-secondary'}`}>
-                                                <div className={`w-4 h-4 bg-background rounded-full shadow-md transition-all duration-300 transform ${useTargetSize ? 'translate-x-5' : 'translate-x-0'}`}></div>
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className={`text-sm font-semibold transition-colors ${useTargetSize ? 'text-foreground' : 'text-muted-foreground group-hover/toggle:text-foreground'}`}>Specify Target Size</span>
-                                                <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Priority over quality</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className={`relative transition-all duration-500 origin-right ${useTargetSize ? 'scale-100 opacity-100' : 'scale-90 opacity-0 pointer-events-none'}`}>
-                                            <div className="relative">
-                                                <input
-                                                    type="number"
-                                                    value={targetSize}
-                                                    onChange={(e) => setTargetSize(e.target.value)}
-                                                    placeholder="100"
-                                                    min="1"
-                                                    className="w-24 bg-primary/10 border border-primary/20 rounded-xl pl-3 pr-9 py-2 text-right text-foreground font-bold focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                                />
-                                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-primary/70 pointer-events-none uppercase">KB</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                 </div>
+
                              </div>
 
                              {/* Privacy Note */}

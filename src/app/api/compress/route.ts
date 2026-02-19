@@ -10,8 +10,6 @@ export async function POST(req: NextRequest) {
     const file = formData.get('file') as File;
     const requestedFormat = formData.get('format') as string;
     const compressionLevel = (formData.get('level') as string) || 'mid'; // 'best' | 'mid' | 'low' | 'lossless'
-    const targetSizeMsg = formData.get('targetSize');
-    const targetSize = targetSizeMsg ? parseInt(targetSizeMsg as string) : null;
     const speed = formData.get('speed') as string || 'normal'; // 'fast' | 'normal'
 
     // Parse resize & crop options
@@ -131,46 +129,13 @@ export async function POST(req: NextRequest) {
 
     let processedBuffer: Buffer;
 
-    if (targetSize) {
-        // --- Target Size Mode (Binary Search) ---
-        let minQ = 1;
-        let maxQ = 100;
-        let bestQ = 0;
-        let minSizeQ = 1;
-        let minSizeVal = Infinity;
-
-        while (minQ <= maxQ) {
-            const midQ = Math.floor((minQ + maxQ) / 2);
-            // Use Fast mode for search
-            const buf = await compressBuffer(midQ, true);
-            const size = buf.length;
-
-            if (size < minSizeVal) {
-                minSizeVal = size;
-                minSizeQ = midQ;
-            }
-
-            if (size <= targetSize) {
-                bestQ = midQ;
-                minQ = midQ + 1;
-            } else {
-                maxQ = midQ - 1;
-            }
-        }
-        
-        // Final High Quality Pass
-        const finalQ = bestQ || minSizeQ;
-        processedBuffer = await compressBuffer(finalQ, false);
-
-    } else {
-        // --- Standard Mode ---
-        let quality = 75;
-        if (compressionLevel === 'best') quality = 90;
-        if (compressionLevel === 'low') quality = 40; 
-        if (compressionLevel === 'lossless') quality = 100;
-        
-        processedBuffer = await compressBuffer(quality);
-    }
+    // --- Standard Mode ---
+    let quality = 75;
+    if (compressionLevel === 'best') quality = 90;
+    if (compressionLevel === 'low') quality = 40; 
+    if (compressionLevel === 'lossless') quality = 100;
+    
+    processedBuffer = await compressBuffer(quality);
 
     return new NextResponse(processedBuffer as BodyInit, {
       status: 200,
