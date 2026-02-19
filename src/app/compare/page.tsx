@@ -22,7 +22,7 @@ import JsonLd from "@/components/JsonLd";
 
 export default function ComparePage() {
   return (
-    <main className="min-h-screen pt-24 pb-12 px-6 max-w-7xl mx-auto">
+    <main className="min-h-screen pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto">
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "WebPage",
@@ -105,7 +105,8 @@ export default function ComparePage() {
       </div>
 
       {/* Comparison Table */}
-      <div className="bg-background/50 border border-border rounded-3xl overflow-hidden mb-8 backdrop-blur-md">
+      <div className="bg-background/50 border border-border rounded-3xl overflow-x-auto mb-8 backdrop-blur-md">
+        <div className="min-w-[600px]">
         <div className="grid grid-cols-3 p-6 border-b border-border bg-surface">
           <div className="text-lg font-semibold text-muted-foreground">Feature</div>
           <div className="text-xl font-bold text-center text-primary">MicroPng</div>
@@ -160,6 +161,7 @@ export default function ComparePage() {
           tiny="PNG, JPEG, WebP"
           isBetter={true}
         />
+        </div>
       </div>
 
       {/* Detailed Technical Note */}

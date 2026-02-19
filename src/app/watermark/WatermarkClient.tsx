@@ -147,7 +147,7 @@ export default function WatermarkClient() {
       
       <Navbar />
 
-      <main className="container mx-auto px-6 pt-32 pb-20">
+      <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-20">
         <PageHeader 
             title={<>Add Watermark <span className="text-primary">Instantly.</span></>}
             description="Protect your images properly. Add logos or text watermarks with full control over opacity and positioning."

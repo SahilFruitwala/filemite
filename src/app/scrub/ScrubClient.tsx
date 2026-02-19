@@ -107,7 +107,7 @@ export default function ScrubClient() {
       
       <Navbar />
 
-      <main className="container mx-auto px-6 pt-32 pb-20">
+      <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-20">
         <PageHeader 
             title={<>Privacy First. <span className="text-primary">Scrub Metadata.</span></>}
             description="View hidden data in your photos (GPS, Model, Settings) and strip it clean before sharing."

@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/icon.png",
+        url: "/icon.webp",
         width: 1200,
         height: 630,
         alt: "MicroPng CLI Logo",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MicroPng CLI | Terminal-based Image Optimizer",
     description: "High-performance recursive image compression. Zero-data transfer, purely local processing.",
-    images: ["/icon.png"],
+    images: ["/icon.webp"],
   },
 };
 
@@ -75,7 +75,7 @@ export default function CliPage() {
           "Parallel processing",
           "Metadata preservation"
         ],
-        "screenshot": "https://micropng.sahilfruitwala.com/icon.png"
+        "screenshot": "https://micropng.sahilfruitwala.com/icon.webp"
       }} />
       <CliClient />
     </>

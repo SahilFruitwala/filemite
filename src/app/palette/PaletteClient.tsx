@@ -73,7 +73,7 @@ export default function PaletteClient() {
     <div className="min-h-screen relative overflow-hidden bg-center selection:bg-primary/30">
       <Navbar />
       
-      <main className="container mx-auto px-6 pt-32 pb-20">
+      <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-20">
         <PageHeader 
             title={<>Extract Color Palette</>}
             description="Upload an image to instantly generate a color palette based on its dominant colors. Perfect for designers."

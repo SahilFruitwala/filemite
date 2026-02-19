@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { Menu, X, Github, Zap, Palette, FileText, Layout, ChevronDown } from "lucide-react";
+import { Menu, X, Github, Zap, Palette, FileText, Layout, ChevronDown, Terminal } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import Button from "./ui/Button";
 
@@ -39,8 +39,6 @@ export default function Navbar() {
       name: "Development",
       icon: <FileText size={16} />,
       links: [
-        { href: "/cli", label: "CLI" },
-        { href: "/favicon", label: "Favicon" },
         { href: "/scrub", label: "Scrub" },
         { href: "/palette", label: "Palette" },
         { href: "/watermark", label: "Watermark" },
@@ -80,7 +78,7 @@ export default function Navbar() {
         fixed top-4 left-4 right-4 transition-all duration-300
         ${isMenuOpen ? 'z-[1000]' : 'z-50'}
         ${scrolled
-          ? 'bg-background/80 backdrop-blur-md border border-border/50 shadow-sm rounded-2xl py-3 px-4 sm:px-6'
+          ? 'bg-background/80 backdrop-blur-md border border-border/50 shadow-sm rounded-2xl py-3 px-4 sm:px-6 w-[calc(100%-2rem)] mx-auto max-w-7xl'
           : 'bg-transparent border-transparent py-4 px-4 sm:px-6'
         }
       `}>
@@ -89,7 +87,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-2 group relative z-50">
             <div className="relative w-8 h-8 sm:w-10 sm:h-10 overflow-hidden rounded-xl border border-border/50 shadow-sm transition-transform group-hover:scale-105">
               <Image
-                src="/icon.png"
+                src="/icon.webp"
                 alt="MicroPng"
                 fill
                 className="object-cover"
@@ -100,9 +98,10 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-6">
             <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">Compress</Link>
+            <Link href="/cli" className="text-sm font-medium hover:text-primary transition-colors">CLI</Link>
+            <Link href="/favicon" className="text-sm font-medium hover:text-primary transition-colors">Favicon</Link>
 
             <div className="relative" ref={dropdownRef}>
                 <button
@@ -164,6 +163,28 @@ export default function Navbar() {
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
           <div className="fixed inset-0 z-[900] bg-background p-6 md:hidden flex flex-col gap-6 animate-in fade-in slide-in-from-top-4 overflow-y-auto pt-24 pb-32">
+              <div className="grid grid-cols-1 gap-2">
+                  {[
+                      { href: "/", label: "Compress", icon: <Zap size={16} /> },
+                      { href: "/cli", label: "CLI", icon: <Terminal size={16} /> },
+                      { href: "/favicon", label: "Favicon", icon: <Layout size={16} /> },
+                  ].map((link) => (
+                      <Link 
+                          key={link.href}
+                          href={link.href} 
+                          onClick={() => setIsMenuOpen(false)} 
+                          className={`flex items-center gap-3 text-lg font-bold p-4 rounded-2xl border transition-all ${
+                              pathname === link.href
+                                  ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20"
+                                  : "bg-surface border-border hover:border-primary/50"
+                          }`}
+                      >
+                          {link.icon}
+                          {link.label}
+                      </Link>
+                  ))}
+              </div>
+              <div className="h-px bg-border/50 my-2"></div>
               {categories.map((cat) => (
                   <div key={cat.name} className="space-y-3">
                       <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">

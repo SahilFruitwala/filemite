@@ -252,7 +252,7 @@ export default function HomeClient() {
       
       <Navbar />
 
-      <main className="container mx-auto px-6 pt-32 pb-20">
+      <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-20">
         <PageHeader 
           title={<>Compress Images <span className="text-primary">Flawlessly.</span></>}
           description="Reduce image size without compromising quality. Fast, secure, and client-side processing."

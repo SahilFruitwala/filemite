@@ -192,7 +192,7 @@ export default function GlassClient() {
         <div className="min-h-screen relative overflow-hidden bg-background">
             <Navbar />
 
-            <main className="container mx-auto px-6 pt-32 pb-20">
+            <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-20">
                 <PageHeader 
                     title={<>Glassmorphism <br /> <span className="text-muted-foreground">UI Background Designer.</span></>}
                 />

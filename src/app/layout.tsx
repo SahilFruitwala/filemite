@@ -51,8 +51,8 @@ export const metadata: Metadata = {
     creator: "@micropng",
   },
   icons: {
-    icon: "/icon.png",
-    apple: "/icon.png", 
+    icon: "/icon.webp",
+    apple: "/icon.webp", 
   },
   robots: {
     index: true,

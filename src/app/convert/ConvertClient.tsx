@@ -128,7 +128,7 @@ export default function ConvertClient() {
       
       <Navbar />
 
-      <main className="container mx-auto px-6 pt-32 pb-20">
+      <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-20">
         <PageHeader 
             title={<>Convert image formats <br /> <span className="text-muted-foreground">instantly and Lossless.</span></>}
         />

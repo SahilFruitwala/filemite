@@ -132,7 +132,7 @@ export default function FaviconPage() {
 
             <Navbar />
 
-            <main className="container mx-auto px-6 pt-32 pb-20">
+            <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-20">
                 <div className="text-center mb-16">
                     <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight text-foreground">
                         Favicon Generator <br />

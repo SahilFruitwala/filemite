@@ -52,7 +52,7 @@ export default function Dropzone({
   return (
     <div
       className={`relative group cursor-pointer transition-all duration-300 w-full max-w-2xl mx-auto
-        min-h-[300px] flex flex-col items-center justify-center text-center p-10
+        min-h-[300px] flex flex-col items-center justify-center text-center p-6 sm:p-10
         border-2 border-dashed rounded-3xl
         ${
           isDragging

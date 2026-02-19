@@ -37,9 +37,9 @@ const CodeBlock = ({ code, label }: { code: string, label?: string }) => {
           {label}
         </div>
       )}
-      <div className="bg-black/40 backdrop-blur-md border border-border/50 rounded-xl p-4 font-mono text-sm group-hover:border-primary/30 transition-colors flex items-center justify-between gap-4 overflow-hidden">
-        <code className="text-secondary-foreground overflow-x-auto whitespace-nowrap scrollbar-hide">
-          <span className="text-primary mr-2 font-bold">$</span>
+      <div className="bg-black/40 backdrop-blur-md border border-border/50 rounded-xl p-3 sm:p-4 font-mono text-xs sm:text-sm group-hover:border-primary/30 transition-colors flex items-center justify-between gap-3 sm:gap-4 overflow-hidden w-full max-w-[calc(100vw-2rem)] sm:max-w-none">
+        <code className="text-secondary-foreground overflow-x-auto whitespace-nowrap scrollbar-hide flex-1 min-w-0">
+          <span className="text-primary mr-2 font-bold select-none">$</span>
           {code}
         </code>
         <button 
@@ -148,10 +148,10 @@ export default function CliClient() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
 
-      <main className="container mx-auto px-6 pt-32 pb-24 max-w-6xl">
+      <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-16 sm:pb-24 max-w-6xl overflow-hidden">
         <section aria-labelledby="cli-header" className="mb-20">
           <PageHeader 
             title={<>MicroPng <span className="text-primary">CLI.</span></>}
@@ -168,7 +168,7 @@ export default function CliClient() {
 
         <section aria-labelledby="cli-hero" className="grid lg:grid-cols-2 gap-12 items-center mb-32">
           <div className="space-y-8">
-            <h2 id="cli-hero" className="text-3xl font-bold tracking-tight">Powerful Features, <br/><span className="text-muted-foreground">Zero Compromise.</span></h2>
+            <h2 id="cli-hero" className="text-2xl sm:text-3xl font-bold tracking-tight">Powerful Features, <br className="hidden sm:block" /><span className="text-muted-foreground">Zero Compromise.</span></h2>
             <p className="text-muted-foreground leading-relaxed max-w-md">
               The MicroPng CLI brings professional-grade image optimization to your build pipelines and local development environment. Built for speed and reliability.
             </p>
@@ -196,38 +196,38 @@ export default function CliClient() {
                   </span>
                 </div>
               </div>
-              <div className="p-6 font-mono text-xs sm:text-sm leading-relaxed whitespace-pre">
+              <div className="p-4 sm:p-6 font-mono text-[10px] sm:text-xs md:text-sm leading-relaxed whitespace-pre-wrap break-all sm:break-words">
                 <div className="text-muted-foreground mb-2"># Processing 148 images recursively...</div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-x-2 gap-y-1">
                   <span className="text-primary font-bold">➜</span>
                   <span className="text-emerald-400">SUCCESS</span>
-                  <span className="text-white">Optimized image-24.png</span>
-                  <span className="text-muted-foreground">Saved 42% (1.2 MB)</span>
+                  <span className="text-white break-all">Optimized image-24.png</span>
+                  <span className="text-muted-foreground whitespace-nowrap">Saved 42% (1.2 MB)</span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-x-2 gap-y-1">
                   <span className="text-primary font-bold">➜</span>
                   <span className="text-emerald-400">SUCCESS</span>
-                  <span className="text-white">banner-large.webp</span>
-                  <span className="text-muted-foreground">Saved 68% (4.5 MB)</span>
+                  <span className="text-white break-all">banner-large.webp</span>
+                  <span className="text-muted-foreground whitespace-nowrap">Saved 68% (4.5 MB)</span>
                 </div>
-                <div className="flex gap-2">
-                  <span className="text-primary font-bold">➜</span>
-                  <span className="text-emerald-400">SUCCESS</span>
-                  <span className="text-white">logo-transparent.png</span>
-                  <span className="text-muted-foreground">Saved 12% (15 KB)</span>
+                <div className="flex flex-wrap gap-x-2 gap-y-1">
+                  <span className="text-primary font-bold shrink-0">➜</span>
+                  <span className="text-emerald-400 shrink-0">SUCCESS</span>
+                  <span className="text-white break-all">logo-transparent.png</span>
+                  <span className="text-muted-foreground shrink-0 whitespace-nowrap">Saved 12% (15 KB)</span>
                 </div>
-                <div className="mt-4 pt-4 border-t border-white/5">
-                  <div className="text-primary font-bold mb-1">Total Stats:</div>
+                <div className="mt-4 pt-4 border-t border-white/5 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+                  <div className="text-primary font-bold mb-1 sm:col-span-2">Total Stats:</div>
                   <div className="text-white">Files Processed: 148</div>
-                  <div className="text-white">Total Space Saved: <span className="text-emerald-400 font-bold underline decoration-emerald-400/30 underline-offset-2">124.5 MB</span></div>
                   <div className="text-white">Time Taken: 4.2s</div>
+                  <div className="text-white sm:col-span-2">Total Space Saved: <span className="text-emerald-400 font-bold underline decoration-emerald-400/30 underline-offset-2">124.5 MB</span></div>
                 </div>
               </div>
             </GlassCard>
           </div>
         </section>
 
-        <section aria-labelledby="cli-features" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-32">
+        <section aria-labelledby="cli-features" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-20 sm:mb-32">
           <h2 id="cli-features" className="sr-only">Key Features</h2>
           {features.map((feature, idx) => (
             <div key={idx} className="animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: `${idx * 100}ms` }}>
@@ -236,7 +236,7 @@ export default function CliClient() {
           ))}
         </section>
 
-        <section aria-labelledby="cli-usage" className="grid lg:grid-cols-5 gap-12 mb-32">
+        <section aria-labelledby="cli-usage" className="grid grid-cols-1 lg:grid-cols-5 gap-12 mb-20 sm:mb-32">
           <div className="lg:col-span-3 space-y-8">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 rounded-lg bg-primary/10 text-primary">
@@ -263,8 +263,8 @@ export default function CliClient() {
             </div>
             
             <GlassCard className="p-0 border-orange-500/10 overflow-hidden" hoverEffect={false}>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
+              <div className="overflow-x-auto w-full">
+                <table className="w-full text-left text-sm min-w-[500px]">
                   <thead className="bg-secondary/50 border-b border-border/50">
                     <tr>
                       <th className="px-4 py-3 font-bold text-[10px] uppercase tracking-widest text-muted-foreground">Option</th>
@@ -291,7 +291,7 @@ export default function CliClient() {
         </section>
 
         <section aria-labelledby="cli-cta">
-          <GlassCard className="bg-gradient-to-br from-primary/10 via-background to-transparent border-primary/20 p-12 text-center overflow-hidden">
+          <GlassCard className="bg-gradient-to-br from-primary/10 via-background to-transparent border-primary/20 p-8 sm:p-12 text-center overflow-hidden">
              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -z-10 rounded-full"></div>
              <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 blur-[80px] -z-10 rounded-full"></div>
              
