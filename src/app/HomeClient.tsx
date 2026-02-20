@@ -1,6 +1,7 @@
 "use client";
 
 import imageCompression from 'browser-image-compression';
+import posthog from 'posthog-js';
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
@@ -30,6 +31,9 @@ export default function HomeClient() {
       const doneFiles = files.filter((f: CompressedFile) => f.status === 'done' && (f.blobUrl || f.clientStats?.blobUrl));
       if (doneFiles.length === 0) return;
 
+      posthog.capture('zip_download_clicked', {
+          file_count: doneFiles.length,
+      });
 
       setIsZipping(true);
       try {
@@ -52,6 +56,7 @@ export default function HomeClient() {
           URL.revokeObjectURL(zipUrl);
       } catch (error) {
           console.error('Error creating ZIP:', error);
+          posthog.captureException(error);
       } finally {
           setIsZipping(false);
       }
@@ -107,6 +112,13 @@ export default function HomeClient() {
     }));
 
     setFiles(prev => [...prev, ...newFiles]);
+
+    posthog.capture('image_compression_started', {
+        file_count: selectedFiles.length,
+        processing_mode: processingMode,
+        compression_level: compressionLevel,
+        output_format: outputFormat,
+    });
 
     // Process each file
     const processFiles = async (filesToProcess: CompressedFile[], sourceFiles: File[]) => {
@@ -193,8 +205,21 @@ export default function HomeClient() {
                             newFile.compressedSize = clientRes.blob.size;
                             newFile.blobUrl = newFile.clientStats.blobUrl;
                             newFile.outputFormat = outputFormat === 'original' ? file.type.split('/')[1] : outputFormat;
+                            posthog.capture('image_compression_completed', {
+                                processing_mode: 'client',
+                                compression_level: compressionLevel,
+                                original_size_bytes: file.size,
+                                compressed_size_bytes: clientRes.blob.size,
+                                reduction_percent: Math.round(((file.size - clientRes.blob.size) / file.size) * 100),
+                                time_ms: Math.round(clientRes.time!),
+                                output_format: newFile.outputFormat,
+                            });
                         } else {
                             newFile.clientStatus = 'error';
+                            posthog.capture('image_compression_failed', {
+                                processing_mode: 'client',
+                                compression_level: compressionLevel,
+                            });
                         }
                     }
 
@@ -210,8 +235,21 @@ export default function HomeClient() {
                             newFile.compressedSize = serverRes.blob.size;
                             newFile.blobUrl = newFile.serverStats.blobUrl;
                             newFile.outputFormat = serverRes.blob.type.split('/')[1];
+                            posthog.capture('image_compression_completed', {
+                                processing_mode: 'server',
+                                compression_level: compressionLevel,
+                                original_size_bytes: file.size,
+                                compressed_size_bytes: serverRes.blob.size,
+                                reduction_percent: Math.round(((file.size - serverRes.blob.size) / file.size) * 100),
+                                time_ms: Math.round(serverRes.time!),
+                                output_format: newFile.outputFormat,
+                            });
                         } else {
                             newFile.serverStatus = 'error';
+                            posthog.capture('image_compression_failed', {
+                                processing_mode: 'server',
+                                compression_level: compressionLevel,
+                            });
                         }
                     }
 
@@ -220,8 +258,13 @@ export default function HomeClient() {
 
             } catch (error) {
                 console.error(error);
-                 setFiles(prev => prev.map(f => f.id === fileId ? { 
-                    ...f, 
+                posthog.captureException(error);
+                posthog.capture('image_compression_failed', {
+                    processing_mode: processingMode,
+                    compression_level: compressionLevel,
+                });
+                 setFiles(prev => prev.map(f => f.id === fileId ? {
+                    ...f,
                     status: 'error',
                     error: 'Failed'
                 } : f));
@@ -338,7 +381,13 @@ export default function HomeClient() {
                                      <div 
                                          className={`flex items-center gap-3 cursor-pointer group/mode-toggle transition-opacity duration-300`}
                                          onClick={() => {
-                                             setProcessingMode(processingMode === 'client' ? 'server' : 'client');
+                                             const newMode = processingMode === 'client' ? 'server' : 'client';
+                                             setProcessingMode(newMode);
+                                             posthog.capture('processing_mode_toggled', {
+                                                 new_mode: newMode,
+                                                 previous_mode: processingMode,
+                                                 is_mobile: isMobile,
+                                             });
                                          }}
                                          title={isMobile && processingMode === 'server' ? "Browser compression is not recommended on mobile but can be enabled" : ""}
                                      >

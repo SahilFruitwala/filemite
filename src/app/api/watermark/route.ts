@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import sharp from 'sharp';
+import { getPostHogClient } from '@/lib/posthog-server';
 
 // Configuration: Adjust these limits as needed
 const MAX_WIDTH = 8192; 
@@ -127,13 +128,28 @@ export async function POST(req: NextRequest) {
     // Output with standard high quality
     const processedBuffer = await pipeline.toFormat(targetFormat as any, { quality: DEFAULT_QUALITY }).toBuffer();
 
+    // Track server-side watermark event
+    const posthog = getPostHogClient();
+    posthog.capture({
+      distinctId: 'server',
+      event: 'server_watermark_applied',
+      properties: {
+        watermark_type: watermarkType || 'none',
+        watermark_position: watermarkPosition,
+        watermark_opacity: watermarkOpacity,
+        output_format: targetFormat,
+        original_size_bytes: buffer.length,
+        result_size_bytes: processedBuffer.length,
+      },
+    });
+
     return new NextResponse(processedBuffer as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': contentType,
         'Content-Length': processedBuffer.length.toString(),
         'Content-Disposition': `attachment; filename="watermarked.${targetFormat}"`,
-        'Cache-Control': 'public, max-age=31536000, immutable', 
+        'Cache-Control': 'public, max-age=31536000, immutable',
       },
     });
 

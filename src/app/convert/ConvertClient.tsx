@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
@@ -78,8 +79,13 @@ export default function ConvertClient() {
       const pendingFiles = files.filter(f => f.status === 'pending');
       if (pendingFiles.length === 0) return;
 
+      posthog.capture('image_conversion_started', {
+          file_count: pendingFiles.length,
+          target_format: targetFormat,
+      });
+
       setIsProcessing(true);
-      
+
       for (const fileObj of pendingFiles) {
             setFiles(prev => prev.map(f => f.id === fileObj.id ? { ...f, status: 'processing' } : f));
 
@@ -88,7 +94,7 @@ export default function ConvertClient() {
             formData.append('format', targetFormat);
             formData.append('level', 'lossless'); // Default to lossless for conversion
             formData.append('speed', 'fast');
-            
+
             try {
                 const response = await fetch('/api/compress', {
                     method: 'POST',
@@ -100,8 +106,16 @@ export default function ConvertClient() {
                 const blob = await response.blob();
                 const url = URL.createObjectURL(blob);
 
-                setFiles(prev => prev.map(f => f.id === fileObj.id ? { 
-                    ...f, 
+                const originalFormat = fileObj.fileRaw?.type.split('/')[1] || 'unknown';
+                posthog.capture('image_conversion_completed', {
+                    original_format: originalFormat,
+                    target_format: targetFormat,
+                    original_size_bytes: fileObj.originalSize,
+                    converted_size_bytes: blob.size,
+                });
+
+                setFiles(prev => prev.map(f => f.id === fileObj.id ? {
+                    ...f,
                     status: 'done',
                     compressedSize: blob.size,
                     blobUrl: url
@@ -109,8 +123,9 @@ export default function ConvertClient() {
 
             } catch (error) {
                 console.error(error);
-                 setFiles(prev => prev.map(f => f.id === fileObj.id ? { 
-                    ...f, 
+                posthog.captureException(error);
+                 setFiles(prev => prev.map(f => f.id === fileObj.id ? {
+                    ...f,
                     status: 'error',
                     error: 'Failed'
                 } : f));

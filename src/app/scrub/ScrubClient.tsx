@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -52,9 +53,18 @@ export default function ScrubClient() {
         if (!res.ok) throw new Error('Failed to scan');
         
         const data = await res.json();
+        const metadataFieldCount = data.metadata ? Object.keys(data.metadata).filter(
+            k => typeof data.metadata[k] !== 'object' || data.metadata[k] === null
+        ).length : 0;
+        posthog.capture('metadata_viewed', {
+            file_format: fileItem.file.type,
+            file_size_bytes: fileItem.file.size,
+            metadata_field_count: metadataFieldCount,
+        });
         setFile(prev => prev ? { ...prev, metadata: data.metadata, status: 'scanned' } : null);
     } catch (e) {
         console.error(e);
+        posthog.captureException(e);
         setFile(prev => prev ? { ...prev, status: 'error' } : null);
     }
   };
@@ -77,9 +87,16 @@ export default function ScrubClient() {
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
 
+        posthog.capture('metadata_scrubbed', {
+            file_format: file.file.type,
+            original_size_bytes: file.file.size,
+            scrubbed_size_bytes: blob.size,
+        });
+
         setFile(prev => prev ? { ...prev, scrubbedUrl: url, status: 'done' } : null);
     } catch (e) {
         console.error(e);
+        posthog.captureException(e);
         setFile(prev => prev ? { ...prev, status: 'error' } : null);
     }
   };

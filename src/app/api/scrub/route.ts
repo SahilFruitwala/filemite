@@ -1,6 +1,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -42,7 +43,19 @@ export async function POST(req: NextRequest) {
       // Sharp removes metadata by default unless .withMetadata() is called.
       // So we just proceed to convert to buffer.
       const scrubbedBuffer = await pipeline.toBuffer();
-      
+
+      // Track server-side scrub event
+      const posthog = getPostHogClient();
+      posthog.capture({
+        distinctId: 'server',
+        event: 'server_metadata_scrubbed',
+        properties: {
+          file_format: format || 'unknown',
+          original_size_bytes: buffer.length,
+          scrubbed_size_bytes: scrubbedBuffer.length,
+        },
+      });
+
       return new NextResponse(scrubbedBuffer as unknown as BodyInit, {
         headers: {
           "Content-Type": file.type,

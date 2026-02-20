@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import sharp from 'sharp';
+import { getPostHogClient } from '@/lib/posthog-server';
 
 // Configuration: Adjust these limits as needed
 const MAX_WIDTH = 1920; 
@@ -137,13 +138,30 @@ export async function POST(req: NextRequest) {
     
     processedBuffer = await compressBuffer(quality);
 
+    // Track server-side compression
+    const posthog = getPostHogClient();
+    posthog.capture({
+      distinctId: 'server',
+      event: 'server_image_compressed',
+      properties: {
+        input_format: metadata.format || 'unknown',
+        output_format: targetFormat,
+        compression_level: compressionLevel,
+        original_size_bytes: buffer.length,
+        compressed_size_bytes: processedBuffer.length,
+        reduction_percent: Math.round(((buffer.length - processedBuffer.length) / buffer.length) * 100),
+        did_resize: shouldResize,
+        did_crop: shouldCrop,
+      },
+    });
+
     return new NextResponse(processedBuffer as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': contentType,
         'Content-Length': processedBuffer.length.toString(),
         'Content-Disposition': `attachment; filename="compressed.${targetFormat}"`,
-        'Cache-Control': 'public, max-age=31536000, immutable', 
+        'Cache-Control': 'public, max-age=31536000, immutable',
       },
     });
 
