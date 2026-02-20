@@ -29,7 +29,7 @@ export default function Footer() {
              <div className="flex flex-col gap-2">
                  <Link href="/convert" className="text-muted-foreground hover:text-primary transition-colors">Convert</Link>
                  <Link href="/resize" className="text-muted-foreground hover:text-primary transition-colors">Resize</Link>
-                 <Link href="/compress" className="text-muted-foreground hover:text-primary transition-colors">Compress</Link>
+                 <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">Compress</Link>
              </div>
           </div>
 
