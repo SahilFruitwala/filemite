@@ -194,7 +194,7 @@ export default function FaviconPage() {
                                         <h2 className="text-2xl font-bold text-foreground">Generated Assets</h2>
                                         <button 
                                             onClick={downloadAll}
-                                            className="bg-success text-white px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-success/20 hover:bg-success/90"
+                                            className="bg-primary text-primary-foreground px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-primary/20 hover:bg-primary-hover"
                                         >
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                             Download All (ZIP)
@@ -216,7 +216,7 @@ export default function FaviconPage() {
                                                     <a 
                                                         href={file.url} 
                                                         download={`favicon-${file.size}x${file.size}.png`}
-                                                        className="p-1.5 text-gray-500 hover:text-white transition-colors"
+                                                        className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                                                     >
                                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                                     </a>
@@ -228,8 +228,8 @@ export default function FaviconPage() {
                                     {/* Special Assets: ICO and Mobile */}
                                     <div className="grid md:grid-cols-2 gap-8">
                                         <section>
-                                            <h3 className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-2">
-                                                <span className="w-8 h-[1px] bg-white/10"></span> Mobile (iOS)
+                                            <h3 className="text-muted-foreground text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-2">
+                                                <span className="w-8 h-[1px] bg-border"></span> Mobile (iOS)
                                             </h3>
                                             <div className="bg-surface border border-border rounded-2xl p-6 flex items-center gap-6">
                                                 {generatedFiles.filter(f => f.type === 'mobile').map((file) => (
@@ -254,16 +254,16 @@ export default function FaviconPage() {
                                         </section>
 
                                         <section>
-                                            <h3 className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-2">
-                                                <span className="w-8 h-[1px] bg-white/10"></span> Legacy Support
+                                            <h3 className="text-muted-foreground text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-2">
+                                                <span className="w-8 h-[1px] bg-border"></span> Legacy Support
                                             </h3>
                                             <div className="bg-surface border border-border rounded-2xl p-6 flex items-center gap-6">
                                                 <div className="w-20 h-20 flex items-center justify-center bg-black rounded-xl border border-border shadow-xl">
                                                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
                                                 </div>
                                                 <div className="flex-1">
-                                                    <p className="text-white font-bold">favicon.ico</p>
-                                                    <p className="text-gray-500 text-sm">Multi-res (16, 32, 48) • ICO</p>
+                                                    <p className="text-foreground font-bold">favicon.ico</p>
+                                                    <p className="text-muted-foreground text-sm">Multi-res (16, 32, 48) • ICO</p>
                                                     {icoBlob && (
                                                         <a 
                                                             href={URL.createObjectURL(icoBlob)} 
