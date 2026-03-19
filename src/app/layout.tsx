@@ -34,6 +34,7 @@ export const metadata: Metadata = {
   authors: [{ name: "MicroPng Team" }],
   creator: "MicroPng",
   publisher: "MicroPng",
+  applicationName: "MicroPng",
   openGraph: {
     title: "MicroPng - Professional Image Compression",
     description:
@@ -66,6 +67,13 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   alternates: {
     canonical: "./",
