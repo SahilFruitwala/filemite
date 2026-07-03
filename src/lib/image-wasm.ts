@@ -12,6 +12,7 @@ import encodeWebp, { init as initWebpEnc } from '@jsquash/webp/encode.js';
 import decodeAvif, { init as initAvifDec } from '@jsquash/avif/decode.js';
 import encodeAvif, { init as initAvifEnc } from '@jsquash/avif/encode.js';
 import resize, { initResize } from '@jsquash/resize';
+import { png as icodecPng } from 'icodec';
 
 import JPEG_DEC_WASM from '@jsquash/jpeg/codec/dec/mozjpeg_dec.wasm';
 import JPEG_ENC_WASM from '@jsquash/jpeg/codec/enc/mozjpeg_enc.wasm';
@@ -25,6 +26,7 @@ import AVIF_DEC_WASM from '@jsquash/avif/codec/dec/avif_dec.wasm';
 import AVIF_ENC_WASM from '@jsquash/avif/codec/enc/avif_enc.wasm';
 // @ts-expect-error see above
 import RESIZE_WASM from '@jsquash/resize/lib/resize/pkg/squoosh_resize_bg.wasm';
+import PNGQUANT_WASM from 'icodec/png-enc.wasm';
 
 // workerd has no ImageData global; jSquash constructs them.
 if (typeof globalThis.ImageData === 'undefined') {
@@ -62,6 +64,7 @@ const ready = {
   avifDec: () => once('avifDec', () => (initAvifDec as any)(AVIF_DEC_WASM)),
   avifEnc: () => once('avifEnc', () => (initAvifEnc as any)(AVIF_ENC_WASM)),
   resize: () => once('resize', () => Promise.resolve(initResize(RESIZE_WASM as any))),
+  pngquant: () => once('pngquant', () => icodecPng.loadEncoder(PNGQUANT_WASM as any)),
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -122,11 +125,29 @@ export async function encode(
       return encodeJpeg(image, { quality: lossless ? 100 : quality });
     }
     case 'png': {
-      await ready.pngEnc();
-      const png = await encodePng(image);
-      if (fast) return png;
-      await ready.oxipng();
-      return optimisePng(png, { level: lossless ? 4 : 3 });
+      if (lossless || quality >= 100) {
+        await ready.pngEnc();
+        const png = await encodePng(image);
+        if (fast) return png;
+        await ready.oxipng();
+        return optimisePng(png, { level: 4 });
+      }
+      // Lossy PNG: imagequant palette quantization + oxipng (pngquant-style).
+      // Keep imagequant's quality at 100 and control loss through palette size,
+      // like sharp's colors = quality/100*256 — a lower ceiling merges distinct
+      // colors and visibly shifts flat-color images.
+      await ready.pngquant();
+      const out = icodecPng.encode({ data: image.data, width: image.width, height: image.height, depth: 8 }, {
+        quantize: true,
+        quality: 100,
+        colors: Math.max(16, Math.floor((quality / 100) * 256)),
+        speed: fast ? 8 : 4,
+        dithering: 1,
+        level: fast ? 1 : 3,
+      });
+      return out.byteOffset === 0 && out.byteLength === out.buffer.byteLength
+        ? (out.buffer as ArrayBuffer)
+        : (out.slice().buffer as ArrayBuffer);
     }
     case 'webp': {
       await ready.webpEnc();
@@ -177,22 +198,23 @@ export async function resizeImage(
   const height = targetHeight ?? Math.round(width / aspect);
 
   if (fit === 'fill' || (targetWidth === undefined || targetHeight === undefined)) {
-    return resize(image, { width, height, fitMethod: 'stretch', method: 'lanczos3' });
+    return resize(image, { width, height, fitMethod: 'stretch', method: 'lanczos3', linearRGB: false });
   }
 
   if (fit === 'cover') {
     // jSquash "contain" crops to the target aspect ratio before scaling — CSS cover.
-    return resize(image, { width, height, fitMethod: 'contain', method: 'lanczos3' });
+    return resize(image, { width, height, fitMethod: 'contain', method: 'lanczos3', linearRGB: false });
   }
 
-  // inside/contain: scale to fit within the box, preserving aspect
-  const scale = Math.min(width / srcW, height / srcH, fit === 'inside' ? 1 : Infinity);
+  // inside/contain: scale to fit within the box, preserving aspect (may enlarge,
+  // matching sharp's withoutEnlargement: false)
+  const scale = Math.min(width / srcW, height / srcH);
   const innerW = Math.max(1, Math.round(srcW * scale));
   const innerH = Math.max(1, Math.round(srcH * scale));
   const scaled =
     innerW === srcW && innerH === srcH
       ? image
-      : await resize(image, { width: innerW, height: innerH, fitMethod: 'stretch', method: 'lanczos3' });
+      : await resize(image, { width: innerW, height: innerH, fitMethod: 'stretch', method: 'lanczos3', linearRGB: false });
 
   if (fit === 'inside') return scaled;
 
@@ -212,5 +234,5 @@ export async function capWidth(image: ImageData, maxWidth: number): Promise<Imag
   if (image.width <= maxWidth) return image;
   const height = Math.round((maxWidth / image.width) * image.height);
   await ready.resize();
-  return resize(image, { width: maxWidth, height, fitMethod: 'stretch', method: 'lanczos3' });
+  return resize(image, { width: maxWidth, height, fitMethod: 'stretch', method: 'lanczos3', linearRGB: false });
 }

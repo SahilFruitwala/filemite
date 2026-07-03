@@ -171,7 +171,7 @@ export default function WatermarkClient() {
                             </div>
         
                             <div className="grid gap-4">
-                                {files.map((file) => (
+                                {files.filter(f => f.status === 'done').map((file) => (
                                     <ResultCard 
                                         key={file.id}
                                         originalFile={file.fileRaw!}
