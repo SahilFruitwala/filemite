@@ -7,7 +7,6 @@ import {
   TopNavMegaMenuFeaturedCard,
 } from '@astryxdesign/core/TopNav';
 import { useRouterState } from '@tanstack/react-router';
-import { Github } from 'lucide-react';
 import { ThemeToggle } from './mode';
 
 const tools = [
@@ -122,21 +121,7 @@ export default function SiteNav() {
           />
         </>
       }
-      endContent={
-        <>
-          <a
-            href="https://github.com/SahilFruitwala/micropng"
-            target="_blank"
-            rel="noreferrer"
-            className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-            title="GitHub"
-          >
-            <Github size={18} />
-            <span className="sr-only">GitHub</span>
-          </a>
-          <ThemeToggle />
-        </>
-      }
+      endContent={<ThemeToggle />}
     />
   );
 }

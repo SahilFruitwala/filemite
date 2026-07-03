@@ -88,6 +88,11 @@
   --radius: 0.75rem;
 }
 
+/* Keep the sticky nav above page content that uses legacy z-index utilities */
+.astryx-app-shell-header {
+  z-index: 100;
+}
+
 /* Byte counts and file sizes are always tabular mono */
 .font-mono,
 [data-bytes] {
