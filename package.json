@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@astryxdesign/core": "^0.1.2",
+    "@astryxdesign/theme-neutral": "^0.1.2",
     "@radix-ui/react-slot": "^1.2.4",
     "@vercel/analytics": "^1.6.1",
     "browser-image-compression": "^2.0.2",
@@ -34,6 +36,7 @@
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
+    "@astryxdesign/cli": "^0.1.2",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/colorthief": "^2.6.1",
     "@types/jszip": "^3.4.0",
