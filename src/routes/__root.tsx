@@ -15,6 +15,7 @@ import { micropngTheme } from '@/theme/micropng';
 import { ModeProvider, useMode } from '@/components/shell/mode';
 import SiteNav from '@/components/shell/SiteNav';
 import SiteFooter from '@/components/shell/SiteFooter';
+import NotFoundPage from '@/tools/NotFoundPage';
 import appCss from '@/styles/app.css?url';
 
 const SITE_URL = 'https://micropng.sahilfruitwala.com';
@@ -67,6 +68,7 @@ export const Route = createRootRoute({
   }),
   shellComponent: RootDocument,
   component: RootLayout,
+  notFoundComponent: NotFoundPage,
 });
 
 function RouterLink(props: React.ComponentProps<'a'> & { href?: string }) {
