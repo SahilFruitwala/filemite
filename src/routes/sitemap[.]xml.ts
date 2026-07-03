@@ -9,12 +9,10 @@ const routes = [
   '/crop',
   '/filters',
   '/glass',
-  '/tracer',
   '/watermark',
   '/palette',
   '/scrub',
   '/compare',
-  '/cli',
   '/favicon',
 ];
 

@@ -51,11 +51,6 @@ const tools = [
     description: 'Extract dominant colors from an image',
   },
   {
-    href: '/tracer',
-    title: 'Tracer',
-    description: 'Turn raster images into SVG vectors',
-  },
-  {
     href: '/pdf',
     title: 'PDF Tools',
     description: 'Images to PDF and back again',
@@ -102,10 +97,10 @@ export default function SiteNav() {
             }
             featured={
               <TopNavMegaMenuFeaturedCard
-                title="MicroPNG CLI"
-                description="Bulk optimization from the terminal — recursive directories, automated pipelines, no browser."
-                linkLabel="Explore the CLI"
-                linkHref="/cli"
+                title="Privacy first"
+                description="Images are processed in-memory and never stored — most tools run entirely in your browser."
+                linkLabel="Read the privacy policy"
+                linkHref="/privacy"
               />
             }
           />
@@ -113,11 +108,6 @@ export default function SiteNav() {
             label="Favicon"
             href="/favicon"
             isSelected={pathname === '/favicon'}
-          />
-          <TopNavItem
-            label="CLI"
-            href="/cli"
-            isSelected={pathname === '/cli'}
           />
         </>
       }

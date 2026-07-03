@@ -164,7 +164,7 @@ export default function WatermarkClient() {
                                 <h2 className="text-2xl font-bold text-foreground">Watermarked Images</h2>
                                 <button 
                                     onClick={handleReset}
-                                    className="text-sm text-muted hover:text-foreground underline underline-offset-4"
+                                    className="text-sm text-muted-foreground hover:text-foreground underline underline-offset-4"
                                 >
                                     Start Over
                                 </button>

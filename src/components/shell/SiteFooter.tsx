@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { Heart, Terminal } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 export default function SiteFooter() {
   return (
@@ -48,10 +48,6 @@ export default function SiteFooter() {
               </Link>
               <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
                 Terms
-              </Link>
-              <Link to="/cli" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5">
-                <Terminal size={12} />
-                CLI Tool
               </Link>
               <a
                 href="https://github.com/SahilFruitwala/micropng"
