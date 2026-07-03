@@ -9,8 +9,6 @@ import encodePng, { init as initPngEnc } from '@jsquash/png/encode.js';
 import optimisePng, { init as initOxipng } from '@jsquash/oxipng/optimise.js';
 import decodeWebp, { init as initWebpDec } from '@jsquash/webp/decode.js';
 import encodeWebp, { init as initWebpEnc } from '@jsquash/webp/encode.js';
-import decodeAvif, { init as initAvifDec } from '@jsquash/avif/decode.js';
-import encodeAvif, { init as initAvifEnc } from '@jsquash/avif/encode.js';
 import resize, { initResize } from '@jsquash/resize';
 import { png as icodecPng } from 'icodec';
 
@@ -27,8 +25,6 @@ import PNG_WASM from '@jsquash/png/codec/pkg/squoosh_png_bg.wasm?base64';
 import OXIPNG_WASM from '@jsquash/oxipng/codec/pkg/squoosh_oxipng_bg.wasm?base64';
 import WEBP_DEC_WASM from '@jsquash/webp/codec/dec/webp_dec.wasm?base64';
 import WEBP_ENC_WASM from '@jsquash/webp/codec/enc/webp_enc.wasm?base64';
-import AVIF_DEC_WASM from '@jsquash/avif/codec/dec/avif_dec.wasm?base64';
-import AVIF_ENC_WASM from '@jsquash/avif/codec/enc/avif_enc.wasm?base64';
 import RESIZE_WASM from '@jsquash/resize/lib/resize/pkg/squoosh_resize_bg.wasm?base64';
 import PNGQUANT_WASM from 'icodec/png-enc.wasm?base64';
 
@@ -48,7 +44,9 @@ if (typeof globalThis.ImageData === 'undefined') {
   (globalThis as Record<string, unknown>).ImageData = ImageDataPolyfill;
 }
 
-export type ImageFormat = 'jpeg' | 'png' | 'webp' | 'avif';
+// AVIF is intentionally omitted: its codec wasm (avif_enc ~3.4MB) dominated the
+// server bundle and pushed the Cloudflare Worker past the 3 MiB free-tier limit.
+export type ImageFormat = 'jpeg' | 'png' | 'webp';
 
 const initOnce: Record<string, Promise<unknown> | undefined> = {};
 function once(key: string, fn: () => Promise<unknown>) {
@@ -84,8 +82,6 @@ const ready = {
   oxipng: () => once('oxipng', async () => (initOxipng as any)(await loadModule(OXIPNG_WASM))),
   webpDec: () => once('webpDec', async () => (initWebpDec as any)(await loadModule(WEBP_DEC_WASM))),
   webpEnc: () => once('webpEnc', async () => (initWebpEnc as any)(await loadModule(WEBP_ENC_WASM))),
-  avifDec: () => once('avifDec', async () => (initAvifDec as any)(await loadModule(AVIF_DEC_WASM))),
-  avifEnc: () => once('avifEnc', async () => (initAvifEnc as any)(await loadModule(AVIF_ENC_WASM))),
   resize: () => once('resize', async () => initResize(await loadModule(RESIZE_WASM) as any)),
   pngquant: () => once('pngquant', async () => icodecPng.loadEncoder(await loadModule(PNGQUANT_WASM) as any)),
 };
@@ -101,9 +97,8 @@ export function sniffFormat(buffer: ArrayBuffer, mimeType?: string): ImageFormat
   ) {
     return 'webp';
   }
-  if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) return 'avif';
   const fromMime = mimeType?.split('/')[1]?.replace('jpg', 'jpeg');
-  if (fromMime === 'jpeg' || fromMime === 'png' || fromMime === 'webp' || fromMime === 'avif') {
+  if (fromMime === 'jpeg' || fromMime === 'png' || fromMime === 'webp') {
     return fromMime;
   }
   return null;
@@ -120,12 +115,6 @@ export async function decode(buffer: ArrayBuffer, format: ImageFormat): Promise<
     case 'webp':
       await ready.webpDec();
       return decodeWebp(buffer);
-    case 'avif': {
-      await ready.avifDec();
-      const image = await decodeAvif(buffer);
-      if (!image) throw new Error('AVIF decode failed');
-      return image;
-    }
   }
 }
 
@@ -180,13 +169,6 @@ export async function encode(
           ? { lossless: 1, quality: 100 }
           : { quality, method: fast ? 0 : 4 },
       );
-    }
-    case 'avif': {
-      await ready.avifEnc();
-      return encodeAvif(image, {
-        quality: lossless ? 90 : Math.min(quality, 85),
-        speed: fast ? 9 : 6,
-      });
     }
   }
 }

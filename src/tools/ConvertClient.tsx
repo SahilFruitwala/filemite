@@ -9,7 +9,7 @@ import JSZip from 'jszip';
 import PageHeader from '@/components/ui/PageHeader';
 import GlassCard from '@/components/ui/GlassCard';
 
-type TargetFormat = 'png' | 'jpeg' | 'webp' | 'avif';
+type TargetFormat = 'png' | 'jpeg' | 'webp';
 
 export default function ConvertClient() {
   const [files, setFiles] = useState<CompressedFile[]>([]);
@@ -220,8 +220,8 @@ export default function ConvertClient() {
                             </h3>
                         </div>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-4 md:p-6">
-                            {(['webp', 'png', 'jpeg', 'avif'] as const).map((format) => (
+                        <div className="grid grid-cols-3 gap-2 p-4 md:p-6">
+                            {(['webp', 'png', 'jpeg'] as const).map((format) => (
                                 <button
                                     key={format}
                                     onClick={() => setTargetFormat(format)}

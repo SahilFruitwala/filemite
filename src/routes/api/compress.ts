@@ -57,7 +57,7 @@ export const Route = createFileRoute('/api/compress')({
 
           let targetFormat = (requestedFormat || inputFormat).toLowerCase();
           if (targetFormat === 'jpg') targetFormat = 'jpeg';
-          if (!['jpeg', 'png', 'webp', 'avif'].includes(targetFormat)) {
+          if (!['jpeg', 'png', 'webp'].includes(targetFormat)) {
             targetFormat = 'webp';
           }
 
