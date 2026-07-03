@@ -30,6 +30,7 @@ function wasmBase64(): Plugin {
 
 export default defineConfig({
   server: { port: 3000 },
+  build: { cssMinify: 'esbuild' },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
