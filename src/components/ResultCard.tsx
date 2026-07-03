@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Image from "next/image";
 import { Download, Check, Files, RefreshCw } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import Button from "@/components/ui/Button";
@@ -73,12 +72,10 @@ export default function ResultCard({
                     rightLabel="Optimized"
                 />
             ) : (
-                <Image
+                <img
                 src={compressedUrl}
                 alt="Compressed preview"
-                fill
-                className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
-                unoptimized
+                className="absolute inset-0 w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
                 />
             )}
             {!originalUrl && (

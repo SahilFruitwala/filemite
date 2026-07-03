@@ -1,11 +1,13 @@
-import { PostHog } from "posthog-node";
+import { PostHog } from 'posthog-node';
 
 let posthogClient: PostHog | null = null;
 
-export function getPostHogClient(): PostHog {
+function getPostHogClient(): PostHog | null {
+  const key = import.meta.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN;
+  if (!key) return null;
   if (!posthogClient) {
-    posthogClient = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-      host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    posthogClient = new PostHog(key, {
+      host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
       flushAt: 1,
       flushInterval: 0,
     });
@@ -13,8 +15,14 @@ export function getPostHogClient(): PostHog {
   return posthogClient;
 }
 
-export async function shutdownPostHog(): Promise<void> {
-  if (posthogClient) {
-    await posthogClient.shutdown();
+/** Fire-and-forget server-side event capture; analytics failures never break a response. */
+export function captureServerEvent(
+  event: string,
+  properties: Record<string, unknown>,
+): void {
+  try {
+    getPostHogClient()?.capture({ distinctId: 'server', event, properties });
+  } catch {
+    // ignore analytics errors
   }
 }
