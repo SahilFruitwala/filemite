@@ -1,6 +1,6 @@
 /**
  * WebAssembly image pipeline (jSquash/Squoosh codecs).
- * Replaces sharp so server routes run on Cloudflare Workers and Node alike.
+ * Replaces sharp so server routes run on any host (Vercel, Netlify, Node, etc.).
  */
 import decodeJpeg, { init as initJpegDec } from '@jsquash/jpeg/decode.js';
 import encodeJpeg, { init as initJpegEnc } from '@jsquash/jpeg/encode.js';
@@ -14,19 +14,23 @@ import encodeAvif, { init as initAvifEnc } from '@jsquash/avif/encode.js';
 import resize, { initResize } from '@jsquash/resize';
 import { png as icodecPng } from 'icodec';
 
-import JPEG_DEC_WASM from '@jsquash/jpeg/codec/dec/mozjpeg_dec.wasm';
-import JPEG_ENC_WASM from '@jsquash/jpeg/codec/enc/mozjpeg_enc.wasm';
-// @ts-expect-error wasm-bindgen's d.ts has no default export; the bundler provides a WebAssembly.Module
-import PNG_WASM from '@jsquash/png/codec/pkg/squoosh_png_bg.wasm';
-// @ts-expect-error see above
-import OXIPNG_WASM from '@jsquash/oxipng/codec/pkg/squoosh_oxipng_bg.wasm';
-import WEBP_DEC_WASM from '@jsquash/webp/codec/dec/webp_dec.wasm';
-import WEBP_ENC_WASM from '@jsquash/webp/codec/enc/webp_enc.wasm';
-import AVIF_DEC_WASM from '@jsquash/avif/codec/dec/avif_dec.wasm';
-import AVIF_ENC_WASM from '@jsquash/avif/codec/enc/avif_enc.wasm';
-// @ts-expect-error see above
-import RESIZE_WASM from '@jsquash/resize/lib/resize/pkg/squoosh_resize_bg.wasm';
-import PNGQUANT_WASM from 'icodec/png-enc.wasm';
+// The `.wasm` codecs are inlined as base64 (see the `wasm-base64` plugin in
+// vite.config.ts) and compiled to a `WebAssembly.Module` at runtime. Baking the
+// bytes into the server bundle keeps it self-contained and portable to any host
+// (Vercel, Netlify, Cloudflare, bare Node) — unlike bare `.wasm` default
+// imports, which only resolve under runtime-specific bundlers like Cloudflare's
+// vite plugin, and unlike `?url`, whose emitted assets aren't copied for
+// server-only code. jSquash/icodec `init()` all accept a Module.
+import JPEG_DEC_WASM from '@jsquash/jpeg/codec/dec/mozjpeg_dec.wasm?base64';
+import JPEG_ENC_WASM from '@jsquash/jpeg/codec/enc/mozjpeg_enc.wasm?base64';
+import PNG_WASM from '@jsquash/png/codec/pkg/squoosh_png_bg.wasm?base64';
+import OXIPNG_WASM from '@jsquash/oxipng/codec/pkg/squoosh_oxipng_bg.wasm?base64';
+import WEBP_DEC_WASM from '@jsquash/webp/codec/dec/webp_dec.wasm?base64';
+import WEBP_ENC_WASM from '@jsquash/webp/codec/enc/webp_enc.wasm?base64';
+import AVIF_DEC_WASM from '@jsquash/avif/codec/dec/avif_dec.wasm?base64';
+import AVIF_ENC_WASM from '@jsquash/avif/codec/enc/avif_enc.wasm?base64';
+import RESIZE_WASM from '@jsquash/resize/lib/resize/pkg/squoosh_resize_bg.wasm?base64';
+import PNGQUANT_WASM from 'icodec/png-enc.wasm?base64';
 
 // workerd has no ImageData global; jSquash constructs them.
 if (typeof globalThis.ImageData === 'undefined') {
@@ -52,19 +56,38 @@ function once(key: string, fn: () => Promise<unknown>) {
   return initOnce[key]!;
 }
 
+/**
+ * Compile a base64-inlined wasm codec into a `WebAssembly.Module`, portably.
+ * No filesystem or network — the bytes are baked into the bundle. Cached so each
+ * codec compiles at most once. `Buffer` on Node, `atob` elsewhere.
+ */
+const moduleCache = new Map<string, Promise<WebAssembly.Module>>();
+function loadModule(base64: string): Promise<WebAssembly.Module> {
+  let mod = moduleCache.get(base64);
+  if (!mod) {
+    const bytes =
+      typeof Buffer !== 'undefined'
+        ? Buffer.from(base64, 'base64')
+        : Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+    mod = WebAssembly.compile(bytes);
+    moduleCache.set(base64, mod);
+  }
+  return mod;
+}
+
 /* eslint-disable @typescript-eslint/no-explicit-any -- jSquash init() typings omit the WebAssembly.Module overload */
 const ready = {
-  jpegDec: () => once('jpegDec', () => (initJpegDec as any)(JPEG_DEC_WASM)),
-  jpegEnc: () => once('jpegEnc', () => (initJpegEnc as any)(JPEG_ENC_WASM)),
-  pngDec: () => once('pngDec', () => (initPngDec as any)(PNG_WASM)),
-  pngEnc: () => once('pngEnc', () => (initPngEnc as any)(PNG_WASM)),
-  oxipng: () => once('oxipng', () => (initOxipng as any)(OXIPNG_WASM)),
-  webpDec: () => once('webpDec', () => (initWebpDec as any)(WEBP_DEC_WASM)),
-  webpEnc: () => once('webpEnc', () => (initWebpEnc as any)(WEBP_ENC_WASM)),
-  avifDec: () => once('avifDec', () => (initAvifDec as any)(AVIF_DEC_WASM)),
-  avifEnc: () => once('avifEnc', () => (initAvifEnc as any)(AVIF_ENC_WASM)),
-  resize: () => once('resize', () => Promise.resolve(initResize(RESIZE_WASM as any))),
-  pngquant: () => once('pngquant', () => icodecPng.loadEncoder(PNGQUANT_WASM as any)),
+  jpegDec: () => once('jpegDec', async () => (initJpegDec as any)(await loadModule(JPEG_DEC_WASM))),
+  jpegEnc: () => once('jpegEnc', async () => (initJpegEnc as any)(await loadModule(JPEG_ENC_WASM))),
+  pngDec: () => once('pngDec', async () => (initPngDec as any)(await loadModule(PNG_WASM))),
+  pngEnc: () => once('pngEnc', async () => (initPngEnc as any)(await loadModule(PNG_WASM))),
+  oxipng: () => once('oxipng', async () => (initOxipng as any)(await loadModule(OXIPNG_WASM))),
+  webpDec: () => once('webpDec', async () => (initWebpDec as any)(await loadModule(WEBP_DEC_WASM))),
+  webpEnc: () => once('webpEnc', async () => (initWebpEnc as any)(await loadModule(WEBP_ENC_WASM))),
+  avifDec: () => once('avifDec', async () => (initAvifDec as any)(await loadModule(AVIF_DEC_WASM))),
+  avifEnc: () => once('avifEnc', async () => (initAvifEnc as any)(await loadModule(AVIF_ENC_WASM))),
+  resize: () => once('resize', async () => initResize(await loadModule(RESIZE_WASM) as any)),
+  pngquant: () => once('pngquant', async () => icodecPng.loadEncoder(await loadModule(PNGQUANT_WASM) as any)),
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
 

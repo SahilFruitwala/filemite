@@ -47,3 +47,6 @@ next-env.d.ts
 .claude/
 # stale next cache
 /.next/
+
+# Nitro build output
+.output/
