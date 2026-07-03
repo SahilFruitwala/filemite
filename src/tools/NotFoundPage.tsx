@@ -23,7 +23,7 @@ export default function NotFoundPage() {
               <Link to="/">Back to home</Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link to="/convert">Convert an image</Link>
+              <Link to="/crop">Crop an image</Link>
             </Button>
           </div>
         </div>

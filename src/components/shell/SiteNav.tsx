@@ -8,7 +8,6 @@ import { ThemeToggle } from './mode';
 
 const navItems = [
   { href: '/', label: 'Compress' },
-  { href: '/convert', label: 'Convert' },
   { href: '/crop', label: 'Crop' },
   { href: '/scrub', label: 'Scrub' },
   { href: '/palette', label: 'Palette' },

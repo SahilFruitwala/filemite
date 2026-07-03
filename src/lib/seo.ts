@@ -4,7 +4,7 @@ interface SeoOptions {
   title: string;
   description: string;
   keywords?: string[];
-  /** Path portion of the canonical URL, e.g. "/convert". */
+  /** Path portion of the canonical URL, e.g. "/crop". */
   path?: string;
 }
 

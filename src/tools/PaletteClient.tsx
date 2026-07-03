@@ -67,7 +67,7 @@ export default function PaletteClient() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-center selection:bg-primary/30">
+    <div className="min-h-screen relative overflow-hidden bg-background selection:bg-primary/30">
       
       <main className="container mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-12 sm:pb-20">
         <PageHeader 

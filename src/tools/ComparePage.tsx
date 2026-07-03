@@ -7,7 +7,8 @@ import JsonLd from "@/components/JsonLd";
 
 export default function ComparePage() {
   return (
-    <main className="min-h-screen pt-12 sm:pt-16 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-background">
+    <main className="pt-12 sm:pt-16 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto">
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "WebPage",
@@ -199,6 +200,7 @@ export default function ComparePage() {
         </p>
       </div>
     </main>
+    </div>
   );
 }
 

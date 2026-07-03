@@ -31,11 +31,11 @@ export default function SiteFooter() {
               <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
                 Compress
               </Link>
-              <Link to="/convert" className="text-muted-foreground hover:text-primary transition-colors">
-                Convert
-              </Link>
               <Link to="/crop" className="text-muted-foreground hover:text-primary transition-colors">
                 Crop
+              </Link>
+              <Link to="/scrub" className="text-muted-foreground hover:text-primary transition-colors">
+                Scrub
               </Link>
             </div>
           </div>

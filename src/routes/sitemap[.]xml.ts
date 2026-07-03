@@ -3,7 +3,6 @@ import { SITE_URL } from '@/lib/seo';
 
 const routes = [
   '',
-  '/convert',
   '/pdf',
   '/resize',
   '/crop',
