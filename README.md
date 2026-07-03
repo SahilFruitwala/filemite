@@ -1,6 +1,6 @@
 # MicroPng 🚀
 
-MicroPng is a high-performance image optimization and conversion tool built with Next.js. It offers both client-side and server-side compression with real-time benchmarking, allowing you to choose the best balance between speed and quality.
+MicroPng is a high-performance image optimization and conversion tool built with TanStack Start. It offers both client-side and server-side compression with real-time benchmarking, allowing you to choose the best balance between speed and quality.
 
 ![MicroPng Preview](public/preview.png) *(Note: Add a real preview image here)*
 
@@ -16,10 +16,12 @@ MicroPng is a high-performance image optimization and conversion tool built with
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Next.js 15+](https://nextjs.org/) (App Router)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Framework**: [TanStack Start](https://tanstack.com/start) (Vite + TanStack Router)
+- **Design System**: [Astryx](https://www.npmjs.com/package/@astryxdesign/core) with a custom MicroPNG theme
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) backed by Astryx design tokens
 - **Client-side Compression**: [browser-image-compression](https://www.npmjs.com/package/browser-image-compression)
-- **Server-side Processing**: [Sharp](https://sharp.pixelplumbing.com/)
+- **Server-side Processing**: [jSquash](https://github.com/jamsinclair/jSquash) WebAssembly codecs (mozjpeg, oxipng, libwebp, libavif) — runs on Cloudflare Workers and Node
+- **Deployment**: [Cloudflare Workers](https://workers.cloudflare.com/) via Wrangler (or any Node host)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 
 ## 🚀 Getting Started
