@@ -34,8 +34,8 @@ export default function SiteFooter() {
               <Link to="/convert" className="text-muted-foreground hover:text-primary transition-colors">
                 Convert
               </Link>
-              <Link to="/resize" className="text-muted-foreground hover:text-primary transition-colors">
-                Resize
+              <Link to="/crop" className="text-muted-foreground hover:text-primary transition-colors">
+                Crop
               </Link>
             </div>
           </div>

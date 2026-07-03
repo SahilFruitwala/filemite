@@ -288,7 +288,7 @@ export default function HomeClient() {
                                                 className={`py-3 sm:py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-200 border ${
                                                     compressionLevel === level
                                                         ? 'bg-primary text-primary-foreground border-primary shadow-md'
-                                                        : 'bg-background text-muted-foreground border-transparent hover:bg-accent'
+                                                        : 'bg-background text-muted-foreground border-transparent hover:bg-accent hover:text-foreground'
                                                 }`}
                                             >
                                                 {level === 'best' && 'Best'}
@@ -310,7 +310,7 @@ export default function HomeClient() {
                                                   className={`py-2 px-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
                                                       outputFormat === format
                                                           ? 'bg-primary/10 text-primary border-primary/20'
-                                                          : 'bg-background text-muted-foreground border-transparent hover:bg-accent'
+                                                          : 'bg-background text-muted-foreground border-transparent hover:bg-accent hover:text-foreground'
                                                   }`}
                                               >
                                                  {format === 'original' ? 'Original' : format.toUpperCase()}
