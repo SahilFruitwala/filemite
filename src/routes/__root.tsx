@@ -17,6 +17,7 @@ import SiteNav from '@/components/shell/SiteNav';
 import SiteFooter from '@/components/shell/SiteFooter';
 import NotFoundPage from '@/tools/NotFoundPage';
 import appCss from '@/styles/app.css?url';
+import { registerServiceWorker } from '@/lib/pwa';
 
 const SITE_URL = 'https://micropng.sahilfruitwala.com';
 const TITLE = 'MicroPNG - Professional Image Compression';
@@ -36,6 +37,11 @@ export const Route = createRootRoute({
           'image compression, compress png, compress jpeg, optimize images, web performance, local compression, privacy focused',
       },
       { name: 'application-name', content: 'MicroPNG' },
+      { name: 'theme-color', content: '#ea580c' },
+      { name: 'mobile-web-app-capable', content: 'yes' },
+      { name: 'apple-mobile-web-app-capable', content: 'yes' },
+      { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+      { name: 'apple-mobile-web-app-title', content: 'MicroPNG' },
       { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' },
       { property: 'og:title', content: TITLE },
       { property: 'og:description', content: DESCRIPTION },
@@ -55,7 +61,7 @@ export const Route = createRootRoute({
     links: [
       { rel: 'stylesheet', href: appCss },
       { rel: 'icon', href: '/icon.webp' },
-      { rel: 'apple-touch-icon', href: '/icon.webp' },
+      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       { rel: 'canonical', href: SITE_URL },
       { rel: 'manifest', href: '/manifest.webmanifest' },
     ],
@@ -103,6 +109,10 @@ function ThemedApp({ children }: { children: React.ReactNode }) {
 }
 
 function RootLayout() {
+  useEffect(() => {
+    registerServiceWorker();
+  }, []);
+
   useEffect(() => {
     const key = import.meta.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN;
     if (key && !posthog.__loaded) {
