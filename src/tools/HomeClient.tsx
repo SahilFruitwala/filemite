@@ -231,24 +231,55 @@ export default function HomeClient() {
                     </div>
 
                     <div className="grid gap-4">
-                        {files.filter(f => f.status === 'done').map((file) => (
-                            <ResultCard
-                                key={file.id}
-                                originalFile={file.fileRaw!}
-                                originalUrl={file.originalBlobUrl}
-                                compressedUrl={file.blobUrl || ''}
-                                compressedSize={file.compressedSize}
-                                outputFormat={file.outputFormat || 'webp'}
-                                stats={{
-                                    originalSize: formatSize(file.originalSize),
-                                    compressedSize: formatSize(file.compressedSize),
-                                    compressionRatio: 'N/A',
-                                    reduction: `${Math.round(((file.originalSize - file.compressedSize) / file.originalSize) * 100)}%`,
-                                    timeTaken: `${(file.serverStats?.time || 0).toFixed(0)}ms`
-                                }}
-                                onReset={handleReset}
-                            />
-                        ))}
+                        {files.map((file) => {
+                            if (file.status === 'done') {
+                                return (
+                                    <ResultCard
+                                        key={file.id}
+                                        originalFile={file.fileRaw!}
+                                        originalUrl={file.originalBlobUrl}
+                                        compressedUrl={file.blobUrl || ''}
+                                        compressedSize={file.compressedSize}
+                                        outputFormat={file.outputFormat || 'webp'}
+                                        stats={{
+                                            originalSize: formatSize(file.originalSize),
+                                            compressedSize: formatSize(file.compressedSize),
+                                            compressionRatio: 'N/A',
+                                            reduction: `${Math.round(((file.originalSize - file.compressedSize) / file.originalSize) * 100)}%`,
+                                            timeTaken: `${(file.serverStats?.time || 0).toFixed(0)}ms`
+                                        }}
+                                        onReset={handleReset}
+                                    />
+                                );
+                            }
+
+                            if (file.status === 'error') {
+                                return (
+                                    <div key={file.id} className="w-full max-w-5xl mx-auto p-6 rounded-2xl border border-destructive/30 bg-destructive/10 flex items-center justify-between gap-4">
+                                        <div>
+                                            <p className="font-semibold text-foreground">{file.originalName}</p>
+                                            <p className="text-sm text-destructive">Compression failed. Please try again.</p>
+                                        </div>
+                                        <button
+                                            onClick={() => setFiles(prev => prev.filter(f => f.id !== file.id))}
+                                            className="text-sm font-semibold text-muted-foreground hover:text-foreground underline underline-offset-4 shrink-0"
+                                        >
+                                            Dismiss
+                                        </button>
+                                    </div>
+                                );
+                            }
+
+                            return (
+                                <div key={file.id} className="w-full max-w-5xl mx-auto p-6 rounded-2xl border border-border/50 bg-secondary/30 flex items-center gap-4">
+                                    <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin shrink-0"></div>
+                                    <div>
+                                        <p className="font-semibold text-foreground">{file.originalName}</p>
+                                        <p className="text-sm text-muted-foreground">Compressing...</p>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                      <div className='flex justify-center mt-8'>
                         <Dropzone onFileSelect={handleFilesSelect} isCompressing={isProcesssing} />

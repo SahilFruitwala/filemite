@@ -130,7 +130,7 @@ export default function ResultCard({
             </div>
           </div>
 
-            <Button onClick={handleDownload} fullWidth size="lg" className="rounded-xl shadow-lg shadow-primary/20 py-6 text-lg">
+            <Button onClick={handleDownload} fullWidth size="lg" className="rounded-xl shadow-lg shadow-primary/20 h-14 text-lg">
                 {downloaded ? (
                     <>
                     <Check size={24} className="mr-2" /> Downloaded

@@ -148,23 +148,6 @@ export default function ScrubClient() {
                              </button>
                         </div>
                     </GlassCard>
-
-                    {file.status === 'done' && file.scrubbedUrl && (
-                     <div className="bg-primary/10 border border-primary/20 rounded-2xl p-6 text-center animate-in fade-in slide-in-from-bottom-4">
-                            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 text-white">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            </div>
-                            <h3 className="text-xl font-bold text-foreground mb-2">Image Scrubbed!</h3>
-                            <p className="text-muted-foreground mb-6 text-sm">All metadata has been removed successfully.</p>
-                            <a 
-                                href={file.scrubbedUrl} 
-                                download={`scrubbed-${file.file.name}`}
-                                className="inline-block bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-xl transition-all"
-                            >
-                                Download Safe Image
-                            </a>
-                        </div>
-                    )}
                 </div>
 
                 {/* Right Column: Metadata & Actions */}
@@ -201,13 +184,37 @@ export default function ScrubClient() {
                                      Review the metadata above. Proceed to scrub to permanently remove this information.
                                 </p>
                              </div>
-                             <button 
+                             <button
                                 onClick={handleScrub}
-                                className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 text-lg shadow-sm hover:shadow-sm"
+                                className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 text-base sm:text-lg shadow-sm hover:shadow-sm text-center"
                              >
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                 Continue to Scrub Data
                              </button>
+                        </div>
+                    )}
+
+                    {file.status === 'scrubbing' && (
+                        <div className="pt-6 border-t border-border flex items-center justify-center gap-3 text-muted-foreground">
+                            <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+                            Scrubbing metadata...
+                        </div>
+                    )}
+
+                    {file.status === 'done' && file.scrubbedUrl && (
+                        <div className="pt-6 border-t border-border text-center animate-in fade-in slide-in-from-bottom-2">
+                            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 text-white">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <h3 className="text-xl font-bold text-foreground mb-2">Image Scrubbed!</h3>
+                            <p className="text-muted-foreground mb-6 text-sm">All metadata has been removed successfully.</p>
+                            <a
+                                href={file.scrubbedUrl}
+                                download={`scrubbed-${file.file.name}`}
+                                className="inline-block w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all"
+                            >
+                                Download Safe Image
+                            </a>
                         </div>
                     )}
                 </GlassCard>
