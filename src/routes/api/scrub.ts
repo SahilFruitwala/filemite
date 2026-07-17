@@ -1,6 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
 import exifr from 'exifr';
-import { decode, encode, sniffFormat } from '@/lib/image-wasm';
+import {
+  getImageDimensions,
+  scrubImage,
+  sniffFormat,
+  type ImageFormat,
+} from '@/lib/image';
+import { MAX_FILE_BYTES } from '@/lib/constants';
 import { captureServerEvent } from '@/lib/posthog-server';
 
 function json(data: unknown, status = 200) {
@@ -19,8 +25,17 @@ export const Route = createFileRoute('/api/scrub')({
           const file = formData.get('file');
           if (!(file instanceof File)) return json({ error: 'No file provided' }, 400);
 
+          if (file.size > MAX_FILE_BYTES) {
+            return json(
+              {
+                error: `File too large. Max size is ${Math.round(MAX_FILE_BYTES / (1024 * 1024))}MB.`,
+              },
+              413,
+            );
+          }
+
           const action = new URL(request.url).searchParams.get('action');
-          const buffer = await file.arrayBuffer();
+          const buffer = Buffer.from(await file.arrayBuffer());
           const format = sniffFormat(buffer, file.type);
 
           if (action === 'view') {
@@ -30,11 +45,11 @@ export const Route = createFileRoute('/api/scrub')({
             } catch {
               // no parseable metadata is a valid result
             }
+            const dims = await getImageDimensions(buffer).catch(() => ({}));
             return json({
               metadata: {
-                format,
-                width: undefined,
-                height: undefined,
+                format: format === 'heif' ? 'heic' : format,
+                ...dims,
                 ...metadata,
               },
             });
@@ -43,12 +58,10 @@ export const Route = createFileRoute('/api/scrub')({
           if (action === 'scrub') {
             if (!format) return json({ error: 'Unsupported image format' }, 415);
 
-            // Decoding to raw pixels and re-encoding drops every metadata block.
-            const image = await decode(buffer, format);
-            const scrubbed = await encode(image, format, {
-              quality: 100,
-              lossless: format !== 'jpeg',
-            });
+            const outputFormat: ImageFormat =
+              format === 'heif' ? 'jpeg' : format;
+
+            const scrubbed = await scrubImage(buffer, outputFormat);
 
             captureServerEvent('server_metadata_scrubbed', {
               file_format: format,
@@ -56,10 +69,11 @@ export const Route = createFileRoute('/api/scrub')({
               scrubbed_size_bytes: scrubbed.byteLength,
             });
 
-            return new Response(scrubbed, {
+            return new Response(new Uint8Array(scrubbed), {
               headers: {
-                'Content-Type': file.type || `image/${format}`,
-                'Content-Disposition': `attachment; filename="scrubbed-${file.name}"`,
+                'Content-Type': `image/${outputFormat}`,
+                'Content-Disposition': `attachment; filename="scrubbed-${file.name.replace(/\.[^.]+$/, '')}.${outputFormat === 'jpeg' ? 'jpg' : outputFormat}"`,
+                'Cache-Control': 'no-store',
               },
             });
           }

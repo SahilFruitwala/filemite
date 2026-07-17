@@ -17,31 +17,26 @@ import SiteNav from '@/components/shell/SiteNav';
 import SiteFooter from '@/components/shell/SiteFooter';
 import NotFoundPage from '@/tools/NotFoundPage';
 import appCss from '@/styles/app.css?url';
-import { registerServiceWorker } from '@/lib/pwa';
 
 const SITE_URL = 'https://micropng.sahilfruitwala.com';
 const TITLE = 'MicroPNG - Professional Image Compression';
 const DESCRIPTION =
-  'Fast, secure, and professional-grade image compression directly in your browser. Lossless optimization for PNG, JPEG, and WebP.';
+  'Fast, secure image compression. Shrink PNG, JPEG, WebP, and HEIC without storing your files.';
 
 export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
       { title: TITLE },
       { name: 'description', content: DESCRIPTION },
       {
         name: 'keywords',
         content:
-          'image compression, compress png, compress jpeg, optimize images, web performance, local compression, privacy focused',
+          'image compression, compress png, compress jpeg, optimize images, web performance, privacy focused',
       },
       { name: 'application-name', content: 'MicroPNG' },
       { name: 'theme-color', content: '#ea580c' },
-      { name: 'mobile-web-app-capable', content: 'yes' },
-      { name: 'apple-mobile-web-app-capable', content: 'yes' },
-      { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
-      { name: 'apple-mobile-web-app-title', content: 'MicroPNG' },
       { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' },
       { property: 'og:title', content: TITLE },
       { property: 'og:description', content: DESCRIPTION },
@@ -63,7 +58,6 @@ export const Route = createRootRoute({
       { rel: 'icon', href: '/icon.webp' },
       { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       { rel: 'canonical', href: SITE_URL },
-      { rel: 'manifest', href: '/manifest.webmanifest' },
     ],
     scripts: [
       {
@@ -109,8 +103,14 @@ function ThemedApp({ children }: { children: React.ReactNode }) {
 }
 
 function RootLayout() {
+  // Clear any previously installed PWA service workers so they don't intercept API calls.
   useEffect(() => {
-    registerServiceWorker();
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.getRegistrations().then((regs) => {
+      for (const reg of regs) {
+        void reg.unregister();
+      }
+    });
   }, []);
 
   useEffect(() => {

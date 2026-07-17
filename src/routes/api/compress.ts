@@ -1,14 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import {
-  capWidth,
-  cropImage,
-  decode,
-  encode,
-  resizeImage,
+  processImage,
   sniffFormat,
   type ImageFormat,
   type ResizeFit,
-} from '@/lib/image-wasm';
+} from '@/lib/image';
+import { MAX_FILE_BYTES } from '@/lib/constants';
 import { captureServerEvent } from '@/lib/posthog-server';
 
 const MAX_WIDTH = 1920;
@@ -29,9 +26,15 @@ export const Route = createFileRoute('/api/compress')({
           const file = formData.get('file');
           if (!(file instanceof File)) return jsonError('No file provided', 400);
 
+          if (file.size > MAX_FILE_BYTES) {
+            return jsonError(
+              `File too large. Max size is ${Math.round(MAX_FILE_BYTES / (1024 * 1024))}MB.`,
+              413,
+            );
+          }
+
           const requestedFormat = formData.get('format') as string | null;
           const compressionLevel = (formData.get('level') as string) || 'mid';
-          const speed = (formData.get('speed') as string) || 'normal';
 
           const widthRaw = formData.get('width');
           const heightRaw = formData.get('height');
@@ -48,29 +51,17 @@ export const Route = createFileRoute('/api/compress')({
           const shouldCrop =
             cropW !== null && cropH !== null && cropX !== null && cropY !== null;
           const shouldResize =
-            (finalWidth !== undefined && !isNaN(finalWidth)) ||
-            (finalHeight !== undefined && !isNaN(finalHeight));
+            (finalWidth !== undefined && !Number.isNaN(finalWidth)) ||
+            (finalHeight !== undefined && !Number.isNaN(finalHeight));
 
-          const buffer = await file.arrayBuffer();
+          const buffer = Buffer.from(await file.arrayBuffer());
           const inputFormat = sniffFormat(buffer, file.type);
           if (!inputFormat) return jsonError('Unsupported image format', 415);
 
-          let targetFormat = (requestedFormat || inputFormat).toLowerCase();
+          let targetFormat = (requestedFormat || (inputFormat === 'heif' ? 'jpeg' : inputFormat)).toLowerCase();
           if (targetFormat === 'jpg') targetFormat = 'jpeg';
           if (!['jpeg', 'png', 'webp'].includes(targetFormat)) {
             targetFormat = 'webp';
-          }
-
-          let image = await decode(buffer, inputFormat);
-
-          if (shouldCrop) {
-            image = cropImage(image, cropX!, cropY!, cropW!, cropH!);
-          }
-
-          if (shouldResize) {
-            image = await resizeImage(image, finalWidth, finalHeight, resizeFit);
-          } else if (image.width > MAX_WIDTH) {
-            image = await capWidth(image, MAX_WIDTH);
           }
 
           let quality = 75;
@@ -78,32 +69,39 @@ export const Route = createFileRoute('/api/compress')({
           if (compressionLevel === 'low') quality = 40;
           if (compressionLevel === 'lossless') quality = 100;
 
-          const output = await encode(image, targetFormat as ImageFormat, {
+          const output = await processImage(buffer, {
             quality,
             lossless: compressionLevel === 'lossless',
-            fast: speed === 'fast',
+            targetFormat: targetFormat as ImageFormat,
+            maxWidth: shouldResize ? undefined : MAX_WIDTH,
+            width: shouldResize ? finalWidth : undefined,
+            height: shouldResize ? finalHeight : undefined,
+            fit: resizeFit,
+            crop: shouldCrop
+              ? { x: cropX!, y: cropY!, width: cropW!, height: cropH! }
+              : undefined,
           });
 
           captureServerEvent('server_image_compressed', {
             input_format: inputFormat,
-            output_format: targetFormat,
+            output_format: output.format,
             compression_level: compressionLevel,
             original_size_bytes: buffer.byteLength,
-            compressed_size_bytes: output.byteLength,
+            compressed_size_bytes: output.data.byteLength,
             reduction_percent: Math.round(
-              ((buffer.byteLength - output.byteLength) / buffer.byteLength) * 100,
+              ((buffer.byteLength - output.data.byteLength) / buffer.byteLength) * 100,
             ),
             did_resize: shouldResize,
             did_crop: shouldCrop,
           });
 
-          return new Response(output, {
+          return new Response(new Uint8Array(output.data), {
             status: 200,
             headers: {
-              'Content-Type': `image/${targetFormat}`,
-              'Content-Length': output.byteLength.toString(),
-              'Content-Disposition': `attachment; filename="compressed.${targetFormat}"`,
-              'Cache-Control': 'public, max-age=31536000, immutable',
+              'Content-Type': `image/${output.format}`,
+              'Content-Length': output.data.byteLength.toString(),
+              'Content-Disposition': `attachment; filename="compressed.${output.format}"`,
+              'Cache-Control': 'no-store',
             },
           });
         } catch (error) {

@@ -93,6 +93,18 @@
   z-index: 100;
 }
 
+/* Mobile nav lives inside SiteNav; avoid double sticky chrome from AppShell */
+@media (max-width: 767px) {
+  .astryx-app-shell-header {
+    position: sticky;
+    top: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+}
+
 /* Byte counts and file sizes are always tabular mono */
 .font-mono,
 [data-bytes] {

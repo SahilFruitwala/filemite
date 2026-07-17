@@ -1,83 +1,44 @@
-# MicroPng 🚀
+# MicroPNG
 
-MicroPng is a high-performance image optimization and conversion tool built with TanStack Start. It offers both client-side and server-side compression with real-time benchmarking, allowing you to choose the best balance between speed and quality.
+High-performance image compression and toolkit built with TanStack Start. Compress, crop, scrub EXIF, extract palettes, and generate favicons — processed in-memory on the server and never stored.
 
-![MicroPng Preview](public/preview.png) *(Note: Add a real preview image here)*
+## Features
 
-## ✨ Features
+- **Smart compression** — Best / Balanced / Small presets for PNG, JPEG, WebP (HEIC input supported)
+- **Bulk upload** — process multiple images with concurrent server jobs
+- **Crop, scrub, palette, favicon** — focused tools around the same pipeline
+- **Privacy** — images are processed in-memory; nothing is persisted
 
-- **Smart Compression**: Optimized presets (Best, Balanced, Small) to reduce file size without significant quality loss.
-- **Target Size Mode**: Specify a target file size (e.g., 100KB), and the app will intelligently find the best quality settings.
-- **Universal Format Support**: Convert between PNG, JPEG, WebP, and AVIF formats effortlessly.
-- **Real-time Benchmarking**: Compare client-side vs. server-side compression performance and results side-by-side.
-- **Lossless Conversion**: Built-in support for lossless image format transformation.
-- **Bulk Processing**: Upload and process multiple images simultaneously.
-- **Privacy First**: Choose client-side compression to keep your images in the browser.
-
-## 🛠️ Tech Stack
+## Tech stack
 
 - **Framework**: [TanStack Start](https://tanstack.com/start) (Vite + TanStack Router)
-- **Design System**: [Astryx](https://www.npmjs.com/package/@astryxdesign/core) with a custom MicroPNG theme
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) backed by Astryx design tokens
-- **Client-side Compression**: [browser-image-compression](https://www.npmjs.com/package/browser-image-compression)
-- **Server-side Processing**: [jSquash](https://github.com/jamsinclair/jSquash) WebAssembly codecs (mozjpeg, oxipng, libwebp, libavif) — runs on Cloudflare Workers and Node
-- **Deployment**: [Cloudflare Workers](https://workers.cloudflare.com/) via Wrangler (or any Node host)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Design system**: [Astryx](https://www.npmjs.com/package/@astryxdesign/core) + custom MicroPNG theme
+- **Styling**: Tailwind CSS 4
+- **Image backend**: [Sharp](https://sharp.pixelplumbing.com/) (libvips) on Node serverless
+- **Deploy**: [Vercel](https://vercel.com/) (Nitro `vercel` preset)
 
-## 🚀 Getting Started
+## Getting started
 
-### Prerequisites
+Prerequisites: Node.js 20+
 
-- Node.js 20+
-- npm, yarn, pnpm, or bun
+```bash
+bun install   # or npm install
+bun run dev   # http://localhost:3000
+```
 
-### Installation
+## Deploy on Vercel
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/micropng.git
-   cd micropng
-   ```
+```bash
+bun run build
+# or connect the repo in the Vercel dashboard — Nitro emits a Vercel output
+```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+Sharp requires the **Node.js** runtime (not Edge). Body size is capped at ~4MB to stay within Vercel serverless request limits.
 
-3. Run the development server:
-   ```bash
-   npm run dev
-   ```
+## Privacy
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Images are processed in-memory and discarded when the request completes. See [/privacy](/privacy).
 
-## 📖 Usage Guide
+## License
 
-### Image Compression
-1. Drop your images or click to upload in the home page.
-2. Select a compression level or switch to "Target Size" mode.
-3. Toggle "Benchmark" to compare browser-based compression with our high-performance server processing.
-4. Download the result that meets your needs.
-
-### Format Conversion
-1. Navigate to the `/convert` page.
-2. Upload your images.
-3. Choose the target format (WebP, PNG, JPEG, or AVIF).
-4. Click "Convert All" to process your files losslessly.
-
-## 🤝 Contributing & Vibe
-
-MicroPng is **vibe coded** and each feature has been **manually tested** for performance and UX. We believe in simplicity and quality.
-
-If you can improve it, whether through better algorithms, UI refinements, or bug fixes, **any contribution is welcome!** Please see our [CONTRIBUTING.md](CONTRIBUTING.md) to get started.
-
-## 🔒 Privacy & Security
-
-We take your data seriously:
-- **Zero Storage**: We do not store anything on our server. Images are processed in-memory and are gone as soon as the request is completed.
-- **Client-Side Option**: For maximum privacy, use the "Browser" mode to process images entirely on your own device.
-
-## 📄 License
-
-This project is [MIT](LICENSE) licensed.
-
+MIT — see [LICENSE](LICENSE).
