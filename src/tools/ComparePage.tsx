@@ -129,19 +129,13 @@ export default function ComparePage() {
           tiny="Mobile-ready via Upload"
           isBetter={true}
         />
-        <ComparisonRow 
+        <ComparisonRow
           feature="Pricing"
-          micro="Free / Open Source*"
+          micro="Free*"
           tiny="Paid after 20 images"
           isBetter={true}
         />
-        <ComparisonRow 
-          feature="Self-Hostable"
-          micro="Yes (Run it yourself)"
-          tiny="No (SaaS only)"
-          isBetter={true}
-        />
-        <ComparisonRow 
+        <ComparisonRow
           feature="Format Support"
           micro="PNG, JPEG, WebP, ICO"
           tiny="PNG, JPEG, WebP"
@@ -171,16 +165,13 @@ export default function ComparePage() {
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
             </div>
             <div className="space-y-3">
-                <h4 className="text-lg font-semibold text-foreground">Community Supported & Open Source</h4>
+                <h4 className="text-lg font-semibold text-foreground">Free to Use</h4>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                    * MicroPng is a free service hosted by the community. We are committed to keeping it free as long as we can sustain the hosting costs.
+                    * MicroPng is a free service. We are committed to keeping it free as long as we can sustain the hosting costs.
                 </p>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                    Concerned about longevity or privacy? <strong>You don't have to rely on us.</strong> MicroPng is 100% Open Source. You can clone the repository and run your own private instance locally.
+                    Concerned about longevity or privacy? Every image is processed in-memory and never stored — see our <Link to="/privacy" className="text-primary hover:text-primary-hover font-medium">Privacy Policy</Link> for the full details.
                 </p>
-                <a href="https://github.com/SahilFruitwala/MicroPng" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary-hover font-medium transition-colors">
-                    View on GitHub <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
-                </a>
             </div>
         </div>
       </div>

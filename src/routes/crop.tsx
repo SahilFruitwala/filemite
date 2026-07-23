@@ -21,7 +21,7 @@ function CropRoute() {
         data={softwareAppJsonLd({
           name: 'MicroPng Smart Cropper',
           category: 'MultimediaApplication',
-          description: 'Smart AI-powered cropping tool to automatically detect subjects and crop images perfectly.',
+          description: 'Smart content-aware cropping tool that automatically detects the subject of your photo and crops it perfectly.',
           rating: '4.5',
           ratingCount: '340',
         })}

@@ -80,7 +80,7 @@ export default function CropClient() {
 
             <main className="container mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-12 sm:pb-20">
                 <PageHeader 
-                    title={<>Smart <br /> <span className="text-muted-foreground">AI-Powered Cropping.</span></>}
+                    title={<>Smart <br /> <span className="text-muted-foreground">Content-Aware Cropping.</span></>}
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
@@ -94,7 +94,7 @@ export default function CropClient() {
                                 </h3>
                                 
                                 <p className="text-sm text-subtle leading-relaxed">
-                                    Our AI detects the subject of your image and automatically crops it for popular social media aspect ratios.
+                                    Our content-aware algorithm detects the subject of your image and automatically crops it for popular social media aspect ratios.
                                 </p>
 
                                 <div className="space-y-3">

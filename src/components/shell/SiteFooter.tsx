@@ -1,5 +1,15 @@
 import { Link } from '@tanstack/react-router';
-import { Heart } from 'lucide-react';
+import { Github, Heart, Instagram, Linkedin, X, Youtube } from 'lucide-react';
+
+const SOCIAL_LINKS = [
+  // Icon sizes are hand-tuned: lucide's Linkedin/Youtube are solid glyphs that
+  // read visually heavier than the outline Github/X/Instagram at the same size.
+  { href: 'https://github.com/SahilFruitwala', label: 'GitHub', icon: Github, size: 18 },
+  { href: 'https://www.linkedin.com/in/sahilfruitwala/', label: 'LinkedIn', icon: Linkedin, size: 16 },
+  { href: 'https://x.com/sahilbeingsahil', label: 'X (Twitter)', icon: X, size: 17 },
+  { href: 'https://instagram.com/its_sahilbeingsahil', label: 'Instagram', icon: Instagram, size: 18 },
+  { href: 'https://youtube.com/@sahilbeingsahil', label: 'YouTube', icon: Youtube, size: 17 },
+] as const;
 
 export default function SiteFooter() {
   return (
@@ -20,8 +30,8 @@ export default function SiteFooter() {
               </span>
             </div>
             <p className="text-muted-foreground leading-relaxed max-w-sm">
-              Professional image optimization in your browser. <br />
-              No server uploads. No compromises.
+              Professional image optimization, processed in-memory and never stored. <br />
+              Crop &amp; Palette run entirely in your browser.
             </p>
           </div>
 
@@ -31,17 +41,29 @@ export default function SiteFooter() {
               <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
                 Compress
               </Link>
+              <Link to="/resize" className="text-muted-foreground hover:text-primary transition-colors">
+                Resize
+              </Link>
               <Link to="/crop" className="text-muted-foreground hover:text-primary transition-colors">
                 Crop
               </Link>
               <Link to="/scrub" className="text-muted-foreground hover:text-primary transition-colors">
                 Scrub
               </Link>
+              <Link to="/palette" className="text-muted-foreground hover:text-primary transition-colors">
+                Palette
+              </Link>
+              <Link to="/favicon" className="text-muted-foreground hover:text-primary transition-colors">
+                Favicon
+              </Link>
+              <Link to="/compare" className="text-muted-foreground hover:text-primary transition-colors">
+                Compare
+              </Link>
             </div>
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Legal &amp; Code</h4>
+            <h4 className="font-semibold text-foreground">Legal</h4>
             <div className="flex flex-col gap-2">
               <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
                 Privacy
@@ -49,20 +71,26 @@ export default function SiteFooter() {
               <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
                 Terms
               </Link>
-              <a
-                href="https://github.com/SahilFruitwala/micropng"
-                target="_blank"
-                rel="noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                GitHub
-              </a>
             </div>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-border/50 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Sahil Fruitwala. MIT Licensed.</p>
+          <p>&copy; {new Date().getFullYear()} Sahil Fruitwala. All rights reserved.</p>
+          <div className="flex items-center gap-3">
+            {SOCIAL_LINKS.map(({ href, label, icon: Icon, size }) => (
+              <a
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={label}
+                className="flex items-center justify-center w-5 h-5 text-muted-foreground hover:text-primary transition-colors"
+              >
+                <Icon size={size} />
+              </a>
+            ))}
+          </div>
           <div className="flex items-center gap-2">
             <span>Made with</span>
             <Heart size={12} className="text-destructive fill-destructive" />
