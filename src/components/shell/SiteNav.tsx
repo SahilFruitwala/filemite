@@ -11,6 +11,7 @@ import { ThemeToggle } from './mode';
 const navItems = [
   { href: '/', label: 'Compress' },
   { href: '/crop', label: 'Crop' },
+  { href: '/resize', label: 'Resize' },
   { href: '/scrub', label: 'Scrub' },
   { href: '/palette', label: 'Palette' },
   { href: '/favicon', label: 'Favicon' },

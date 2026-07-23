@@ -1,17 +1,19 @@
 MicroPNG
 
 ## What this is
-MicroPNG is a web app for fast image compression and related tools (compress, crop, EXIF scrub, palette extraction, favicon generation). PNG, JPEG, WebP, and HEIC input are supported.
+MicroPNG is a web app for fast image compression and related tools (compress, resize, crop, EXIF scrub, palette extraction, favicon generation). PNG, JPEG, WebP, and HEIC input are supported.
 
 ## Canonical site
 https://micropng.sahilfruitwala.com
 
 ## Key pages
 - Compress: https://micropng.sahilfruitwala.com/
+- Resize: https://micropng.sahilfruitwala.com/resize
 - Crop: https://micropng.sahilfruitwala.com/crop
 - Scrub: https://micropng.sahilfruitwala.com/scrub
 - Palette: https://micropng.sahilfruitwala.com/palette
 - Favicon: https://micropng.sahilfruitwala.com/favicon
+- Compare (vs TinyPNG): https://micropng.sahilfruitwala.com/compare
 - Terms: https://micropng.sahilfruitwala.com/terms
 - Privacy: https://micropng.sahilfruitwala.com/privacy
 

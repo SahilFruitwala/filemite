@@ -50,7 +50,6 @@ export const Route = createRootRoute({
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: TITLE },
       { name: 'twitter:description', content: DESCRIPTION },
-      { name: 'twitter:creator', content: '@micropng' },
       { name: 'twitter:image', content: `${SITE_URL}/opengraph.webp` },
     ],
     links: [
@@ -63,6 +62,23 @@ export const Route = createRootRoute({
       {
         // Apply the stored color mode before first paint to avoid a flash
         children: `try{var m=localStorage.getItem('micropng-mode');if(m==='light'||m==='dark'){document.documentElement.setAttribute('data-theme',m)}}catch(e){}`,
+      },
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: 'MicroPNG',
+          url: SITE_URL,
+          description: DESCRIPTION,
+          publisher: {
+            '@type': 'Organization',
+            name: 'MicroPNG',
+            url: SITE_URL,
+            logo: `${SITE_URL}/icon.webp`,
+            sameAs: ['https://github.com/SahilFruitwala/micropng'],
+          },
+        }),
       },
     ],
   }),
