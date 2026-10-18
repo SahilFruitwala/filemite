@@ -1,16 +1,19 @@
-export const SITE_URL = 'https://micropng.sahilfruitwala.com';
+import { SITE_NAME, SITE_URL } from './site';
+import type { Tool } from './tools';
+
+export { SITE_URL };
 
 interface SeoOptions {
   title: string;
   description: string;
   keywords?: string[];
-  /** Path portion of the canonical URL, e.g. "/crop". */
+  /** Path portion of the canonical URL, e.g. "/image/crop". */
   path?: string;
 }
 
-/** Builds a TanStack Router `head()` result with title, description, OG/Twitter tags, and canonical link. */
+/** Builds a TanStack Router `head()` result with title, description, OG/Twitter tags and canonical link. */
 export function seoHead({ title, description, keywords, path }: SeoOptions) {
-  const fullTitle = `${title} | MicroPNG`;
+  const fullTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
   const canonical = path !== undefined ? `${SITE_URL}${path === '/' ? '' : path}` : undefined;
   return {
     meta: [
@@ -27,38 +30,25 @@ export function seoHead({ title, description, keywords, path }: SeoOptions) {
   };
 }
 
-interface SoftwareAppJsonLdOptions {
-  name: string;
-  category: string;
-  description: string;
-  rating?: string;
-  ratingCount?: string;
+export function toolHead(tool: Tool) {
+  return seoHead({
+    title: tool.seoTitle,
+    description: tool.seoDescription,
+    keywords: tool.keywords,
+    path: tool.href,
+  });
 }
 
-/** schema.org SoftwareApplication JSON-LD payload shared by the tool pages. */
-export function softwareAppJsonLd({
-  name,
-  category,
-  description,
-  rating,
-  ratingCount,
-}: SoftwareAppJsonLdOptions) {
+/** schema.org SoftwareApplication payload for a tool page. */
+export function toolJsonLd(tool: Tool) {
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name,
-    applicationCategory: category,
+    name: `${tool.title} — ${SITE_NAME}`,
+    url: `${SITE_URL}${tool.href}`,
+    applicationCategory: tool.section === 'pdf' ? 'BusinessApplication' : 'MultimediaApplication',
     operatingSystem: 'Web',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-    description,
-    ...(rating && ratingCount
-      ? {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: rating,
-            ratingCount,
-          },
-        }
-      : {}),
+    description: tool.seoDescription,
   };
 }

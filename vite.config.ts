@@ -7,11 +7,19 @@ import path from 'node:path';
 
 export default defineConfig({
   server: { port: 3000 },
-  build: { cssMinify: 'esbuild' },
+  build: { cssMinify: 'esbuild', target: 'es2022' },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
+  },
+  // MuPDF and mozjpeg ship their own WASM loaders that locate the .wasm file
+  // via import.meta.url; pre-bundling would break that path.
+  optimizeDeps: {
+    exclude: ['mupdf', '@jsquash/jpeg'],
+  },
+  worker: {
+    format: 'es',
   },
   plugins: [
     tailwindcss(),

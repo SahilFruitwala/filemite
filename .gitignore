@@ -50,3 +50,7 @@ next-env.d.ts
 
 # Nitro build output
 .output/
+
+# build caches
+.nitro/
+.tanstack/

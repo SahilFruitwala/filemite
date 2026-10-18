@@ -1,27 +1,15 @@
-import React, { useEffect } from 'react';
-import {
-  createRootRoute,
-  HeadContent,
-  Link,
-  Outlet,
-  Scripts,
-} from '@tanstack/react-router';
-import { Theme } from '@astryxdesign/core';
-import { AppShell } from '@astryxdesign/core/AppShell';
-import { LinkProvider } from '@astryxdesign/core/Link';
+import { useEffect } from 'react';
+import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router';
 import posthog from 'posthog-js';
 
-import { micropngTheme } from '@/theme/micropng';
-import { ModeProvider, useMode } from '@/components/shell/mode';
-import SiteNav from '@/components/shell/SiteNav';
-import SiteFooter from '@/components/shell/SiteFooter';
-import NotFoundPage from '@/tools/NotFoundPage';
+import { SiteFooter } from '@/components/shell/site-footer';
+import { SiteHeader } from '@/components/shell/site-header';
+import { ThemeProvider, themeBootScript } from '@/components/shell/theme';
+import { NotFoundPage } from '@/pages/not-found';
+import { AUTHOR, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from '@/lib/site';
 import appCss from '@/styles/app.css?url';
 
-const SITE_URL = 'https://micropng.sahilfruitwala.com';
-const TITLE = 'MicroPNG - Professional Image Compression';
-const DESCRIPTION =
-  'Fast, secure image compression. Shrink PNG, JPEG, WebP, and HEIC without storing your files.';
+const TITLE = `${SITE_NAME} — ${SITE_TAGLINE}`;
 
 export const Route = createRootRoute({
   head: () => ({
@@ -29,61 +17,39 @@ export const Route = createRootRoute({
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
       { title: TITLE },
-      { name: 'description', content: DESCRIPTION },
-      {
-        name: 'keywords',
-        content:
-          'image compression, compress png, compress jpeg, optimize images, web performance, privacy focused',
-      },
-      { name: 'application-name', content: 'MicroPNG' },
-      { name: 'theme-color', content: '#ea580c' },
-      { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' },
+      { name: 'description', content: SITE_DESCRIPTION },
+      { name: 'application-name', content: SITE_NAME },
+      { name: 'theme-color', content: '#fbf8f2', media: '(prefers-color-scheme: light)' },
+      { name: 'theme-color', content: '#151311', media: '(prefers-color-scheme: dark)' },
+      { name: 'robots', content: 'index, follow, max-image-preview:large' },
       { property: 'og:title', content: TITLE },
-      { property: 'og:description', content: DESCRIPTION },
+      { property: 'og:description', content: SITE_DESCRIPTION },
       { property: 'og:url', content: SITE_URL },
-      { property: 'og:site_name', content: 'MicroPNG' },
-      { property: 'og:locale', content: 'en_US' },
+      { property: 'og:site_name', content: SITE_NAME },
       { property: 'og:type', content: 'website' },
       { property: 'og:image', content: `${SITE_URL}/opengraph.webp` },
-      { property: 'og:image:width', content: '1200' },
-      { property: 'og:image:height', content: '630' },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: TITLE },
-      { name: 'twitter:description', content: DESCRIPTION },
+      { name: 'twitter:description', content: SITE_DESCRIPTION },
       { name: 'twitter:image', content: `${SITE_URL}/opengraph.webp` },
     ],
     links: [
       { rel: 'stylesheet', href: appCss },
-      { rel: 'icon', href: '/icon.webp' },
+      { rel: 'icon', href: '/logo.svg', type: 'image/svg+xml' },
+      { rel: 'icon', href: '/favicon.ico', sizes: '32x32' },
       { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-      { rel: 'canonical', href: SITE_URL },
     ],
     scripts: [
-      {
-        // Apply the stored color mode before first paint to avoid a flash
-        children: `try{var m=localStorage.getItem('micropng-mode');if(m==='light'||m==='dark'){document.documentElement.setAttribute('data-theme',m)}}catch(e){}`,
-      },
+      { children: themeBootScript },
       {
         type: 'application/ld+json',
         children: JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          name: 'MicroPNG',
+          name: SITE_NAME,
           url: SITE_URL,
-          description: DESCRIPTION,
-          publisher: {
-            '@type': 'Organization',
-            name: 'MicroPNG',
-            url: SITE_URL,
-            logo: `${SITE_URL}/icon.webp`,
-            sameAs: [
-              'https://github.com/SahilFruitwala',
-              'https://www.linkedin.com/in/sahilfruitwala/',
-              'https://x.com/sahilbeingsahil',
-              'https://instagram.com/its_sahilbeingsahil',
-              'https://youtube.com/@sahilbeingsahil',
-            ],
-          },
+          description: SITE_DESCRIPTION,
+          author: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
         }),
       },
     ],
@@ -92,14 +58,6 @@ export const Route = createRootRoute({
   component: RootLayout,
   notFoundComponent: NotFoundPage,
 });
-
-function RouterLink(props: React.ComponentProps<'a'> & { href?: string }) {
-  const { href, ...rest } = props;
-  if (!href || href.startsWith('http') || href.startsWith('#')) {
-    return <a href={href} {...rest} />;
-  }
-  return <Link to={href} {...(rest as Record<string, unknown>)} />;
-}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -115,23 +73,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ThemedApp({ children }: { children: React.ReactNode }) {
-  const { mode } = useMode();
-  return (
-    <Theme theme={micropngTheme} mode={mode}>
-      <LinkProvider component={RouterLink}>{children}</LinkProvider>
-    </Theme>
-  );
-}
-
 function RootLayout() {
-  // Clear any previously installed PWA service workers so they don't intercept API calls.
+  // Older versions installed a PWA service worker; make sure it can't intercept API calls.
   useEffect(() => {
     if (!('serviceWorker' in navigator)) return;
-    navigator.serviceWorker.getRegistrations().then((regs) => {
-      for (const reg of regs) {
-        void reg.unregister();
-      }
+    void navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) void registration.unregister();
     });
   }, []);
 
@@ -142,6 +89,13 @@ function RootLayout() {
         api_host: '/ingest',
         ui_host: 'https://us.posthog.com',
         defaults: '2026-01-30',
+        // Only the explicit events (counts, sizes, settings) are sent. Autocapture
+        // and recordings could pick up file names shown on the page.
+        autocapture: false,
+        disable_session_recording: true,
+        mask_all_text: true,
+        mask_all_element_attributes: true,
+        person_profiles: 'identified_only',
         capture_exceptions: true,
         debug: import.meta.env.DEV,
       });
@@ -149,13 +103,20 @@ function RootLayout() {
   }, []);
 
   return (
-    <ModeProvider>
-      <ThemedApp>
-        <AppShell topNav={<SiteNav />} height="auto" variant="surface" contentPadding={0}>
+    <ThemeProvider>
+      <div className="flex min-h-dvh flex-col">
+        <a
+          href="#main"
+          className="sr-only z-[60] rounded-md bg-foreground px-3 py-2 text-sm text-background focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        >
+          Skip to content
+        </a>
+        <SiteHeader />
+        <main id="main" className="flex-1">
           <Outlet />
-          <SiteFooter />
-        </AppShell>
-      </ThemedApp>
-    </ModeProvider>
+        </main>
+        <SiteFooter />
+      </div>
+    </ThemeProvider>
   );
 }

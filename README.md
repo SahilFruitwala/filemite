@@ -1,44 +1,88 @@
-# MicroPNG
+# Micro Tools
 
-High-performance image compression and toolkit built with TanStack Start. Compress, crop, scrub EXIF, extract palettes, and generate favicons — processed in-memory on the server and never stored.
+Small, fast tools for images and PDFs — one app, one design system.
 
-## Features
+| Image tools (server, in-memory) | PDF tools (in the browser) |
+| --- | --- |
+| **Compress** — PNG, JPEG, WebP, HEIC; batch of 10; Best / Balanced / Smallest | **Merge** — drag to reorder; links, forms and bookmarks kept |
+| **Resize** — exact pixels or presets; cover / contain / fit / stretch | **Split** — every N pages, custom ranges, or click to cut |
+| **Smart crop** — content-aware crops for social formats *(browser)* | **Extract** — keep or remove pages; `1-3, 8, 10-z` ranges |
+| **Remove metadata** — shows then strips EXIF, GPS, XMP, IPTC | **Compress** — by quality or to a target size; text stays sharp |
+| **Color palette** — HEX / RGB / HSL, copy as CSS variables *(browser)* | |
+| **Favicon** — 16–256 px PNGs, `favicon.ico`, Apple touch icon | |
 
-- **Smart compression** — Best / Balanced / Small presets for PNG, JPEG, WebP (HEIC input supported)
-- **Bulk upload** — process multiple images with concurrent server jobs
-- **Crop, scrub, palette, favicon** — focused tools around the same pipeline
-- **Privacy** — images are processed in-memory; nothing is persisted
+Images sent to the server are processed in memory with [Sharp](https://sharp.pixelplumbing.com/) and never stored. PDFs never leave the device: they're handled by [MuPDF](https://mupdf.com) compiled to WebAssembly, running in Web Workers.
 
-## Tech stack
+## Project layout
 
-- **Framework**: [TanStack Start](https://tanstack.com/start) (Vite + TanStack Router)
-- **Design system**: [Astryx](https://www.npmjs.com/package/@astryxdesign/core) + custom MicroPNG theme
-- **Styling**: Tailwind CSS 4
-- **Image backend**: [Sharp](https://sharp.pixelplumbing.com/) (libvips) on Node serverless
-- **Deploy**: [Vercel](https://vercel.com/) (Nitro `vercel` preset)
-
-## Getting started
-
-Prerequisites: Node.js 20+
-
-```bash
-bun install   # or npm install
-bun run dev   # http://localhost:3000
+```
+src/
+  routes/                 file-based routes (TanStack Start)
+    image/*, pdf/*        one route per tool
+    api/image/*           compress, scrub, favicon endpoints (guarded)
+  features/
+    image/                image tools, API client, helpers
+    pdf/                  PDF tools, MuPDF engine + worker, compression pipeline
+  components/
+    shell/                header (section switcher + tool tabs), footer, theme
+    tool/                 shared tool kit: layout, panels, drop zone, results
+    ui/                   button, input
+  server/                 Sharp pipeline, rate limiting, request guard
+  lib/
+    tools.ts              registry of every tool — drives nav, home, SEO, sitemap
+    site.ts               brand name, URL, links (rename the product here)
+    limits.ts             limits shared by client and server
+  server.ts               server entry: legacy-URL redirects, security headers
 ```
 
-## Deploy on Vercel
+## Design
+
+Warm paper-and-ink neutrals with one accent per section — tangerine for image tools, cobalt for PDF tools — set by a `data-section` attribute that remaps `--primary`. Bricolage Grotesque for display, Geist for UI, Geist Mono for numbers and labels. Light, dark and system themes. Tokens live in `src/styles/app.css`.
+
+## Protecting the server
+
+Only the image endpoints touch the server, and every request goes through `src/server/guard.ts` before its body is read:
+
+| Layer | Default | Response |
+| --- | --- | --- |
+| Batch size (browser) | 10 images per batch, 20 PDFs per merge | rejected in the UI |
+| Body size (from `Content-Length`) | 4 MB file | 413 / 411 |
+| Per-IP concurrent requests (running or queued) | 2 — the browser never sends more | 429 |
+| Per-IP burst bucket | 12, refills 12/min; favicon costs 3 | 429 + `Retry-After` |
+| Per-IP hourly quota | 100 images/hour across all image tools | 429 + `Retry-After` |
+| Global job concurrency + bounded queue | one per CPU (2–4) running, 16 queued, 20 s wait | 503 + `Retry-After` |
+| Decoded pixels per image | 50 MP (decompression bombs) | 422 |
+| Output dimensions / inputs | ≤ 8192 px, strict validation | 400 |
+
+Because one visitor can hold at most 2 of the processing slots, several people are always served side by side; extra work waits in a short queue instead of piling onto the CPU. Requests rejected for concurrency or a busy server are refunded, so they don't eat into a visitor's quota.
+
+The browser client (`src/features/image/lib/api.ts`) shares one upload limiter across every tool and batch, honours short `Retry-After` waits on 429/503, and stops a batch as soon as the hourly quota is reached instead of sending requests that would fail. The analytics proxy has its own light rate limit.
+
+Shared numbers live in `src/lib/limits.ts`. Server values can be tuned with environment variables: `RATE_LIMIT_BURST`, `RATE_LIMIT_PER_MINUTE`, `RATE_LIMIT_PER_HOUR`, `RATE_LIMIT_IP_CONCURRENCY`, `IMAGE_JOB_CONCURRENCY`, `IMAGE_JOB_QUEUE`, `IMAGE_JOB_QUEUE_TIMEOUT_MS`.
+
+Limits are kept in memory per server instance. On serverless hosts each warm instance enforces them independently — that stops one client hogging an instance, but for a hard global cap add a shared limiter in front (e.g. Vercel WAF rate limiting or Redis).
+
+## Development
+
+Requires Node 20+ (or Bun).
 
 ```bash
-bun run build
-# or connect the repo in the Vercel dashboard — Nitro emits a Vercel output
+bun install
+bun run dev         # http://localhost:3000
+bun run lint
+bun run typecheck
+bun test            # rate limiter unit tests
+bun run build && bun run start
 ```
 
-Sharp requires the **Node.js** runtime (not Edge). Body size is capped at ~4MB to stay within Vercel serverless request limits.
+Optional env: `VITE_SITE_URL` (canonical origin), `VITE_PUBLIC_POSTHOG_PROJECT_TOKEN`, `VITE_PUBLIC_POSTHOG_HOST`.
 
-## Privacy
+## Deployment
 
-Images are processed in-memory and discarded when the request completes. See [/privacy](/privacy).
+Built with [TanStack Start](https://tanstack.com/start) and Nitro. On Vercel the `vercel` preset is used automatically; Sharp needs the **Node.js** runtime (not Edge), and uploads stay under Vercel's ~4.5 MB body limit. Elsewhere `bun run start` serves the Node build.
+
+Old MicroPNG (`/crop`, `/resize`, …) and microPDF (`/merge`, `/split`, …) paths 301-redirect to their new homes.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+[GNU AGPL-3.0-or-later](LICENSE), as required by MuPDF. If you deploy a modified version you must offer its source to your users — the footer's “Source code” link (`SOURCE_URL` in `src/lib/site.ts`) is there for that.
