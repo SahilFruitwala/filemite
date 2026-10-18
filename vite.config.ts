@@ -7,7 +7,7 @@ import path from 'node:path';
 
 export default defineConfig({
   server: { port: 3000 },
-  build: { target: 'es2022' },
+  build: { cssMinify: 'lightningcss', target: 'es2022' },
   resolve: {
     alias: {
       '@': path.resolve(import.meta.dirname, 'src'),
