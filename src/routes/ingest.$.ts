@@ -1,10 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { analyticsRateLimit } from '@/server/guard';
 
 const POSTHOG_HOST = 'https://us.i.posthog.com';
 const POSTHOG_ASSETS = 'https://us-assets.i.posthog.com';
 
 /** Reverse proxy for PostHog so analytics traffic is first-party. */
 async function proxy({ request, params }: { request: Request; params: { _splat?: string } }) {
+  const limited = analyticsRateLimit(request);
+  if (limited) return limited;
+
   const path = params._splat ?? '';
   const search = new URL(request.url).search;
   const target = path.startsWith('static/')

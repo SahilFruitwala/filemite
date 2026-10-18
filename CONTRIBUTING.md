@@ -1,6 +1,6 @@
-# Contributing to MicroPng
+# Contributing to Micro Tools
 
-Thank you for your interest in contributing to MicroPng! We welcome contributions from everyone.
+Thank you for your interest in contributing to Micro Tools! We welcome contributions from everyone.
 
 ## 🚀 Getting Started
 
@@ -24,9 +24,11 @@ Thank you for your interest in contributing to MicroPng! We welcome contribution
     ```bash
     npm run build
     ```
-6.  **Run linting**:
+6.  **Run the checks**:
     ```bash
-    npm run lint
+    bun run lint
+    bun run typecheck
+    bun test
     ```
 
 ## 🛠️ Development Guidelines
@@ -44,7 +46,7 @@ Thank you for your interest in contributing to MicroPng! We welcome contribution
 4.  Once submitted, wait for a maintainer to review your PR.
 
 ## 🐛 Reporting Issues
-If you find a bug or have a feature request, please [open an issue](https://github.com/sahil/MicroPng/issues) on GitHub. Provide as much detail as possible, including steps to reproduce the bug.
+If you find a bug or have a feature request, please [open an issue](https://github.com/SahilFruitwala/MicroPng/issues) on GitHub. Provide as much detail as possible, including steps to reproduce the bug.
 
 ## 📄 Code of Conduct
 Please be respectful and professional in your interactions within the project.

@@ -1,124 +1,218 @@
-@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
 
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
-@import "@astryxdesign/core/reset.css";
-@import "@astryxdesign/core/astryx.css";
-@import "../theme/micropng.css";
-@import "@astryxdesign/core/tailwind-theme.css";
-@import "tailwindcss/utilities.css" layer(utilities);
-
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
 @import "@fontsource-variable/bricolage-grotesque";
-@import "@fontsource-variable/inter";
-@import "@fontsource-variable/jetbrains-mono";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * Legacy semantic variables, remapped onto astryx tokens.
- * Tool pages written against the old shadcn-style names (bg-background,
- * text-primary, bg-surface, ...) resolve to the active astryx theme in
- * both modes via light-dark() — no per-page rewrite needed.
+ * Design tokens. Warm paper + ink neutrals, one accent per section:
+ * tangerine for image tools, cobalt for PDF tools. Components only ever
+ * reference `primary`, so a section switch is a single attribute.
  */
-[data-astryx-theme] {
-  --background: var(--color-background-body);
-  --foreground: var(--color-text-primary);
+:root {
+  --background: oklch(0.982 0.005 85);
+  --foreground: oklch(0.21 0.012 60);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --muted: oklch(0.956 0.007 85);
+  --muted-foreground: oklch(0.49 0.012 65);
+  --subtle: oklch(0.62 0.01 65);
+  --secondary: oklch(0.945 0.008 85);
+  --secondary-foreground: var(--foreground);
+  --border: oklch(0.905 0.008 80);
+  --border-strong: oklch(0.82 0.01 75);
+  --input: var(--border-strong);
 
-  --card: var(--color-background-card);
-  --card-foreground: var(--color-text-primary);
-  --card-hover: var(--color-background-muted);
+  --tangerine: oklch(0.655 0.19 41);
+  --tangerine-foreground: oklch(1 0 0);
+  --cobalt: oklch(0.525 0.19 262);
+  --cobalt-foreground: oklch(1 0 0);
 
-  --primary: var(--color-accent);
-  --primary-foreground: var(--color-on-accent);
-  --primary-hover: color-mix(in oklch, var(--color-accent), black 12%);
+  --primary: var(--tangerine);
+  --primary-foreground: var(--tangerine-foreground);
 
-  --secondary: var(--color-background-muted);
-  --secondary-foreground: var(--color-text-primary);
+  --danger: oklch(0.55 0.2 27);
+  --danger-foreground: oklch(1 0 0);
+  --success: oklch(0.58 0.13 155);
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.72 0.15 75);
 
-  --muted: var(--color-background-muted);
-  --muted-foreground: var(--color-text-secondary);
+  --shadow-color: 40 20% 20%;
+  --radius: 0.875rem;
 
-  --accent: var(--color-background-muted);
-  --accent-foreground: var(--color-text-primary);
-
-  --destructive: var(--color-error);
-  --destructive-foreground: var(--color-on-error);
-
-  --border: var(--color-border);
-  --input: var(--color-border);
-  --ring: var(--color-accent);
-
-  --subtle: var(--color-text-disabled);
+  color-scheme: light;
 }
 
-@theme {
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary-hover: var(--primary-hover);
+.dark {
+  --background: oklch(0.165 0.006 60);
+  --foreground: oklch(0.955 0.006 85);
+  --card: oklch(0.205 0.007 60);
+  --muted: oklch(0.235 0.007 60);
+  --muted-foreground: oklch(0.72 0.01 75);
+  --subtle: oklch(0.58 0.01 70);
+  --secondary: oklch(0.255 0.008 60);
+  --border: oklch(0.285 0.008 60);
+  --border-strong: oklch(0.37 0.01 60);
 
+  --tangerine: oklch(0.74 0.165 50);
+  --tangerine-foreground: oklch(0.19 0.03 50);
+  --cobalt: oklch(0.71 0.135 258);
+  --cobalt-foreground: oklch(0.18 0.03 260);
+
+  --danger: oklch(0.68 0.17 25);
+  --danger-foreground: oklch(0.18 0.03 25);
+  --success: oklch(0.72 0.14 155);
+  --success-foreground: oklch(0.18 0.03 155);
+
+  --shadow-color: 0 0% 0%;
+
+  color-scheme: dark;
+}
+
+[data-section="pdf"] {
+  --primary: var(--cobalt);
+  --primary-foreground: var(--cobalt-foreground);
+}
+
+:root,
+.dark,
+[data-section] {
+  --ring: var(--primary);
+  --primary-soft: color-mix(in oklch, var(--primary) 11%, var(--card));
+  --primary-line: color-mix(in oklch, var(--primary) 32%, var(--border));
+  --danger-soft: color-mix(in oklch, var(--danger) 10%, var(--card));
+  --success-soft: color-mix(in oklch, var(--success) 12%, var(--card));
+}
+
+@theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
   --color-surface: var(--card);
-  --color-surface-hover: var(--card-hover);
-  --color-surface-foreground: var(--card-foreground);
-
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-
-  --color-border: var(--border);
-  --color-input: var(--input);
-
+  --color-subtle: var(--subtle);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-subtle: var(--subtle);
 
-  --font-geist-sans: var(--font-family-body);
-  --font-geist-mono: var(--font-family-code);
-  --font-sans: var(--font-family-body);
-  --font-mono: var(--font-family-code);
-  --font-display: var(--font-family-heading);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-line: var(--primary-line);
+  --color-tangerine: var(--tangerine);
+  --color-cobalt: var(--cobalt);
 
-  --radius: 0.75rem;
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-danger-soft: var(--danger-soft);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, monospace;
+  --font-display: "Bricolage Grotesque Variable", "Geist Variable", ui-sans-serif, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
+
+  --shadow-xs: 0 1px 0 hsl(var(--shadow-color) / 0.04);
+  --shadow-sm: 0 1px 0 hsl(var(--shadow-color) / 0.04), 0 2px 6px -2px hsl(var(--shadow-color) / 0.08);
+  --shadow-md: 0 1px 0 hsl(var(--shadow-color) / 0.04), 0 10px 28px -14px hsl(var(--shadow-color) / 0.22);
+  --shadow-lg: 0 1px 0 hsl(var(--shadow-color) / 0.05), 0 24px 48px -20px hsl(var(--shadow-color) / 0.3);
 }
 
-/* Keep the sticky nav above page content that uses legacy z-index utilities */
-.astryx-app-shell-header {
-  z-index: 100;
-}
-
-/* Mobile nav lives inside SiteNav; avoid double sticky chrome from AppShell */
-@media (max-width: 767px) {
-  .astryx-app-shell-header {
-    position: sticky;
-    top: 0;
-    padding: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
+@layer base {
+  * {
+    @apply border-border outline-ring/60;
+  }
+  html {
+    @apply bg-background font-sans text-foreground antialiased;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply min-h-dvh bg-background;
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--primary) 26%, transparent);
+  }
+  a, button, [role="button"], summary {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 }
 
-/* Byte counts and file sizes are always tabular mono */
-.font-mono,
-[data-bytes] {
-  font-variant-numeric: tabular-nums;
+@layer components {
+  /* Small mono caps used for labels, readouts and section markers. */
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase;
+  }
+
+  /* Faint dot grid, the "cutting mat" behind hero areas. */
+  .bg-dots {
+    background-image: radial-gradient(
+      color-mix(in oklch, var(--foreground) 13%, transparent) 1px,
+      transparent 1.2px
+    );
+    background-size: 18px 18px;
+  }
+
+  /* Checkerboard for transparent image previews. */
+  .bg-checker {
+    background-color: var(--card);
+    background-image:
+      linear-gradient(45deg, var(--muted) 25%, transparent 25%),
+      linear-gradient(-45deg, var(--muted) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, var(--muted) 75%),
+      linear-gradient(-45deg, transparent 75%, var(--muted) 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-/* Subtle checker texture used behind transparent-image previews */
-.bg-repeating-conic {
-  background-image: repeating-conic-gradient(#0000 0% 25%, #00000005 0% 50%);
-  background-position: 0 0, 16px 16px;
-  background-size: 32px 32px;
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
-button,
-a {
-  cursor: pointer;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
