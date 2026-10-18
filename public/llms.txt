@@ -29,4 +29,4 @@ https://micropng.sahilfruitwala.com
 ## Other pages
 - Privacy: https://micropng.sahilfruitwala.com/privacy
 - Terms: https://micropng.sahilfruitwala.com/terms
-- Source code (AGPL-3.0): https://github.com/SahilFruitwala/MicroPng
+- Source code (AGPL-3.0): https://github.com/SahilFruitwala/micro-tools

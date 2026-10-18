@@ -7,8 +7,8 @@ Thank you for your interest in contributing to Micro Tools! We welcome contribut
 1.  **Fork the repository** on GitHub.
 2.  **Clone your fork** locally:
     ```bash
-    git clone https://github.com/your-username/MicroPng.git
-    cd MicroPng
+    git clone https://github.com/your-username/micro-tools.git
+    cd micro-tools
     ```
 3.  **Install dependencies**:
     ```bash
@@ -46,7 +46,7 @@ Thank you for your interest in contributing to Micro Tools! We welcome contribut
 4.  Once submitted, wait for a maintainer to review your PR.
 
 ## 🐛 Reporting Issues
-If you find a bug or have a feature request, please [open an issue](https://github.com/SahilFruitwala/MicroPng/issues) on GitHub. Provide as much detail as possible, including steps to reproduce the bug.
+If you find a bug or have a feature request, please [open an issue](https://github.com/SahilFruitwala/micro-tools/issues) on GitHub. Provide as much detail as possible, including steps to reproduce the bug.
 
 ## 📄 Code of Conduct
 Please be respectful and professional in your interactions within the project.
