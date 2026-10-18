@@ -7,10 +7,10 @@ import path from 'node:path';
 
 export default defineConfig({
   server: { port: 3000 },
-  build: { cssMinify: 'esbuild', target: 'es2022' },
+  build: { cssMinify: 'lightningcss', target: 'es2022' },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      '@': path.resolve(import.meta.dirname, 'src'),
     },
   },
   // MuPDF and mozjpeg ship their own WASM loaders that locate the .wasm file
