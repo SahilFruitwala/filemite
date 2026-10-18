@@ -27,7 +27,7 @@ function PrivacyPage() {
       eyebrow="Legal"
       title="Privacy"
       intro="Your files are yours. Here is exactly what happens to them."
-      updated="October 19, 2026"
+      updated="October 18, 2026"
       sections={[
         {
           heading: 'Server tools process in memory',
