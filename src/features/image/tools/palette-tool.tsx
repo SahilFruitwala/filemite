@@ -137,7 +137,7 @@ export function PaletteTool() {
                     style={{ backgroundColor: toHex(color) }}
                     aria-label={`Copy ${value}`}
                   >
-                    <span className="font-mono text-[10px] tracking-wide uppercase opacity-0 transition-opacity group-hover:opacity-100 sm:text-[11px]">
+                    <span className="font-mono text-[10px] tracking-wide uppercase opacity-0 transition-opacity group-hover:opacity-100 sm:text-[11px] [@media(hover:none)]:opacity-100">
                       {copied === `swatch-${index}` ? 'Copied' : toHex(color)}
                     </span>
                   </button>

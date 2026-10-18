@@ -27,7 +27,7 @@ function PrivacyPage() {
       eyebrow="Legal"
       title="Privacy"
       intro="Your files are yours. Here is exactly what happens to them."
-      updated="October 18, 2026"
+      updated="October 19, 2026"
       sections={[
         {
           heading: 'Server tools process in memory',
@@ -63,7 +63,9 @@ function PrivacyPage() {
           body: (
             <p>
               We use PostHog for anonymous usage analytics — for example, that a compression
-              finished and which preset was used. We never collect the contents of your files.
+              finished, which preset was used and how much smaller the file got. We never send file
+              contents or file names, there are no session recordings, and your IP address is
+              stripped before events reach PostHog.
             </p>
           ),
         },

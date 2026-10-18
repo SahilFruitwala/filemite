@@ -4,7 +4,9 @@ import { LogoMark, Wordmark } from '@/components/shell/logo';
 import { AUTHOR, SITE_TAGLINE, SOCIAL_LINKS, SOURCE_URL } from '@/lib/site';
 import { SECTIONS, toolsIn, type Section } from '@/lib/tools';
 
-const linkClass = 'text-muted-foreground transition-colors hover:text-foreground';
+// min-h keeps every link a comfortable touch target without changing the visual rhythm.
+const linkClass =
+  'inline-flex min-h-8 items-center text-muted-foreground transition-colors hover:text-foreground';
 
 export function SiteFooter() {
   return (
@@ -27,7 +29,7 @@ export function SiteFooter() {
               <span aria-hidden className="size-1.5 rounded-full bg-primary" />
               {SECTIONS[section].title}
             </p>
-            <ul className="space-y-2">
+            <ul className="space-y-0.5">
               {toolsIn(section).map((tool) => (
                 <li key={tool.id}>
                   <Link to={tool.href} className={linkClass}>
@@ -41,7 +43,7 @@ export function SiteFooter() {
 
         <div className="space-y-3 text-sm">
           <p className="eyebrow">About</p>
-          <ul className="space-y-2">
+          <ul className="space-y-0.5">
             <li>
               <Link to="/privacy" className={linkClass}>
                 Privacy
@@ -65,32 +67,32 @@ export function SiteFooter() {
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p>
             © {new Date().getFullYear()}{' '}
-            <a href={AUTHOR.url} className="hover:text-foreground">
+            <a href={AUTHOR.url} className="inline-flex min-h-8 items-center hover:text-foreground">
               {AUTHOR.name}
             </a>{' '}
             · Free software under{' '}
             <a
               href={`${SOURCE_URL}/blob/master/LICENSE`}
-              className="underline underline-offset-2 hover:text-foreground"
+              className="inline-flex min-h-8 items-center underline underline-offset-2 hover:text-foreground"
             >
               AGPL-3.0
             </a>{' '}
             · PDF engine by{' '}
             <a
               href="https://mupdf.com"
-              className="underline underline-offset-2 hover:text-foreground"
+              className="inline-flex min-h-8 items-center underline underline-offset-2 hover:text-foreground"
             >
               MuPDF
             </a>
           </p>
-          <ul className="flex flex-wrap gap-x-4 gap-y-1">
+          <ul className="flex flex-wrap gap-x-3">
             {SOCIAL_LINKS.map((social) => (
               <li key={social.href}>
                 <a
                   href={social.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:text-foreground"
+                  className="inline-flex min-h-8 min-w-8 items-center justify-center hover:text-foreground"
                 >
                   {social.label}
                 </a>

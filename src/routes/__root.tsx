@@ -89,6 +89,13 @@ function RootLayout() {
         api_host: '/ingest',
         ui_host: 'https://us.posthog.com',
         defaults: '2026-01-30',
+        // Only the explicit events (counts, sizes, settings) are sent. Autocapture
+        // and recordings could pick up file names shown on the page.
+        autocapture: false,
+        disable_session_recording: true,
+        mask_all_text: true,
+        mask_all_element_attributes: true,
+        person_profiles: 'identified_only',
         capture_exceptions: true,
         debug: import.meta.env.DEV,
       });

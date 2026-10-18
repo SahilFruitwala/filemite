@@ -172,7 +172,7 @@ export function CropTool() {
                   variant="outline"
                   size="icon-sm"
                   aria-label={`Download ${crop.target.label}`}
-                  className="absolute top-2 right-2 opacity-0 shadow-md group-hover:opacity-100 focus-visible:opacity-100 max-md:opacity-100"
+                  className="absolute top-2 right-2 opacity-0 shadow-md group-hover:opacity-100 focus-visible:opacity-100 max-md:opacity-100 [@media(hover:none)]:opacity-100"
                   onClick={() => downloadBlob(crop.blob, fileName(crop))}
                 >
                   <Download />

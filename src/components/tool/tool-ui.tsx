@@ -374,23 +374,27 @@ export function Checkbox({
 }) {
   const id = useId();
   return (
-    <div className="flex items-start gap-3">
+    // The whole row is the label, so it's one large touch target.
+    <label
+      htmlFor={id}
+      className="-m-1.5 flex cursor-pointer items-start gap-3 rounded-lg p-1.5 hover:bg-muted/60"
+    >
       <input
         id={id}
         type="checkbox"
         checked={checked}
         onChange={(event) => onChange(event.target.checked)}
-        className="mt-0.5 size-4 shrink-0 rounded accent-primary"
+        className="mt-px size-[18px] shrink-0 cursor-pointer rounded accent-primary"
       />
-      <label htmlFor={id} className="text-sm">
+      <span className="text-sm">
         <span className="font-medium">{label}</span>
         {description && (
           <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">
             {description}
           </span>
         )}
-      </label>
-    </div>
+      </span>
+    </label>
   );
 }
 

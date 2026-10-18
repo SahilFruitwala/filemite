@@ -2,7 +2,8 @@ import { useState } from "react";
 import {
   DndContext,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   closestCenter,
   useSensor,
   useSensors,
@@ -57,7 +58,9 @@ export function MergeTool() {
   const job = useJob<MergeResult>();
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    // On touch screens a swipe should still scroll the page: press and hold to pick a card up.
+    useSensor(TouchSensor, { activationConstraint: { delay: 220, tolerance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
@@ -150,7 +153,9 @@ export function MergeTool() {
         {documents.notice && <Message tone="error">{documents.notice}</Message>}
 
         <p className="text-xs text-muted-foreground">
-          Drag cards to change the order — files are combined left to right, top to bottom.
+          <span className="[@media(hover:none)]:hidden">Drag cards</span>
+          <span className="hidden [@media(hover:none)]:inline">Press and hold a card, then drag it</span>{" "}
+          to change the order — files are combined left to right, top to bottom.
         </p>
 
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
@@ -240,7 +245,7 @@ function MergeCard({
         {...attributes}
         {...listeners}
         aria-label={`${doc.file.name}, position ${position}. Press space to move.`}
-        className="cursor-grab touch-none outline-none focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:ring-inset active:cursor-grabbing"
+        className="cursor-grab touch-manipulation outline-none select-none [-webkit-touch-callout:none] focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:ring-inset active:cursor-grabbing"
       >
         <div className="flex items-center gap-1.5 border-b border-border px-2 py-1.5">
           <GripVertical className="size-4 shrink-0 text-muted-foreground" />
