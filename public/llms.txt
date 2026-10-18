@@ -23,8 +23,8 @@ https://micropng.sahilfruitwala.com
 - Compress: https://micropng.sahilfruitwala.com/pdf/compress
 
 ## Limits
-- Images: 20 per batch, 4 MB each, 50 megapixels max; requests are rate limited per visitor.
-- PDFs: up to 250 MB, limited only by the visitor's device.
+- Images: 10 per batch, 4 MB each, 50 megapixels max, 2 processed at a time, 100 per hour per visitor.
+- PDFs: up to 250 MB each, 20 per merge; processed on the visitor's device.
 
 ## Other pages
 - Privacy: https://micropng.sahilfruitwala.com/privacy

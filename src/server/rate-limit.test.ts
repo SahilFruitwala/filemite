@@ -95,3 +95,15 @@ describe('InFlight', () => {
     expect(inFlight.tryEnter('a', 2)).toBe(true);
   });
 });
+
+describe('TokenBucket.refund', () => {
+  test('returns tokens without exceeding capacity', () => {
+    const bucket = new TokenBucket({ capacity: 2, refillPerSecond: 0.001, now: () => 0 });
+    bucket.take('a', 2);
+    expect(bucket.take('a').ok).toBe(false);
+    bucket.refund('a', 1);
+    expect(bucket.take('a').ok).toBe(true);
+    bucket.refund('a', 10);
+    expect(bucket.take('a', 3).ok).toBe(false);
+  });
+});

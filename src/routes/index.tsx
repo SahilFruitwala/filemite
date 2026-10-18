@@ -3,7 +3,7 @@ import { ArrowRight, ArrowUpRight, Cloud, Gauge, Laptop, LockKeyhole, UserX } fr
 
 import { buttonVariants } from '@/components/ui/button';
 import { formatBytes } from '@/lib/format';
-import { MAX_IMAGE_BATCH, MAX_IMAGE_BYTES } from '@/lib/limits';
+import { IMAGES_PER_HOUR, MAX_IMAGE_BATCH, MAX_IMAGE_BYTES } from '@/lib/limits';
 import { seoHead } from '@/lib/seo';
 import { SITE_DESCRIPTION, SITE_NAME, SOURCE_URL } from '@/lib/site';
 import { SECTIONS, toolsIn, type Section } from '@/lib/tools';
@@ -34,7 +34,7 @@ const PROMISES = [
   {
     icon: Gauge,
     title: 'Fast for everyone',
-    text: `Fair-use limits — ${MAX_IMAGE_BATCH} images per batch, ${formatBytes(MAX_IMAGE_BYTES)} each — keep the servers quick for every visitor.`,
+    text: `Fair-use limits — ${MAX_IMAGE_BATCH} images per batch, ${formatBytes(MAX_IMAGE_BYTES)} each, ${IMAGES_PER_HOUR} an hour — keep the servers quick for every visitor.`,
   },
 ];
 

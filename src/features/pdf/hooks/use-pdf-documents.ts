@@ -2,12 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { closeDocument, EngineError, openDocument } from "@/features/pdf/lib/engine";
 import { formatBytes } from "@/lib/format";
-import { MAX_PDF_BYTES } from "@/lib/limits";
+import { MAX_PDF_BYTES, MAX_PDF_FILES } from "@/lib/limits";
 
 export const MAX_FILE_BYTES = MAX_PDF_BYTES;
+export const MAX_FILES = MAX_PDF_FILES;
 export const PDF_ACCEPT = "application/pdf,.pdf";
 export const PDF_HINT = `PDF · up to ${formatBytes(MAX_FILE_BYTES)}`;
-export const PDF_HINT_MULTIPLE = `PDF · up to ${formatBytes(MAX_FILE_BYTES)} each`;
+export const PDF_HINT_MULTIPLE = `Up to ${MAX_PDF_FILES} PDFs · ${formatBytes(MAX_FILE_BYTES)} each`;
 
 export type PdfDocument = {
   id: string;
@@ -87,6 +88,18 @@ export function usePdfDocuments({ multiple }: { multiple: boolean }) {
         if (!multiple && accepted.length) break;
       }
 
+      // Every open PDF lives in the tab's memory; keep merges to a sane size.
+      if (multiple) {
+        const slots = Math.max(0, MAX_FILES - documents.length);
+        if (accepted.length > slots) {
+          const skipped = accepted.length - slots;
+          accepted.splice(slots);
+          problems.push(
+            `Up to ${MAX_FILES} PDFs at a time — ${skipped} file${skipped === 1 ? "" : "s"} skipped.`
+          );
+        }
+      }
+
       setNotice(problems.length ? problems.join(" ") : null);
       if (!accepted.length) return;
 
@@ -99,7 +112,7 @@ export function usePdfDocuments({ multiple }: { multiple: boolean }) {
       }
       accepted.forEach((doc) => open(doc));
     },
-    [multiple, open]
+    [documents.length, multiple, open]
   );
 
   const unlock = useCallback(

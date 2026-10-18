@@ -34,6 +34,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useJob } from "@/hooks/use-job";
 import {
+  MAX_FILES,
   PDF_ACCEPT,
   PDF_HINT_MULTIPLE,
   usePdfDocuments,
@@ -120,6 +121,9 @@ export function MergeTool() {
         <div className="flex flex-wrap items-center gap-2">
           <p className="mr-auto text-sm font-medium">
             {plural(docs.length, "file")} · {plural(totalPages, "page")}
+            <span className="ml-2 font-mono text-xs text-muted-foreground">
+              {docs.length}/{MAX_FILES}
+            </span>
           </p>
           <Button
             variant="ghost"
@@ -138,7 +142,9 @@ export function MergeTool() {
             <Trash2 />
             Clear
           </Button>
-          <AddFilesButton accept={PDF_ACCEPT} multiple onFiles={add} label="Add PDFs" />
+          {docs.length < MAX_FILES && (
+            <AddFilesButton accept={PDF_ACCEPT} multiple onFiles={add} label="Add PDFs" />
+          )}
         </div>
 
         {documents.notice && <Message tone="error">{documents.notice}</Message>}

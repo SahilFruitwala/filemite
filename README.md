@@ -4,7 +4,7 @@ Small, fast tools for images and PDFs — one app, one design system.
 
 | Image tools (server, in-memory) | PDF tools (in the browser) |
 | --- | --- |
-| **Compress** — PNG, JPEG, WebP, HEIC; batch of 20; Best / Balanced / Smallest | **Merge** — drag to reorder; links, forms and bookmarks kept |
+| **Compress** — PNG, JPEG, WebP, HEIC; batch of 10; Best / Balanced / Smallest | **Merge** — drag to reorder; links, forms and bookmarks kept |
 | **Resize** — exact pixels or presets; cover / contain / fit / stretch | **Split** — every N pages, custom ranges, or click to cut |
 | **Smart crop** — content-aware crops for social formats *(browser)* | **Extract** — keep or remove pages; `1-3, 8, 10-z` ranges |
 | **Remove metadata** — shows then strips EXIF, GPS, XMP, IPTC | **Compress** — by quality or to a target size; text stays sharp |
@@ -45,16 +45,20 @@ Only the image endpoints touch the server, and every request goes through `src/s
 
 | Layer | Default | Response |
 | --- | --- | --- |
+| Batch size (browser) | 10 images per batch, 20 PDFs per merge | rejected in the UI |
 | Body size (from `Content-Length`) | 4 MB file | 413 / 411 |
-| Per-IP token bucket | burst 30, refills 30/min; favicon costs 3 | 429 + `Retry-After` |
-| Per-IP concurrent requests | 3 | 429 |
-| Global job concurrency + bounded queue | 4 running, 24 queued, 20 s wait | 503 + `Retry-After` |
+| Per-IP concurrent requests (running or queued) | 2 — the browser never sends more | 429 |
+| Per-IP burst bucket | 12, refills 12/min; favicon costs 3 | 429 + `Retry-After` |
+| Per-IP hourly quota | 100 images/hour across all image tools | 429 + `Retry-After` |
+| Global job concurrency + bounded queue | one per CPU (2–4) running, 16 queued, 20 s wait | 503 + `Retry-After` |
 | Decoded pixels per image | 50 MP (decompression bombs) | 422 |
 | Output dimensions / inputs | ≤ 8192 px, strict validation | 400 |
 
-The browser client (`src/features/image/lib/api.ts`) uploads two files at a time and honours `Retry-After` on 429/503 before showing an error. The analytics proxy has its own light rate limit.
+Because one visitor can hold at most 2 of the processing slots, several people are always served side by side; extra work waits in a short queue instead of piling onto the CPU. Requests rejected for concurrency or a busy server are refunded, so they don't eat into a visitor's quota.
 
-Tune with environment variables: `RATE_LIMIT_BURST`, `RATE_LIMIT_PER_MINUTE`, `RATE_LIMIT_IP_CONCURRENCY`, `IMAGE_JOB_CONCURRENCY`, `IMAGE_JOB_QUEUE`, `IMAGE_JOB_QUEUE_TIMEOUT_MS`.
+The browser client (`src/features/image/lib/api.ts`) shares one upload limiter across every tool and batch, honours short `Retry-After` waits on 429/503, and stops a batch as soon as the hourly quota is reached instead of sending requests that would fail. The analytics proxy has its own light rate limit.
+
+Shared numbers live in `src/lib/limits.ts`. Server values can be tuned with environment variables: `RATE_LIMIT_BURST`, `RATE_LIMIT_PER_MINUTE`, `RATE_LIMIT_PER_HOUR`, `RATE_LIMIT_IP_CONCURRENCY`, `IMAGE_JOB_CONCURRENCY`, `IMAGE_JOB_QUEUE`, `IMAGE_JOB_QUEUE_TIMEOUT_MS`.
 
 Limits are kept in memory per server instance. On serverless hosts each warm instance enforces them independently — that stops one client hogging an instance, but for a hard global cap add a shared limiter in front (e.g. Vercel WAF rate limiting or Redis).
 

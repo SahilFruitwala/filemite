@@ -6,7 +6,7 @@ import { AddFilesButton, DropTarget, FileDrop } from '@/components/tool/file-dro
 import { Field, Message, Panel, Segmented, ToolLayout } from '@/components/tool/tool-ui';
 import { Button } from '@/components/ui/button';
 import ImageCompare from '@/features/image/components/ImageCompare';
-import { postImageForm, runQueue } from '@/features/image/lib/api';
+import { isQuotaError, postImageForm, runQueue } from '@/features/image/lib/api';
 import {
   ACCEPTED_IMAGE_TYPES,
   SERVER_IMAGE_HINT,
@@ -16,7 +16,12 @@ import {
 } from '@/features/image/lib/files';
 import { downloadBlob, downloadBlobsAsZip } from '@/lib/download';
 import { formatBytes, plural } from '@/lib/format';
-import { MAX_IMAGE_BATCH, MAX_IMAGE_BYTES } from '@/lib/limits';
+import {
+  IMAGE_UPLOAD_CONCURRENCY,
+  IMAGES_PER_HOUR,
+  MAX_IMAGE_BATCH,
+  MAX_IMAGE_BYTES,
+} from '@/lib/limits';
 import { getTool } from '@/lib/tools';
 import { cn } from '@/lib/utils';
 
@@ -101,7 +106,8 @@ export function CompressTool() {
         output_format: settings.format,
       });
 
-      await runQueue(batch, async (item) => {
+      let quotaMessage: string | null = null;
+      const skipped = await runQueue(batch, async (item, _index, stop) => {
         patch(item.id, { status: 'working', error: undefined });
         const started = performance.now();
         try {
@@ -138,12 +144,28 @@ export function CompressTool() {
           });
         } catch (error) {
           posthog.capture('image_compression_failed', { compression_level: settings.level });
+          // Out of quota: the rest of the batch would fail the same way, so don't send it.
+          if (isQuotaError(error)) {
+            quotaMessage = error.message;
+            stop();
+          }
           patch(item.id, {
             status: 'error',
             error: error instanceof Error ? error.message : 'Compression failed',
           });
         }
       });
+
+      if (quotaMessage && skipped.length) {
+        const ids = new Set(skipped.map((index) => batch[index].id));
+        const message = quotaMessage;
+        setItems((current) =>
+          current.map((entry) =>
+            ids.has(entry.id) ? { ...entry, status: 'error', error: message } : entry,
+          ),
+        );
+        setNotice(message);
+      }
     },
     [patch],
   );
@@ -232,7 +254,7 @@ export function CompressTool() {
           title={tool.emptyTitle}
           description={tool.emptyDescription}
           buttonLabel="Choose images"
-          hint={`${SERVER_IMAGE_HINT} each`}
+          hint={`Up to ${MAX_IMAGE_BATCH} images · ${SERVER_IMAGE_HINT} each`}
           icon={ImageUp}
         />
         {notice && <Message tone="error">{notice}</Message>}
@@ -348,8 +370,9 @@ export function CompressTool() {
       )}
 
       <p className="px-1 text-xs leading-5 text-muted-foreground">
-        Up to {MAX_IMAGE_BATCH} images per batch, {formatBytes(MAX_IMAGE_BYTES)} each. Images are
-        processed in memory and discarded as soon as the result is sent back.
+        {`Fair use: up to ${MAX_IMAGE_BATCH} images per batch (${formatBytes(MAX_IMAGE_BYTES)} each), `}
+        {`${IMAGE_UPLOAD_CONCURRENCY} processed at a time, ${IMAGES_PER_HOUR} per hour. `}
+        Images are processed in memory and discarded as soon as the result is sent back.
       </p>
     </>
   );

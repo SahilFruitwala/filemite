@@ -36,6 +36,12 @@ export class TokenBucket {
     },
   ) {}
 
+  /** Returns tokens taken for a request that was rejected by a later check. */
+  refund(key: string, cost = 1) {
+    const bucket = this.buckets.get(key);
+    if (bucket) bucket.tokens = Math.min(this.options.capacity, bucket.tokens + cost);
+  }
+
   take(key: string, cost = 1): TakeResult {
     const { capacity, refillPerSecond, maxKeys = 10_000 } = this.options;
     const now = (this.options.now ?? Date.now)();
