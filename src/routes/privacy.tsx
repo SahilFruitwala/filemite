@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 
 import { ProsePage } from '@/pages/prose-page';
 import { seoHead } from '@/lib/seo';
-import { SITE_NAME, SOURCE_URL } from '@/lib/site';
+import { SITE_NAME } from '@/lib/site';
 import { tools } from '@/lib/tools';
 
 export const Route = createFileRoute('/privacy')({
@@ -92,18 +92,9 @@ function PrivacyPage() {
             <p>
               Analytics are cookieless: the random ID PostHog uses is kept in your browser’s memory
               only and is gone when you close or reload the tab, so it cannot follow you between
-              visits. The only things we store on your device are your light or dark theme choice
-              in local storage and the offline cache for the installable app. Because no tracking
+              visits. The only things we store on your device are your light or dark theme choice in
+              local storage and the offline cache for the installable app. Because no tracking
               cookies are set, there is no cookie banner.
-            </p>
-          ),
-        },
-        {
-          heading: 'Open source',
-          body: (
-            <p>
-              You don’t have to take our word for it: the full <a href={SOURCE_URL}>source code</a>{' '}
-              is public. See also the <Link to="/terms">terms of service</Link>.
             </p>
           ),
         },

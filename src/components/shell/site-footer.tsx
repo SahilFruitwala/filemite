@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 
 import { LogoMark, Wordmark } from '@/components/shell/logo';
-import { AUTHOR, SITE_TAGLINE, SOCIAL_LINKS, SOURCE_URL } from '@/lib/site';
+import { AUTHOR, SITE_TAGLINE, SOCIAL_LINKS } from '@/lib/site';
 import { SECTIONS, toolsIn, type Section } from '@/lib/tools';
 
 // min-h keeps every link a comfortable touch target without changing the visual rhythm.
@@ -25,10 +25,7 @@ export function SiteFooter() {
 
         {(['image', 'pdf'] as Section[]).map((section) => (
           <div key={section} data-section={section} className="space-y-3 text-sm">
-            <p className="eyebrow flex items-center gap-2">
-              <span aria-hidden className="size-1.5 rounded-full bg-primary" />
-              {SECTIONS[section].title}
-            </p>
+            <p className="eyebrow">{SECTIONS[section].title}</p>
             <ul className="space-y-0.5">
               {toolsIn(section).map((tool) => (
                 <li key={tool.id}>
@@ -54,11 +51,6 @@ export function SiteFooter() {
                 Terms
               </Link>
             </li>
-            <li>
-              <a href={SOURCE_URL} className={linkClass}>
-                Source code
-              </a>
-            </li>
           </ul>
         </div>
       </div>
@@ -70,14 +62,7 @@ export function SiteFooter() {
             <a href={AUTHOR.url} className="inline-flex min-h-8 items-center hover:text-foreground">
               {AUTHOR.name}
             </a>{' '}
-            · Free software under{' '}
-            <a
-              href={`${SOURCE_URL}/blob/master/LICENSE`}
-              className="inline-flex min-h-8 items-center underline underline-offset-2 hover:text-foreground"
-            >
-              AGPL-3.0
-            </a>{' '}
-            · PDF engine by{' '}
+            · · PDF engine by{' '}
             <a
               href="https://mupdf.com"
               className="inline-flex min-h-8 items-center underline underline-offset-2 hover:text-foreground"

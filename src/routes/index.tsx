@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowRight, ArrowUpRight, Cloud, Gauge, Laptop, LockKeyhole, UserX } from 'lucide-react';
+import { ArrowRight, Cloud, Gauge, Laptop, LockKeyhole, UserX } from 'lucide-react';
 
 import { buttonVariants } from '@/components/ui/button';
 import { formatBytes } from '@/lib/format';
 import { IMAGES_PER_HOUR, MAX_IMAGE_BATCH, MAX_IMAGE_BYTES } from '@/lib/limits';
 import { seoHead } from '@/lib/seo';
-import { SITE_DESCRIPTION, SITE_NAME, SOURCE_URL } from '@/lib/site';
+import { SITE_DESCRIPTION, SITE_NAME } from '@/lib/site';
 import { SECTIONS, toolsIn, type Section } from '@/lib/tools';
 import { cn } from '@/lib/utils';
 
@@ -61,8 +61,8 @@ function HomePage() {
               <span className="text-gradient text-gradient-animated">mighty files.</span>
             </h1>
             <p className="mt-6 max-w-xl animate-in fade-in slide-in-from-bottom-2 text-lg leading-8 text-muted-foreground delay-150 duration-700 fill-mode-both">
-              Compress, convert and mark up images. Merge, sign, redact and shrink PDFs. Focused tools
-              that do one job well — free, private and instant.
+              Compress, convert and mark up images. Merge, sign, redact and shrink PDFs. Focused
+              tools that do one job well — free, private and instant.
             </p>
             <div className="mt-8 flex animate-in fade-in slide-in-from-bottom-2 flex-wrap gap-3 delay-300 duration-700 fill-mode-both">
               <Link
@@ -103,20 +103,6 @@ function HomePage() {
             </div>
           ))}
         </section>
-
-        <section className="reveal flex flex-col items-start justify-between gap-4 rounded-2xl border border-border bg-muted/60 p-6 sm:flex-row sm:items-center sm:p-8">
-          <div>
-            <h2 className="font-display text-xl font-semibold tracking-tight">Free software</h2>
-            <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
-              Every line is public under the AGPL. Read how your files are handled, or run your own
-              copy.
-            </p>
-          </div>
-          <a href={SOURCE_URL} className={buttonVariants({ variant: 'outline', size: 'lg' })}>
-            View source
-            <ArrowUpRight />
-          </a>
-        </section>
       </div>
     </>
   );
@@ -129,8 +115,7 @@ function SectionGrid({ section }: { section: Section }) {
     <section data-section={section} aria-labelledby={`${section}-heading`} className="reveal">
       <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="eyebrow mb-2 flex items-center gap-2">
-            <span className="inline-flex size-1.5 rounded-full bg-primary" />
+          <p className="eyebrow mb-2">
             {meta.label} · {String(list.length).padStart(2, '0')} tools
           </p>
           <h2
@@ -193,7 +178,12 @@ function SectionGrid({ section }: { section: Section }) {
 /** Decorative "before → after" readout that shows what the tools do at a glance. */
 function HeroSpecimen() {
   const rows = [
-    { section: 'image' as const, name: 'holiday-0142.heic', from: 4.2, to: 0.61 },
+    {
+      section: 'image' as const,
+      name: 'holiday-0142.heic',
+      from: 4.2,
+      to: 0.61,
+    },
     { section: 'image' as const, name: 'banner@2x.png', from: 2.9, to: 0.38 },
     { section: 'pdf' as const, name: 'contract-scan.pdf', from: 18.4, to: 2.7 },
   ];
@@ -228,7 +218,12 @@ function HeroSpecimen() {
               <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-muted">
                 <div
                   className="animate-grow-x h-full rounded-full bg-primary"
-                  style={{ width: `${100 - saved}%`, '--delay': `${500 + i * 180}ms` } as React.CSSProperties}
+                  style={
+                    {
+                      width: `${100 - saved}%`,
+                      '--delay': `${500 + i * 180}ms`,
+                    } as React.CSSProperties
+                  }
                 />
               </div>
               <div className="mt-1.5 flex justify-between font-mono text-[10px] text-muted-foreground">

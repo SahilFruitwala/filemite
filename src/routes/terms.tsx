@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { ProsePage } from '@/pages/prose-page';
 import { seoHead } from '@/lib/seo';
-import { SITE_NAME, SOURCE_URL } from '@/lib/site';
+import { SITE_NAME } from '@/lib/site';
 
 export const Route = createFileRoute('/terms')({
   head: () =>
@@ -57,17 +57,6 @@ function TermsPage() {
               To the fullest extent permitted by law, {SITE_NAME} and its creator are not liable for
               any indirect, incidental or consequential damages, or for any loss of data, arising
               from your use of the service. Keep your originals.
-            </p>
-          ),
-        },
-        {
-          heading: 'License',
-          body: (
-            <p>
-              The software is free and open source under the GNU Affero General Public License v3.0
-              or later. You may use, study, modify and share it under that license — the{' '}
-              <a href={SOURCE_URL}>source code</a> is public. The name and logo are not part of the
-              license.
             </p>
           ),
         },
