@@ -6,6 +6,12 @@
 /** Vercel's serverless body limit is ~4.5 MB; stay under it. */
 export const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
+/**
+ * Images over MAX_IMAGE_BYTES are compressed in the browser instead of
+ * uploaded; this only protects the tab's memory.
+ */
+export const MAX_BROWSER_IMAGE_BYTES = 100 * 1024 * 1024;
+
 /** Images one visitor can queue in a batch. */
 export const MAX_IMAGE_BATCH = 10;
 
