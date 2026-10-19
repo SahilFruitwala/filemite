@@ -16,6 +16,7 @@ import {
   RotateCw,
   Scaling,
   SplitSquareHorizontal,
+  Stamp,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -30,6 +31,7 @@ export type ToolId =
   | 'image-crop'
   | 'image-rotate'
   | 'image-redact'
+  | 'image-watermark'
   | 'image-scrub'
   | 'image-palette'
   | 'image-favicon'
@@ -161,6 +163,22 @@ export const tools: Tool[] = [
     emptyDescription: 'Then draw boxes over anything you want to hide.',
     processing: 'browser',
     icon: EyeOff,
+  },
+  {
+    id: 'image-watermark',
+    section: 'image',
+    href: '/image/watermark',
+    title: 'Add Watermark',
+    shortTitle: 'Watermark',
+    description: 'Stamp text or your logo on a photo — once, or tiled across it.',
+    seoTitle: 'Add a Watermark to Photos — Text or Logo, In Your Browser',
+    seoDescription:
+      'Add a text or logo watermark to your images. Choose size, opacity, position and angle, or tile it across the picture. Runs entirely in your browser.',
+    keywords: ['add watermark', 'watermark photo', 'watermark image', 'logo on image', 'text on photo'],
+    emptyTitle: 'Choose an image to watermark',
+    emptyDescription: 'Add text or a logo, then place it where you want it.',
+    processing: 'browser',
+    icon: Stamp,
   },
   {
     id: 'image-scrub',

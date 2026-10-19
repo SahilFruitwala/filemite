@@ -4,13 +4,14 @@ Live at [filemite.com](https://filemite.com).
 
 Small, fast tools for images and PDFs — one app, one design system.
 
-| Image tools (server, in-memory) | PDF tools (in the browser) |
+| Image tools (server, in memory, unless marked *browser*) | PDF tools (in the browser) |
 | --- | --- |
 | **Compress** — PNG, JPEG, WebP, HEIC; batch of 10; Best / Balanced / Smallest | **Merge** — drag to reorder; links, forms and bookmarks kept |
 | **Resize** — exact pixels or presets; cover / contain / fit / stretch | **Split** — every N pages, custom ranges, or click to cut |
 | **Smart crop** — content-aware crops for social formats *(browser)* | **Extract** — keep or remove pages; `1-3, 8, 10-z` ranges |
 | **Rotate & flip** — quarter turns and mirrors at full resolution *(browser)* | **Compress** — by quality or to a target size; text stays sharp |
 | **Blur & redact** — black box, pixelate or blur; hidden pixels are really replaced *(browser)* | **Organize** — rotate pages and drag them into a new order |
+| **Watermark** — text or logo, placed once or tiled *(browser)* | |
 | **Remove metadata** — shows then strips EXIF, GPS, XMP, IPTC | |
 | **Color palette** — HEX / RGB / HSL, copy as CSS variables *(browser)* | |
 | **Favicon** — 16–256 px PNGs, `favicon.ico`, Apple touch icon | |

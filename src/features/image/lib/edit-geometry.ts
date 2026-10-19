@@ -87,10 +87,10 @@ export const MAX_TILES = 2500;
 export function tilePositions(
   image: { width: number; height: number },
   mark: { width: number; height: number },
-  gap: number,
+  gap: { x: number; y: number },
 ): Point[] {
-  const stepX = Math.max(1, mark.width + gap);
-  const stepY = Math.max(1, mark.height + gap);
+  const stepX = Math.max(1, mark.width + gap.x);
+  const stepY = Math.max(1, mark.height + gap.y);
   const points: Point[] = [];
   for (let row = 0, y = 0; y < image.height && points.length < MAX_TILES; row++, y += stepY) {
     const offset = row % 2 === 0 ? 0 : stepX / 2;

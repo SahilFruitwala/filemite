@@ -88,25 +88,31 @@ describe('tilePositions', () => {
   const mark = { width: 100, height: 50 };
 
   test('covers the image edge to edge with the requested gap', () => {
-    const points = tilePositions({ width: 400, height: 200 }, mark, 50);
+    const points = tilePositions({ width: 400, height: 200 }, mark, { x: 50, y: 50 });
     const xs = points.filter((p) => p.y === 0).map((p) => p.x);
     expect(xs).toEqual([0, 150, 300]);
     expect(new Set(points.map((p) => p.y))).toEqual(new Set([0, 100]));
   });
 
+  test('uses separate horizontal and vertical gaps', () => {
+    const points = tilePositions({ width: 400, height: 400 }, mark, { x: 0, y: 150 });
+    expect(new Set(points.map((p) => p.y))).toEqual(new Set([0, 200, 400].filter((y) => y < 400)));
+    expect(points.filter((p) => p.y === 0).map((p) => p.x)).toEqual([0, 100, 200, 300]);
+  });
+
   test('staggers alternate rows by half a step', () => {
-    const points = tilePositions({ width: 400, height: 200 }, mark, 50);
+    const points = tilePositions({ width: 400, height: 200 }, mark, { x: 50, y: 50 });
     expect(points.filter((p) => p.y === 100)[0].x).toBe(-75);
   });
 
   test('is capped so a tiny mark on a big image stays cheap', () => {
-    expect(tilePositions({ width: 20000, height: 20000 }, { width: 2, height: 2 }, 0)).toHaveLength(
+    expect(tilePositions({ width: 20000, height: 20000 }, { width: 2, height: 2 }, { x: 0, y: 0 })).toHaveLength(
       MAX_TILES,
     );
   });
 
   test('never loops forever on a zero-size mark', () => {
-    expect(tilePositions({ width: 100, height: 100 }, { width: 0, height: 0 }, 0).length).toBeLessThanOrEqual(
+    expect(tilePositions({ width: 100, height: 100 }, { width: 0, height: 0 }, { x: 0, y: 0 }).length).toBeLessThanOrEqual(
       MAX_TILES,
     );
   });
