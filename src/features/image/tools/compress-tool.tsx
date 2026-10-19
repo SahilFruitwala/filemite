@@ -3,7 +3,7 @@ import posthog from 'posthog-js';
 import { ChevronDown, Download, ImageUp, Loader2, RotateCcw, Trash2, X } from 'lucide-react';
 
 import { AddFilesButton, DropTarget, FileDrop } from '@/components/tool/file-drop';
-import { Field, Message, Panel, Segmented, Squishing, ToolLayout } from '@/components/tool/tool-ui';
+import { Field, Message, Panel, Segmented, ToolLayout, ProgressBar } from '@/components/tool/tool-ui';
 import { Button } from '@/components/ui/button';
 import ImageCompare from '@/features/image/components/ImageCompare';
 import { isQuotaError, postImageForm, runQueue } from '@/features/image/lib/api';
@@ -356,8 +356,9 @@ export function CompressTool() {
               )}
             </div>
           ) : (
-            <div className="text-sm text-muted-foreground">
-              {busy ? <Squishing /> : 'Nothing finished yet.'}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              {busy && <Loader2 className="size-4 animate-spin" />}
+              {busy ? 'Compressing…' : 'Nothing finished yet.'}
             </div>
           )}
           {failed.length > 0 && (
@@ -476,9 +477,7 @@ function ResultRow({
       </div>
 
       {item.status === 'working' && (
-        <div className="h-0.5 overflow-hidden bg-muted">
-          <div className="h-full w-1/3 animate-pulse bg-primary" />
-        </div>
+        <ProgressBar className="px-3 pb-1 sm:px-4" progress={null} />
       )}
 
       {open && result && previewable && (

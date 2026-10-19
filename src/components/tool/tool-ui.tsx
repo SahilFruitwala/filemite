@@ -121,166 +121,82 @@ export function Message({
   );
 }
 
-const MUNCH_LINES = [
-  'Feeding the mite…',
-  'Teaching pixels to diet…',
-  'Convincing bytes to leave…',
-  'Shaking out the extra weight…',
-  'Ironing out the wrinkles…',
-  'Politely asking bits to squish…',
-  'Nom nom nom…',
-  'Counting every last byte…',
-];
-
 const SQUISH_LINES = [
   'Squishing pixels…',
   'Applying maximum squeeze…',
   'Sit on it, bytes!',
   'Vacuum-sealing your file…',
   'Fitting it into skinny jeans…',
-  'Pixels in the trash compactor…',
   'Squeeze harder!',
+  'Nom nom nom…',
   'Shrinking, not sinking…',
 ];
 
-/** A chubby file with a face gets flattened by a press and pops out small and smug. */
-export function Squishing({ className }: { className?: string }) {
+/** A tiny file with a face; it squashes and stretches as it rides the progress bar. */
+function Mascot() {
+  return (
+    <svg viewBox="0 0 24 28" className="mascot size-6 overflow-visible" aria-hidden>
+      <path
+        d="M5 2h10l6 6v17a1.5 1.5 0 0 1-1.5 1.5h-14A1.5 1.5 0 0 1 4 25V3.5A1.5 1.5 0 0 1 5.5 2Z"
+        fill="var(--card)"
+        stroke="var(--primary)"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <circle cx="9.5" cy="15" r="1.6" fill="var(--foreground)" />
+      <circle cx="16" cy="15" r="1.6" fill="var(--foreground)" />
+      <path d="M10 20q3 2.6 6 0" fill="none" stroke="var(--foreground)" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/**
+ * Progress track with a squishing file riding its leading edge. With no known
+ * progress the fill sweeps along on a loop instead of sitting still.
+ */
+export function ProgressBar({
+  progress,
+  caption = false,
+  className,
+}: {
+  progress: number | null;
+  /** Show a rotating quirky line underneath. */
+  caption?: boolean;
+  className?: string;
+}) {
   const [index, setIndex] = useState(() => Math.floor(Math.random() * SQUISH_LINES.length));
   useEffect(() => {
+    if (!caption) return;
     const timer = setInterval(() => setIndex((value) => (value + 1) % SQUISH_LINES.length), 2400);
     return () => clearInterval(timer);
-  }, []);
+  }, [caption]);
 
+  const determinate = progress !== null;
   return (
-    <div className={cn('flex items-center gap-3 overflow-hidden', className)} aria-hidden>
-      <svg viewBox="0 0 150 64" className="h-16 w-[150px] shrink-0 overflow-visible">
-        {/* anvil */}
-        <rect x="14" y="54" width="60" height="6" rx="3" fill="var(--foreground)" />
-        {/* the big, worried file */}
-        <g className="squish-big">
-          <path
-            d="M36 15h18l10 10v28a2 2 0 0 1-2 2H36a2 2 0 0 1-2-2V17a2 2 0 0 1 2-2Z"
-            fill="var(--card)"
-            stroke="var(--primary)"
-            strokeWidth="2.5"
-            strokeLinejoin="round"
-          />
-          <circle cx="42" cy="34" r="3.2" fill="var(--card)" stroke="var(--foreground)" strokeWidth="1.2" />
-          <circle cx="54" cy="34" r="3.2" fill="var(--card)" stroke="var(--foreground)" strokeWidth="1.2" />
-          <circle cx="42.6" cy="34.4" r="1.4" fill="var(--foreground)" />
-          <circle cx="53.4" cy="34.4" r="1.4" fill="var(--foreground)" />
-          <path d="M43 45q5-3 10 0" fill="none" stroke="var(--foreground)" strokeWidth="1.5" strokeLinecap="round" />
-        </g>
-        {/* the press */}
-        <g className="squish-press">
-          <rect x="14" y="0" width="60" height="7" rx="3" fill="var(--foreground)" />
-          <rect x="42" y="-14" width="4" height="14" fill="var(--foreground)" />
-        </g>
-        {/* squish sparks */}
-        <g className="squish-sparks" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round">
-          <path d="M20 46l-8-3M78 46l8-3M22 38l-9 0M76 38l9 0" />
-        </g>
-        {/* the small, smug result */}
-        <g className="squish-small">
-          <path
-            d="M104 34h9l6 6v14a1.5 1.5 0 0 1-1.5 1.5H104a1.5 1.5 0 0 1-1.5-1.5V35.5A1.5 1.5 0 0 1 104 34Z"
-            fill="var(--primary)"
-          />
-          <circle cx="107" cy="46" r="1.2" fill="var(--primary-foreground)" />
-          <circle cx="114" cy="46" r="1.2" fill="var(--primary-foreground)" />
-          <path d="M107 50q3.5 3 7 0" fill="none" stroke="var(--primary-foreground)" strokeWidth="1.3" strokeLinecap="round" />
-          <text
-            x="124"
-            y="38"
-            fontFamily="var(--font-mono)"
-            fontSize="11"
-            fontWeight="600"
-            fill="var(--primary)"
-          >
-            −87%
-          </text>
-        </g>
-      </svg>
-      <p
-        key={index}
-        className="animate-in fade-in slide-in-from-bottom-1 text-sm text-muted-foreground duration-300"
-      >
-        {SQUISH_LINES[index]}
-      </p>
-    </div>
-  );
-}
-
-/** A tiny critter chomping through files, with a rotating quirky caption. */
-export function Munching({ lines = MUNCH_LINES, className }: { lines?: string[]; className?: string }) {
-  const [index, setIndex] = useState(() => Math.floor(Math.random() * lines.length));
-  useEffect(() => {
-    const timer = setInterval(() => setIndex((value) => (value + 1) % lines.length), 2200);
-    return () => clearInterval(timer);
-  }, [lines.length]);
-
-  return (
-    <div className={cn('flex items-center gap-3 overflow-hidden', className)} aria-hidden>
-      <div className="relative h-16 w-36 shrink-0">
-        {[0, 550, 1100].map((delay) => (
-          <svg
-            key={delay}
-            viewBox="0 0 16 20"
-            className="mite-file absolute top-[22px] left-[58px] h-5 w-4 text-muted-foreground"
-            style={{ '--delay': `${delay}ms` } as React.CSSProperties}
-          >
-            <path
-              d="M2 1h8l4 4v13a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1Z"
-              fill="var(--card)"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-            <path d="M4 10h8M4 13h6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-          </svg>
-        ))}
-        <svg viewBox="0 0 64 64" className="absolute top-0 right-0 size-16 overflow-visible">
-          <g className="mite-jaw-top">
-            <path d="M32 32 L4 32 A28 28 0 0 1 60 32 Z" transform="rotate(0 32 32)" fill="var(--primary)" />
-          </g>
-          <g className="mite-jaw-bottom">
-            <path d="M32 32 L4 32 A28 28 0 0 0 60 32 Z" fill="var(--primary)" />
-          </g>
-          <circle cx="36" cy="16" r="3.4" fill="var(--card)" />
-          <circle cx="37" cy="16" r="1.6" fill="var(--foreground)" />
-          {[
-            { delay: 0, dx: -8 },
-            { delay: 370, dx: 4 },
-            { delay: 740, dx: 14 },
-          ].map(({ delay, dx }) => (
-            <circle
-              key={delay}
-              cx="6"
-              cy="30"
-              r="2"
-              className="mite-crumb"
-              fill="var(--primary)"
-              style={{ '--delay': `${delay}ms`, '--dx': `${dx}px` } as React.CSSProperties}
-            />
-          ))}
-        </svg>
+    <div className={className} aria-hidden>
+      <div className="relative flex h-8 items-center">
+        <div className="progress-stripes h-2.5 w-full overflow-hidden rounded-full bg-muted" />
+        <div
+          className={cn(
+            'absolute inset-y-0 left-0 flex items-center justify-end',
+            determinate ? 'transition-[width] duration-300' : 'progress-sweep',
+          )}
+          style={determinate ? { width: `${Math.max(8, progress * 100)}%` } : undefined}
+        >
+          <div className="progress-fill absolute inset-x-0 h-2.5 rounded-full bg-primary" />
+          <div className="relative -mr-3">
+            <Mascot />
+          </div>
+        </div>
       </div>
-      <p key={index} className="animate-in fade-in slide-in-from-bottom-1 text-sm text-muted-foreground duration-300">
-        {lines[index]}
-      </p>
-    </div>
-  );
-}
-
-export function ProgressBar({ progress }: { progress: number | null }) {
-  return (
-    <div className="h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden>
-      <div
-        className={cn(
-          'progress-shine h-full rounded-full bg-primary transition-[width] duration-300',
-          progress === null && 'w-1/3 animate-pulse',
-        )}
-        style={progress === null ? undefined : { width: `${Math.max(4, progress * 100)}%` }}
-      />
+      {caption && (
+        <p
+          key={index}
+          className="animate-in fade-in slide-in-from-bottom-1 mt-1 text-center font-mono text-[11px] text-muted-foreground duration-300"
+        >
+          {SQUISH_LINES[index]}
+        </p>
+      )}
     </div>
   );
 }
@@ -291,7 +207,6 @@ export function ActionPanel({
   disabledReason,
   job,
   onRun,
-  animation = 'mite',
   children,
 }: {
   label: string;
@@ -299,8 +214,6 @@ export function ActionPanel({
   disabledReason: string | null;
   job: JobState<unknown>;
   onRun: () => void;
-  /** Which quirky loader to show while running; compression-like jobs use "squish". */
-  animation?: 'mite' | 'squish';
   children?: React.ReactNode;
 }) {
   const running = job.status === 'running';
@@ -320,10 +233,7 @@ export function ActionPanel({
         )}
       </Button>
       {running && (
-        <div className="mt-3 space-y-3">
-          {animation === 'squish' ? <Squishing /> : <Munching />}
-          <ProgressBar progress={progress} />
-        </div>
+        <ProgressBar className="mt-2" progress={progress} caption />
       )}
       {disabledReason && !running && (
         <p className="mt-3 text-center text-xs text-muted-foreground">{disabledReason}</p>
