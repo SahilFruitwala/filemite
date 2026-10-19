@@ -6,42 +6,42 @@ Compress, convert, resize, remove-metadata and favicon image tools run on the se
 PDF tools run entirely in the browser with MuPDF (WebAssembly); PDFs are never uploaded.
 
 ## Canonical site
-https://filemite.com
+https://www.filemite.com
 
 ## Image tools
-- Compress: https://filemite.com/image/compress
-- Convert format (HEIC to JPG, PNG, WebP): https://filemite.com/image/convert
-- Resize: https://filemite.com/image/resize
-- Smart crop: https://filemite.com/image/crop
-- Rotate & flip: https://filemite.com/image/rotate
-- Blur & redact: https://filemite.com/image/redact
-- Add watermark: https://filemite.com/image/watermark
-- Remove metadata (EXIF/GPS): https://filemite.com/image/scrub
-- Color palette: https://filemite.com/image/palette
-- Favicon generator: https://filemite.com/image/favicon
-- Collage maker: https://filemite.com/image/collage
-- GIF maker: https://filemite.com/image/gif
-- Passport photo maker: https://filemite.com/image/passport
-- Screenshot beautifier: https://filemite.com/image/beautify
-- Annotate image (arrows, text, steps): https://filemite.com/image/annotate
+- Compress: https://www.filemite.com/image/compress
+- Convert format (HEIC to JPG, PNG, WebP): https://www.filemite.com/image/convert
+- Resize: https://www.filemite.com/image/resize
+- Smart crop: https://www.filemite.com/image/crop
+- Rotate & flip: https://www.filemite.com/image/rotate
+- Blur & redact: https://www.filemite.com/image/redact
+- Add watermark: https://www.filemite.com/image/watermark
+- Remove metadata (EXIF/GPS): https://www.filemite.com/image/scrub
+- Color palette: https://www.filemite.com/image/palette
+- Favicon generator: https://www.filemite.com/image/favicon
+- Collage maker: https://www.filemite.com/image/collage
+- GIF maker: https://www.filemite.com/image/gif
+- Passport photo maker: https://www.filemite.com/image/passport
+- Screenshot beautifier: https://www.filemite.com/image/beautify
+- Annotate image (arrows, text, steps): https://www.filemite.com/image/annotate
 
 ## PDF tools
-- Merge: https://filemite.com/pdf/merge
-- Split: https://filemite.com/pdf/split
-- Extract / remove pages: https://filemite.com/pdf/extract
-- Rotate & reorder pages: https://filemite.com/pdf/organize
-- Compress: https://filemite.com/pdf/compress
-- Images to PDF: https://filemite.com/pdf/from-images
-- PDF to images: https://filemite.com/pdf/to-images
-- Sign: https://filemite.com/pdf/sign
-- Fill & annotate: https://filemite.com/pdf/annotate
-- Redact: https://filemite.com/pdf/redact
+- Merge: https://www.filemite.com/pdf/merge
+- Split: https://www.filemite.com/pdf/split
+- Extract / remove pages: https://www.filemite.com/pdf/extract
+- Rotate & reorder pages: https://www.filemite.com/pdf/organize
+- Compress: https://www.filemite.com/pdf/compress
+- Images to PDF: https://www.filemite.com/pdf/from-images
+- PDF to images: https://www.filemite.com/pdf/to-images
+- Sign: https://www.filemite.com/pdf/sign
+- Fill & annotate: https://www.filemite.com/pdf/annotate
+- Redact: https://www.filemite.com/pdf/redact
 
 ## Limits
 - Images: 10 per batch, 4 MB each, 50 megapixels max, 2 processed at a time, 100 per hour per visitor.
 - PDFs: up to 250 MB each, 20 per merge; processed on the visitor's device.
 
 ## Other pages
-- Privacy: https://filemite.com/privacy
-- Terms: https://filemite.com/terms
+- Privacy: https://www.filemite.com/privacy
+- Terms: https://www.filemite.com/terms
 - Source code (AGPL-3.0): https://github.com/SahilFruitwala/filemite
