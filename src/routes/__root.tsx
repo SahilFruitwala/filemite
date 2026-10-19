@@ -19,6 +19,10 @@ export const Route = createRootRoute({
       { title: TITLE },
       { name: 'description', content: SITE_DESCRIPTION },
       { name: 'application-name', content: SITE_NAME },
+      { name: 'mobile-web-app-capable', content: 'yes' },
+      { name: 'apple-mobile-web-app-capable', content: 'yes' },
+      { name: 'apple-mobile-web-app-title', content: SITE_NAME },
+      { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
       { name: 'theme-color', content: '#fbf8f2', media: '(prefers-color-scheme: light)' },
       { name: 'theme-color', content: '#151311', media: '(prefers-color-scheme: dark)' },
       { name: 'robots', content: 'index, follow, max-image-preview:large' },
@@ -38,6 +42,7 @@ export const Route = createRootRoute({
       { rel: 'icon', href: '/logo.svg', type: 'image/svg+xml' },
       { rel: 'icon', href: '/favicon.ico', sizes: '32x32' },
       { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      { rel: 'manifest', href: '/manifest.webmanifest' },
     ],
     scripts: [
       { children: themeBootScript },
@@ -74,12 +79,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 }
 
 function RootLayout() {
-  // Older versions installed a PWA service worker; make sure it can't intercept API calls.
+  // The worker only caches static assets and pages; it skips /api and /ingest.
   useEffect(() => {
-    if (!('serviceWorker' in navigator)) return;
-    void navigator.serviceWorker.getRegistrations().then((registrations) => {
-      for (const registration of registrations) void registration.unregister();
-    });
+    if (!import.meta.env.PROD || !('serviceWorker' in navigator)) return;
+    void navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
   }, []);
 
   useEffect(() => {
