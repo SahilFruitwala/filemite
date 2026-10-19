@@ -75,3 +75,74 @@ export async function readPixels(bytes: Buffer) {
   };
   return { width: info.width, height: info.height, at };
 }
+
+/** A one-page 300×400 PDF that says "Secret 1" in Helvetica, so its text can be extracted. */
+export function textPdf(): Upload {
+  const doc = new mupdf.PDFDocument();
+  try {
+    const fonts = doc.newDictionary();
+    fonts.put('F1', doc.addSimpleFont(new mupdf.Font('Helvetica'), 'Latin'));
+    const resources = doc.newDictionary();
+    resources.put('Font', fonts);
+    const page = doc.addPage(
+      [0, 0, 300, 400],
+      0,
+      doc.addObject(resources),
+      'BT /F1 24 Tf 50 300 Td (Secret 1) Tj ET',
+    );
+    doc.insertPage(-1, page);
+    return {
+      name: 'text.pdf',
+      mimeType: 'application/pdf',
+      buffer: Buffer.from(doc.saveToBuffer('').asUint8Array()),
+    };
+  } finally {
+    doc.destroy();
+  }
+}
+
+/** The text on each page of a PDF. */
+export function pdfText(bytes: Buffer): string[] {
+  const doc = new mupdf.PDFDocument(bytes);
+  try {
+    return Array.from({ length: doc.countPages() }, (_, index) => {
+      const page = doc.loadPage(index);
+      try {
+        return page.toStructuredText('').asText().trim();
+      } finally {
+        page.destroy();
+      }
+    });
+  } finally {
+    doc.destroy();
+  }
+}
+
+/** Number of non-white pixels in a region of a page, rendered at 72 dpi (1 px = 1 pt). */
+export function pdfInk(bytes: Buffer, pageIndex: number, region: [number, number, number, number]) {
+  const doc = new mupdf.PDFDocument(bytes);
+  try {
+    const page = doc.loadPage(pageIndex);
+    try {
+      const pixmap = page.toPixmap(mupdf.Matrix.identity, mupdf.ColorSpace.DeviceRGB, false, true);
+      try {
+        const width = pixmap.getWidth();
+        const samples = pixmap.getPixels();
+        let count = 0;
+        for (let y = region[1]; y < region[3]; y++) {
+          for (let x = region[0]; x < region[2]; x++) {
+            const i = (y * width + x) * 3;
+            if (samples[i] < 250 || samples[i + 1] < 250 || samples[i + 2] < 250) count++;
+          }
+        }
+        return count;
+      } finally {
+        pixmap.destroy();
+      }
+    } finally {
+      page.destroy();
+    }
+  } finally {
+    doc.destroy();
+  }
+}

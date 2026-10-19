@@ -3,18 +3,29 @@
  * the sitemap all read from this list.
  */
 import {
+  ArrowRightLeft,
   Crop,
   Eraser,
   EyeOff,
   FileArchive,
   FileOutput,
+  FilePenLine,
+  FileX2,
+  Film,
   FlipHorizontal2,
   Gem,
+  IdCard,
   ImageDown,
+  ImagePlus,
+  Images,
   Layers,
+  LayoutGrid,
   Palette,
+  PencilLine,
   RotateCw,
   Scaling,
+  Signature,
+  Sparkles,
   SplitSquareHorizontal,
   Stamp,
   type LucideIcon,
@@ -35,11 +46,22 @@ export type ToolId =
   | 'image-scrub'
   | 'image-palette'
   | 'image-favicon'
+  | 'image-convert'
+  | 'image-collage'
+  | 'image-gif'
+  | 'image-passport'
+  | 'image-beautify'
+  | 'image-annotate'
   | 'pdf-merge'
   | 'pdf-split'
   | 'pdf-extract'
   | 'pdf-organize'
-  | 'pdf-compress';
+  | 'pdf-compress'
+  | 'pdf-from-images'
+  | 'pdf-to-images'
+  | 'pdf-sign'
+  | 'pdf-annotate'
+  | 'pdf-redact';
 
 export type Tool = {
   id: ToolId;
@@ -66,13 +88,15 @@ export const SECTIONS: Record<
   image: {
     label: 'Image',
     title: 'Image tools',
-    description: 'Compress, resize, crop, rotate and clean up PNG, JPEG, WebP and HEIC.',
+    description:
+      'Compress, convert, resize, crop, annotate and clean up PNG, JPEG, WebP and HEIC.',
     href: '/image/compress',
   },
   pdf: {
     label: 'PDF',
     title: 'PDF tools',
-    description: 'Merge, split, extract, organize and compress PDFs — entirely in your browser.',
+    description:
+      'Merge, split, sign, annotate, redact and compress PDFs — entirely in your browser.',
     href: '/pdf/merge',
   },
 };
@@ -229,6 +253,102 @@ export const tools: Tool[] = [
     icon: Gem,
   },
   {
+    id: 'image-convert',
+    section: 'image',
+    href: '/image/convert',
+    title: 'Convert Image Format',
+    shortTitle: 'Convert',
+    description: 'Turn HEIC, PNG, JPEG and WebP into JPG, PNG or WebP — in one batch.',
+    seoTitle: 'Convert Images — HEIC to JPG, PNG to WebP and More',
+    seoDescription:
+      'Convert HEIC to JPG, PNG to WebP, WebP to PNG and more. Up to 10 images at once at full quality, processed in memory and never stored.',
+    keywords: ['heic to jpg', 'convert image', 'png to webp', 'webp to png', 'image converter'],
+    emptyTitle: 'Drop images to convert',
+    emptyDescription: 'HEIC from an iPhone, PNG, JPEG or WebP. Pick the format after.',
+    processing: 'server',
+    icon: ArrowRightLeft,
+  },
+  {
+    id: 'image-collage',
+    section: 'image',
+    href: '/image/collage',
+    title: 'Collage Maker',
+    shortTitle: 'Collage',
+    description: 'Arrange photos in a grid with spacing, rounded corners and a background.',
+    seoTitle: 'Photo Collage Maker — Grids, Spacing & Backgrounds',
+    seoDescription:
+      'Combine photos into a single image with grid layouts, spacing, rounded corners and a background colour. Runs in your browser — nothing is uploaded.',
+    keywords: ['collage maker', 'photo grid', 'combine images', 'photo collage', 'merge photos'],
+    emptyTitle: 'Choose photos for your collage',
+    emptyDescription: 'Add 2 to 12 photos, then pick a layout.',
+    processing: 'browser',
+    icon: LayoutGrid,
+  },
+  {
+    id: 'image-gif',
+    section: 'image',
+    href: '/image/gif',
+    title: 'GIF Maker',
+    shortTitle: 'GIF',
+    description: 'Turn a set of images into an animated GIF with the timing you choose.',
+    seoTitle: 'GIF Maker — Make an Animated GIF From Images',
+    seoDescription:
+      'Make an animated GIF from several images. Reorder frames, set the speed and size, and loop it. Runs in your browser — nothing is uploaded.',
+    keywords: ['gif maker', 'images to gif', 'animated gif', 'create gif', 'photo to gif'],
+    emptyTitle: 'Choose the frames for your GIF',
+    emptyDescription: 'Add 2 to 40 images in the order they should play.',
+    processing: 'browser',
+    icon: Film,
+  },
+  {
+    id: 'image-passport',
+    section: 'image',
+    href: '/image/passport',
+    title: 'Passport Photo Maker',
+    shortTitle: 'Passport',
+    description: 'Crop to official passport and ID sizes and lay out a ready-to-print sheet.',
+    seoTitle: 'Passport Photo Maker — Crop to Size & Print Sheet',
+    seoDescription:
+      'Crop a photo to US, EU, UK, India and other passport and ID sizes at 300 dpi, then download a 4×6 or A4 sheet ready to print. Runs in your browser.',
+    keywords: ['passport photo', 'id photo maker', 'passport size photo', 'visa photo', 'photo 2x2'],
+    emptyTitle: 'Choose a front-facing photo',
+    emptyDescription: 'Plain light background, head straight on. Then pick a country and size.',
+    processing: 'browser',
+    icon: IdCard,
+  },
+  {
+    id: 'image-beautify',
+    section: 'image',
+    href: '/image/beautify',
+    title: 'Screenshot Beautifier',
+    shortTitle: 'Beautify',
+    description: 'Frame screenshots with a gradient, padding, rounded corners and a soft shadow.',
+    seoTitle: 'Screenshot Beautifier — Backgrounds, Shadows & Frames',
+    seoDescription:
+      'Make screenshots look polished: add a gradient background, padding, rounded corners, a shadow and an optional window bar. Runs in your browser.',
+    keywords: ['screenshot beautifier', 'screenshot mockup', 'screenshot background', 'beautify screenshot'],
+    emptyTitle: 'Choose a screenshot',
+    emptyDescription: 'We’ll frame it with a background, shadow and rounded corners.',
+    processing: 'browser',
+    icon: Sparkles,
+  },
+  {
+    id: 'image-annotate',
+    section: 'image',
+    href: '/image/annotate',
+    title: 'Annotate Image',
+    shortTitle: 'Annotate',
+    description: 'Add arrows, boxes, text and numbered steps to screenshots and photos.',
+    seoTitle: 'Annotate Screenshots — Arrows, Boxes, Text & Steps',
+    seoDescription:
+      'Mark up a screenshot or photo with arrows, rectangles, highlights, text, numbered steps and freehand drawing. Runs in your browser — nothing is uploaded.',
+    keywords: ['annotate screenshot', 'add arrows to image', 'markup image', 'add text to image'],
+    emptyTitle: 'Choose an image to mark up',
+    emptyDescription: 'Then add arrows, boxes, text and numbered steps.',
+    processing: 'browser',
+    icon: PencilLine,
+  },
+  {
     id: 'pdf-merge',
     section: 'pdf',
     href: '/pdf/merge',
@@ -307,6 +427,86 @@ export const tools: Tool[] = [
     emptyDescription: 'Images are re-encoded and fonts trimmed — text stays crisp and selectable.',
     processing: 'browser',
     icon: FileArchive,
+  },
+  {
+    id: 'pdf-from-images',
+    section: 'pdf',
+    href: '/pdf/from-images',
+    title: 'Images to PDF',
+    shortTitle: 'From images',
+    description: 'Combine photos and scans into one PDF — choose page size, margins and order.',
+    seoTitle: 'Images to PDF — JPG, PNG & WebP to One PDF',
+    seoDescription:
+      'Turn JPG, PNG, WebP and other images into a single PDF. Reorder pages, pick A4, Letter or fit-to-image, and set margins. Files never leave your device.',
+    keywords: ['jpg to pdf', 'image to pdf', 'png to pdf', 'photos to pdf', 'scan to pdf'],
+    emptyTitle: 'Choose images to turn into a PDF',
+    emptyDescription: 'Add photos or scans, then drag them into page order.',
+    processing: 'browser',
+    icon: ImagePlus,
+  },
+  {
+    id: 'pdf-to-images',
+    section: 'pdf',
+    href: '/pdf/to-images',
+    title: 'PDF to Images',
+    shortTitle: 'To images',
+    description: 'Save PDF pages as sharp PNG or JPG images, all or just the ones you pick.',
+    seoTitle: 'PDF to JPG & PNG — Export Pages as Images',
+    seoDescription:
+      'Convert PDF pages to PNG or JPG at up to 300 dpi. Export every page or a range, as a ZIP. Runs entirely in your browser.',
+    keywords: ['pdf to jpg', 'pdf to png', 'convert pdf to image', 'export pdf pages'],
+    emptyTitle: 'Choose a PDF to export',
+    emptyDescription: 'Each page becomes an image you can download.',
+    processing: 'browser',
+    icon: Images,
+  },
+  {
+    id: 'pdf-sign',
+    section: 'pdf',
+    href: '/pdf/sign',
+    title: 'Sign PDF',
+    shortTitle: 'Sign',
+    description: 'Draw, type or upload your signature and place it anywhere on a page.',
+    seoTitle: 'Sign PDF Online — Draw, Type or Upload Your Signature',
+    seoDescription:
+      'Sign a PDF by drawing, typing or uploading your signature, then drag it into place and resize it. Your document never leaves your device.',
+    keywords: ['sign pdf', 'esign pdf', 'add signature to pdf', 'electronic signature'],
+    emptyTitle: 'Choose a PDF to sign',
+    emptyDescription: 'Create your signature, then drop it on the page.',
+    processing: 'browser',
+    icon: Signature,
+  },
+  {
+    id: 'pdf-annotate',
+    section: 'pdf',
+    href: '/pdf/annotate',
+    title: 'Fill & Annotate PDF',
+    shortTitle: 'Annotate',
+    description: 'Type into forms, tick boxes, highlight and draw shapes on any PDF.',
+    seoTitle: 'Fill & Annotate PDF — Text, Checkmarks, Highlights',
+    seoDescription:
+      'Add text, checkmarks, highlights, rectangles, ellipses, arrows and lines to a PDF. Fill out a form that has no fields. Runs entirely in your browser.',
+    keywords: ['fill pdf', 'annotate pdf', 'edit pdf', 'add text to pdf', 'highlight pdf'],
+    emptyTitle: 'Choose a PDF to fill or mark up',
+    emptyDescription: 'Click to add text and checkmarks, drag to highlight or draw.',
+    processing: 'browser',
+    icon: FilePenLine,
+  },
+  {
+    id: 'pdf-redact',
+    section: 'pdf',
+    href: '/pdf/redact',
+    title: 'Redact PDF',
+    shortTitle: 'Redact',
+    description: 'Permanently remove text and images under black boxes — not just cover them.',
+    seoTitle: 'Redact PDF — Permanently Remove Sensitive Text',
+    seoDescription:
+      'Draw boxes over names, numbers and images in a PDF and remove what is underneath for good. The text is deleted from the file, not just hidden. Runs in your browser.',
+    keywords: ['redact pdf', 'blackout pdf', 'remove text from pdf', 'censor pdf'],
+    emptyTitle: 'Choose a PDF to redact',
+    emptyDescription: 'Draw boxes over what to hide. It’s removed from the file for good.',
+    processing: 'browser',
+    icon: FileX2,
   },
 ];
 

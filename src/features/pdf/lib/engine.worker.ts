@@ -36,14 +36,19 @@ type Operations = Awaited<typeof engine>;
 
 const createHandlers = ({
   PdfError,
+  addOverlays,
   compressPdf,
   compressToTarget,
   extractPages,
   getPageCount,
+  getPageSize,
+  imagesToPdf,
   mergePdfs,
   openPdf,
   organizePages,
+  redactAreas,
   renderPage,
+  renderPagesToImages,
   splitPdf,
 }: Operations): Handlers => ({
   open({ docId, source }) {
@@ -63,6 +68,11 @@ const createHandlers = ({
     if (!doc) throw new PdfError("This document is no longer open.", "unknown");
     return renderPage(doc, pageIndex, width);
   },
+  pageSize({ docId, pageIndex }) {
+    const doc = openDocs.get(docId);
+    if (!doc) throw new PdfError("This document is no longer open.", "unknown");
+    return getPageSize(doc, pageIndex);
+  },
   close({ docId }) {
     openDocs.get(docId)?.destroy();
     openDocs.delete(docId);
@@ -71,6 +81,11 @@ const createHandlers = ({
   split: ({ source, groups }, progress) => splitPdf(source, groups, progress),
   extract: ({ source, pages }) => extractPages(source, pages),
   organize: ({ source, edits }) => organizePages(source, edits),
+  imagesToPdf: ({ images, options }, progress) => imagesToPdf(images, options, progress),
+  renderImages: ({ source, pages, options }, progress) =>
+    renderPagesToImages(source, pages, options, progress),
+  overlay: ({ source, overlays }) => addOverlays(source, overlays),
+  redact: ({ source, boxes }) => redactAreas(source, boxes),
   compress: ({ source, options }, progress) => compressPdf(source, options, progress),
   compressToTarget: ({ source, targetBytes, grayscale }, progress) =>
     compressToTarget(source, targetBytes, grayscale, progress),

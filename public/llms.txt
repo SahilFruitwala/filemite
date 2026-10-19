@@ -2,7 +2,7 @@ Filemite
 
 ## What this is
 Filemite is a free web app with small, focused tools for images and PDFs.
-Image tools (PNG, JPEG, WebP, HEIC) run on the server in memory and never store files.
+Compress, convert, resize, remove-metadata and favicon image tools run on the server in memory and never store files; collage, GIF, passport photo, beautify, annotate, crop, rotate, redact, watermark and palette run in the browser.
 PDF tools run entirely in the browser with MuPDF (WebAssembly); PDFs are never uploaded.
 
 ## Canonical site
@@ -10,6 +10,7 @@ https://filemite.com
 
 ## Image tools
 - Compress: https://filemite.com/image/compress
+- Convert format (HEIC to JPG, PNG, WebP): https://filemite.com/image/convert
 - Resize: https://filemite.com/image/resize
 - Smart crop: https://filemite.com/image/crop
 - Rotate & flip: https://filemite.com/image/rotate
@@ -18,6 +19,11 @@ https://filemite.com
 - Remove metadata (EXIF/GPS): https://filemite.com/image/scrub
 - Color palette: https://filemite.com/image/palette
 - Favicon generator: https://filemite.com/image/favicon
+- Collage maker: https://filemite.com/image/collage
+- GIF maker: https://filemite.com/image/gif
+- Passport photo maker: https://filemite.com/image/passport
+- Screenshot beautifier: https://filemite.com/image/beautify
+- Annotate image (arrows, text, steps): https://filemite.com/image/annotate
 
 ## PDF tools
 - Merge: https://filemite.com/pdf/merge
@@ -25,6 +31,11 @@ https://filemite.com
 - Extract / remove pages: https://filemite.com/pdf/extract
 - Rotate & reorder pages: https://filemite.com/pdf/organize
 - Compress: https://filemite.com/pdf/compress
+- Images to PDF: https://filemite.com/pdf/from-images
+- PDF to images: https://filemite.com/pdf/to-images
+- Sign: https://filemite.com/pdf/sign
+- Fill & annotate: https://filemite.com/pdf/annotate
+- Redact: https://filemite.com/pdf/redact
 
 ## Limits
 - Images: 10 per batch, 4 MB each, 50 megapixels max, 2 processed at a time, 100 per hour per visitor.

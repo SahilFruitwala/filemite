@@ -3,7 +3,7 @@
 export const SITE_NAME = 'Filemite';
 export const SITE_TAGLINE = 'Tiny tools for images and PDFs.';
 export const SITE_DESCRIPTION =
-  'Compress, resize, crop and clean up images. Merge, split, extract and compress PDFs. Free, no sign-up, nothing stored.';
+  'Compress, convert, resize, crop and annotate images. Merge, split, sign, redact and compress PDFs. Free, no sign-up, nothing stored.';
 
 /** Absolute site origin (no trailing slash); override with VITE_SITE_URL. */
 export const SITE_URL = String(
