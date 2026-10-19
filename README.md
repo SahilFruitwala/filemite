@@ -1,3 +1,7 @@
+<p align="center">
+  <img src=".github/banner.png" alt="Filemite — tiny tools for images and PDFs" width="100%">
+</p>
+
 # Filemite
 
 Live at [filemite.com](https://filemite.com).

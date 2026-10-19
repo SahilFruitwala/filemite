@@ -1,4 +1,4 @@
-import { SITE_NAME, SITE_URL } from './site';
+import { OG_IMAGE, OG_IMAGE_ALT, SITE_NAME, SITE_URL } from './site';
 import type { Tool } from './tools';
 
 export { SITE_URL };
@@ -23,8 +23,11 @@ export function seoHead({ title, description, keywords, path }: SeoOptions) {
       { property: 'og:title', content: fullTitle },
       { property: 'og:description', content: description },
       ...(canonical ? [{ property: 'og:url', content: canonical }] : []),
+      { property: 'og:image', content: OG_IMAGE },
+      { property: 'og:image:alt', content: OG_IMAGE_ALT },
       { name: 'twitter:title', content: fullTitle },
       { name: 'twitter:description', content: description },
+      { name: 'twitter:image', content: OG_IMAGE },
     ],
     links: canonical ? [{ rel: 'canonical', href: canonical }] : [],
   };
