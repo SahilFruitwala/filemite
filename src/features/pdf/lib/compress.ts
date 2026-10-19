@@ -21,7 +21,7 @@ import { zlibSync } from "fflate";
 import { encodeCcittG4 } from "./ccitt";
 import { TARGET_LADDER } from "./compress-presets";
 import { optimizeContentStream } from "./content-stream";
-import { getPageCount, isOutOfMemory, save, withPdf } from "./document";
+import { getPageCount, isOutOfMemory, PdfError, save, withPdf } from "./document";
 import {
   bitsForPalette,
   buildPalette,
@@ -693,16 +693,33 @@ function optimizeDocument(
   options: CompressOptions,
   onProgress?: Progress
 ): Omit<CompressStats, "fontsSubset"> {
-  stripHiddenData(doc);
+  // Each analysis pass is best-effort: an oddly structured PDF should lose that
+  // optimisation, not the whole compression. Out-of-memory still propagates.
+  const attempt = <T>(fn: () => T, fallback: T): T => {
+    try {
+      return fn();
+    } catch (error) {
+      if (isOutOfMemory(error)) throw error;
+      return fallback;
+    }
+  };
 
-  const { placements, used } = measureImagePlacements(doc);
-  const fallbackMaxSide = (longestPageSide(doc) / 72) * options.dpi;
-  const listed = listImages(doc);
+  attempt(() => stripHiddenData(doc), undefined);
+
+  const { placements, used } = attempt(
+    () => measureImagePlacements(doc),
+    { placements: new Map<number, Size>(), used: new Set<number>() }
+  );
+  const fallbackMaxSide = (attempt(() => longestPageSide(doc), 792) / 72) * options.dpi;
+  const listed = attempt(() => listImages(doc), {
+    images: [] as mupdf.PDFObject[],
+    softMaskUses: new Map<number, number>(),
+  });
   const softMaskUses = listed.softMaskUses;
   // Images nothing displays (e.g. the thumbnails removed above) are dropped
   // when saving, so there's no point re-encoding them.
   const images = listed.images.filter((ref) => used.has(ref.asIndirect()));
-  const streams = options.optimizeVectors ? contentStreams(doc) : [];
+  const streams = options.optimizeVectors ? attempt(() => contentStreams(doc), []) : [];
   const total = images.length + streams.length + 1;
   let done = 0;
 
@@ -743,7 +760,7 @@ function optimizeDocument(
     imagesRewritten,
     encodings,
     streamsOptimized,
-    fontsEmbedded: countEmbeddedFonts(doc),
+    fontsEmbedded: attempt(() => countEmbeddedFonts(doc), 0),
   };
 }
 
@@ -788,11 +805,33 @@ export function compressPdf(
   if (subset) return { bytes: subset, stats: { ...stats, fontsSubset: true } };
 
   // The first document is closed by now, so only one copy is in memory.
-  const bytes = withPdf(source, (fresh) => {
-    optimizeDocument(fresh, options);
-    return save(fresh);
+  try {
+    const bytes = withPdf(source, (fresh) => {
+      optimizeDocument(fresh, options);
+      return save(fresh);
+    });
+    return { bytes, stats: { ...stats, fontsSubset: false } };
+  } catch (error) {
+    if (isOutOfMemory(error) || error instanceof PdfError) throw error;
+    console.warn("PDF optimisation failed, saving without it", error);
+  }
+
+  // Last resort: a plain lossless rewrite (dedupe, Flate, object streams).
+  const bytes = withPdf(source, (plain) => {
+    getPageCount(plain);
+    return save(plain);
   });
-  return { bytes, stats: { ...stats, fontsSubset: false } };
+  return {
+    bytes,
+    stats: {
+      imagesFound: 0,
+      imagesRewritten: 0,
+      encodings: { bilevel: 0, palette: 0, lossless: 0, jpeg: 0 },
+      streamsOptimized: 0,
+      fontsEmbedded: 0,
+      fontsSubset: false,
+    },
+  };
 }
 
 export type TargetResult = {

@@ -89,6 +89,13 @@ function collectTransfers(value: unknown, out: Transferable[] = []): Transferabl
   return out;
 }
 
+/** Short underlying reason, so reports say more than "something went wrong". */
+function errorDetail(error: unknown) {
+  const text = error instanceof Error ? error.message : String(error);
+  const line = text.split("\n")[0].trim().slice(0, 120);
+  return line ? ` (${line})` : "";
+}
+
 function reply(message: EngineResponse, transfer: Transferable[] = []) {
   self.postMessage(message, transfer);
 }
@@ -126,7 +133,7 @@ self.onmessage = async (event: MessageEvent<EngineRequest>) => {
         code: "unknown",
         message: isOutOfMemory(error)
           ? TOO_LARGE_MESSAGE
-          : "Something went wrong while processing this PDF.",
+          : `Something went wrong while processing this PDF${errorDetail(error)}.`,
       });
     }
   }
