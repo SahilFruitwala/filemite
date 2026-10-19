@@ -1,6 +1,7 @@
 import handler, { createServerEntry } from '@tanstack/react-start/server-entry';
 
 import { SITE_URL } from '@/lib/site';
+import { securityHeaders } from '@/server/security-headers';
 
 /** Permanent redirects from the old MicroPNG and microPDF URLs. */
 const REDIRECTS: Record<string, string> = {
@@ -18,12 +19,7 @@ const REDIRECTS: Record<string, string> = {
   '/pdf': '/pdf/merge',
 };
 
-const SECURITY_HEADERS: Record<string, string> = {
-  'X-Content-Type-Options': 'nosniff',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'X-Frame-Options': 'SAMEORIGIN',
-  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-};
+const SECURITY_HEADERS = securityHeaders(import.meta.env.PROD);
 
 /** Hosts that used to serve the app; they permanently redirect to the canonical origin. */
 const LEGACY_HOSTS = new Set(['micropng.sahilfruitwala.com']);
