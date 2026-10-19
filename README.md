@@ -7,14 +7,20 @@ Small, fast tools for images and PDFs — one app, one design system.
 | Image tools (server, in memory, unless marked *browser*) | PDF tools (in the browser) |
 | --- | --- |
 | **Compress** — PNG, JPEG, WebP, HEIC; batch of 10; Best / Balanced / Smallest | **Merge** — drag to reorder; links, forms and bookmarks kept |
-| **Resize** — exact pixels or presets; cover / contain / fit / stretch | **Split** — every N pages, custom ranges, or click to cut |
-| **Smart crop** — content-aware crops for social formats *(browser)* | **Extract** — keep or remove pages; `1-3, 8, 10-z` ranges |
-| **Rotate & flip** — quarter turns and mirrors at full resolution *(browser)* | **Compress** — by quality or to a target size; text stays sharp |
-| **Blur & redact** — black box, pixelate or blur; hidden pixels are really replaced *(browser)* | **Organize** — rotate pages and drag them into a new order |
-| **Watermark** — text or logo, placed once or tiled *(browser)* | |
-| **Remove metadata** — shows then strips EXIF, GPS, XMP, IPTC | |
-| **Color palette** — HEX / RGB / HSL, copy as CSS variables *(browser)* | |
-| **Favicon** — 16–256 px PNGs, `favicon.ico`, Apple touch icon | |
+| **Convert** — HEIC, PNG, JPEG, WebP to JPG, PNG or WebP at full size | **Split** — every N pages, custom ranges, or click to cut |
+| **Resize** — exact pixels or presets; cover / contain / fit / stretch | **Extract** — keep or remove pages; `1-3, 8, 10-z` ranges |
+| **Smart crop** — content-aware crops for social formats *(browser)* | **Compress** — by quality or to a target size; text stays sharp |
+| **Rotate & flip** — quarter turns and mirrors at full resolution *(browser)* | **Organize** — rotate pages and drag them into a new order |
+| **Blur & redact** — black box, pixelate or blur; hidden pixels are really replaced *(browser)* | **Images to PDF** — JPG, PNG, WebP to one PDF; A4, Letter or fit-to-image |
+| **Watermark** — text or logo, placed once or tiled *(browser)* | **PDF to images** — pages as PNG or JPG at 72–300 dpi, as a ZIP |
+| **Remove metadata** — shows then strips EXIF, GPS, XMP, IPTC | **Sign** — draw, type or upload a signature and place it on a page |
+| **Color palette** — HEX / RGB / HSL, copy as CSS variables *(browser)* | **Fill & annotate** — text, check marks, highlights, shapes, arrows, freehand, numbered steps |
+| **Favicon** — 16–256 px PNGs, `favicon.ico`, Apple touch icon | **Redact** — text, images and line art under a box are deleted from the file |
+| **Collage** — grid, feature, row and column layouts *(browser)* | |
+| **GIF maker** — frames to an animated GIF, bounce and loop options *(browser)* | |
+| **Passport photo** — 300 dpi crops for common sizes and 4×6 / 5×7 / A4 print sheets *(browser)* | |
+| **Screenshot beautifier** — gradient backdrop, padding, shadow, window bar *(browser)* | |
+| **Annotate** — arrows, boxes, text, highlights, freehand and numbered steps *(browser)* | |
 
 Images sent to the server are processed in memory with [Sharp](https://sharp.pixelplumbing.com/) and never stored. PDFs never leave the device: they're handled by [MuPDF](https://mupdf.com) compiled to WebAssembly, running in Web Workers.
 
@@ -30,6 +36,7 @@ src/
     pdf/                  PDF tools, MuPDF engine + worker, compression pipeline
   components/
     shell/                header (section switcher + tool tabs), footer, theme
+    markup/               on-picture editor (marks, handles, tool palette) shared by Annotate, Sign and Redact
     tool/                 shared tool kit: layout, panels, drop zone, results
     ui/                   button, input
   server/                 Sharp pipeline, rate limiting, request guard

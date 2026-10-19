@@ -1,5 +1,13 @@
 /** Message contract between the engine client and the engine Web Worker. */
-import type { CompressStats, MergeOptions, PageEdit, TargetResult } from "./operations";
+import type { ImagePageOptions } from "./image-pages";
+import type {
+  CompressStats,
+  MergeOptions,
+  PageEdit,
+  RenderImageOptions,
+  TargetResult,
+} from "./operations";
+import type { Overlay, RedactBox } from "./overlay";
 import type { CompressOptions, PdfErrorCode, PdfSource } from "./types";
 
 export type EngineApi = {
@@ -7,11 +15,21 @@ export type EngineApi = {
   open(args: { docId: string; source: PdfSource }): { pageCount: number };
   render(args: { docId: string; pageIndex: number; width: number }): Uint8Array;
   close(args: { docId: string }): void;
+  /** Displayed size of a page of an open document, in points. */
+  pageSize(args: { docId: string; pageIndex: number }): [number, number];
 
   merge(args: { sources: PdfSource[]; options: MergeOptions }): Uint8Array;
   split(args: { source: PdfSource; groups: number[][] }): Uint8Array[];
   extract(args: { source: PdfSource; pages: number[] }): Uint8Array;
   organize(args: { source: PdfSource; edits: PageEdit[] }): Uint8Array;
+  imagesToPdf(args: { images: Uint8Array[]; options: ImagePageOptions }): Uint8Array;
+  renderImages(args: {
+    source: PdfSource;
+    pages: number[];
+    options: RenderImageOptions;
+  }): Uint8Array[];
+  overlay(args: { source: PdfSource; overlays: Overlay[] }): Uint8Array;
+  redact(args: { source: PdfSource; boxes: RedactBox[] }): Uint8Array;
   compress(args: {
     source: PdfSource;
     options: CompressOptions;

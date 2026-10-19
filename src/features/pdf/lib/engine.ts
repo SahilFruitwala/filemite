@@ -4,6 +4,8 @@
  * - "preview" keeps documents open and renders thumbnails on demand
  * - "jobs" runs merge / split / extract / compress
  */
+import type { ImagePageOptions } from "./image-pages";
+import type { Overlay, RedactBox } from "./overlay";
 import type {
   EngineArgs,
   EngineOp,
@@ -140,6 +142,11 @@ export function openDocument(docId: string, file: File, password?: string) {
 }
 
 const thumbnailCache = new Map<string, string>();
+
+/** Displayed size of a page of an open document, in points. */
+export function getPageSize(docId: string, pageIndex: number) {
+  return previewWorker.call("pageSize", { docId, pageIndex });
+}
 
 export function closeDocument(docId: string) {
   for (const [key, url] of thumbnailCache) {
@@ -332,4 +339,40 @@ export async function compressFileToTarget(
     { source, targetBytes, grayscale },
     { transfer: transfers(source), onProgress }
   );
+}
+
+/** `images` are PNG or JPEG files, one per page. */
+export async function imagesToPdfFile(
+  images: Uint8Array[],
+  options: ImagePageOptions,
+  onProgress?: CallOptions["onProgress"]
+) {
+  // Copied, not transferred: the caller keeps the images so options can change and run again.
+  return runJob("imagesToPdf", { images, options }, { onProgress });
+}
+
+/** `pages` are 1-based page numbers; one encoded image comes back per page, in order. */
+export async function renderPagesAsImages(
+  file: JobFile,
+  pages: number[],
+  options: EngineArgs<"renderImages">["options"],
+  onProgress?: CallOptions["onProgress"]
+) {
+  const source = await toSource(file);
+  return runJob(
+    "renderImages",
+    { source, pages: pages.map((page) => page - 1), options },
+    { transfer: transfers(source), onProgress }
+  );
+}
+
+/** Marks use 0-based page numbers (`page`) in displayed-page points. */
+export async function addOverlaysToFile(file: JobFile, overlays: Overlay[]) {
+  const source = await toSource(file);
+  return runJob("overlay", { source, overlays }, { transfer: transfers(source) });
+}
+
+export async function redactFile(file: JobFile, boxes: RedactBox[]) {
+  const source = await toSource(file);
+  return runJob("redact", { source, boxes }, { transfer: transfers(source) });
 }

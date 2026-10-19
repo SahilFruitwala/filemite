@@ -61,8 +61,8 @@ function HomePage() {
               <span className="text-gradient text-gradient-animated">mighty files.</span>
             </h1>
             <p className="mt-6 max-w-xl animate-in fade-in slide-in-from-bottom-2 text-lg leading-8 text-muted-foreground delay-150 duration-700 fill-mode-both">
-              Compress, resize and clean up images. Merge, split and shrink PDFs. Focused tools that
-              do one job well — free, private and instant.
+              Compress, convert and mark up images. Merge, sign, redact and shrink PDFs. Focused tools
+              that do one job well — free, private and instant.
             </p>
             <div className="mt-8 flex animate-in fade-in slide-in-from-bottom-2 flex-wrap gap-3 delay-300 duration-700 fill-mode-both">
               <Link

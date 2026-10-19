@@ -8,6 +8,14 @@ import { getPageCount, PdfError, save, withPdf } from "./document";
 import type { PdfSource } from "./types";
 
 export { getPageCount, openPdf, PdfError } from "./document";
+export {
+  addOverlays,
+  getPageSize,
+  imagesToPdf,
+  redactAreas,
+  renderPagesToImages,
+  type RenderImageOptions,
+} from "./edit";
 export { compressPdf, compressToTarget, type CompressStats, type TargetResult } from "./compress";
 
 // ---------------------------------------------------------------------------

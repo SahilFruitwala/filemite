@@ -61,6 +61,15 @@ describe('processImage', () => {
     expect(small.width).toBe(300);
   });
 
+  test('maxWidth 0 keeps the original size (used for format conversion)', async () => {
+    const out = await processImage(await solid(3000, 1000), {
+      quality: 90,
+      targetFormat: 'webp',
+      maxWidth: 0,
+    });
+    expect([out.width, out.height]).toEqual([3000, 1000]);
+  });
+
   test.each([
     ['cover', 200, 100],
     ['fill', 200, 100],

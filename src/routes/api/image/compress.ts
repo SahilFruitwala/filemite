@@ -57,13 +57,16 @@ export const Route = createFileRoute('/api/image/compress')({
               : undefined;
 
           const shouldResize = width !== undefined || height !== undefined;
+          // Format conversion keeps the original size instead of capping the longest edge.
+          const keepSize = form.get('keepSize') === '1';
 
           try {
             const output = await processImage(buffer, {
               quality,
               lossless: level === 'lossless',
               targetFormat,
-              maxWidth: shouldResize ? undefined : MAX_WIDTH,
+              // 0 (not undefined) switches the default 1920 px cap off.
+              maxWidth: keepSize ? 0 : shouldResize ? undefined : MAX_WIDTH,
               width,
               height,
               fit,
