@@ -181,3 +181,47 @@ export function splitPdf(
     return bytes;
   });
 }
+
+// ---------------------------------------------------------------------------
+// Organize (reorder & rotate)
+// ---------------------------------------------------------------------------
+
+export type PageEdit = {
+  /** 0-based index of the page in the source document. */
+  index: number;
+  /** Extra clockwise rotation in degrees (a multiple of 90), added to the page's own. */
+  rotate: number;
+};
+
+/** MuPDF reports a missing /Rotate as a non-number; /Rotate is inheritable. */
+function currentRotation(doc: mupdf.PDFDocument, pageIndex: number): number {
+  const value = doc.findPage(pageIndex).getInheritable("Rotate");
+  return value.isNumber() ? value.asNumber() : 0;
+}
+
+/**
+ * Outputs the pages in `edits` order, each rotated by its own amount. Pages
+ * left out of `edits` are dropped, like extractPages. Each page may appear once.
+ */
+export function organizePages(source: PdfSource, edits: PageEdit[]): Uint8Array {
+  return withPdf(source, (doc) => {
+    const indices = edits.map((edit) => edit.index);
+    assertPages(indices, getPageCount(doc));
+    if (new Set(indices).size !== indices.length) {
+      throw new PdfError("Each page can only be used once.", "invalid");
+    }
+    if (edits.some((edit) => !Number.isInteger(edit.rotate) || edit.rotate % 90 !== 0)) {
+      throw new PdfError("Pages can only be rotated in 90° steps.", "invalid");
+    }
+
+    // Indices refer to the original document, so read rotations before reordering.
+    const rotations = edits.map((edit) => currentRotation(doc, edit.index));
+    doc.rearrangePages(indices);
+    edits.forEach((edit, position) => {
+      if (edit.rotate % 360 === 0) return;
+      const total = (((rotations[position] + edit.rotate) % 360) + 360) % 360;
+      doc.findPage(position).put("Rotate", doc.newInteger(total));
+    });
+    return save(doc);
+  });
+}

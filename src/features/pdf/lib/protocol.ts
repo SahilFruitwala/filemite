@@ -1,5 +1,5 @@
 /** Message contract between the engine client and the engine Web Worker. */
-import type { CompressStats, MergeOptions, TargetResult } from "./operations";
+import type { CompressStats, MergeOptions, PageEdit, TargetResult } from "./operations";
 import type { CompressOptions, PdfErrorCode, PdfSource } from "./types";
 
 export type EngineApi = {
@@ -11,6 +11,7 @@ export type EngineApi = {
   merge(args: { sources: PdfSource[]; options: MergeOptions }): Uint8Array;
   split(args: { source: PdfSource; groups: number[][] }): Uint8Array[];
   extract(args: { source: PdfSource; pages: number[] }): Uint8Array;
+  organize(args: { source: PdfSource; edits: PageEdit[] }): Uint8Array;
   compress(args: {
     source: PdfSource;
     options: CompressOptions;

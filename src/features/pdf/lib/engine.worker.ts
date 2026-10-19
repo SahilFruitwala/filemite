@@ -42,6 +42,7 @@ const createHandlers = ({
   getPageCount,
   mergePdfs,
   openPdf,
+  organizePages,
   renderPage,
   splitPdf,
 }: Operations): Handlers => ({
@@ -69,6 +70,7 @@ const createHandlers = ({
   merge: ({ sources, options }, progress) => mergePdfs(sources, options, progress),
   split: ({ source, groups }, progress) => splitPdf(source, groups, progress),
   extract: ({ source, pages }) => extractPages(source, pages),
+  organize: ({ source, edits }) => organizePages(source, edits),
   compress: ({ source, options }, progress) => compressPdf(source, options, progress),
   compressToTarget: ({ source, targetBytes, grayscale }, progress) =>
     compressToTarget(source, targetBytes, grayscale, progress),

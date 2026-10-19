@@ -11,6 +11,7 @@ import {
   ImageDown,
   Layers,
   Palette,
+  RotateCw,
   Scaling,
   SplitSquareHorizontal,
   type LucideIcon,
@@ -31,6 +32,7 @@ export type ToolId =
   | 'pdf-merge'
   | 'pdf-split'
   | 'pdf-extract'
+  | 'pdf-organize'
   | 'pdf-compress';
 
 export type Tool = {
@@ -64,7 +66,7 @@ export const SECTIONS: Record<
   pdf: {
     label: 'PDF',
     title: 'PDF tools',
-    description: 'Merge, split, extract and compress PDFs — entirely in your browser.',
+    description: 'Merge, split, extract, organize and compress PDFs — entirely in your browser.',
     href: '/pdf/merge',
   },
 };
@@ -219,6 +221,22 @@ export const tools: Tool[] = [
     emptyDescription: 'Click pages or type ranges like 1-3, 8, 10-z.',
     processing: 'browser',
     icon: FileOutput,
+  },
+  {
+    id: 'pdf-organize',
+    section: 'pdf',
+    href: '/pdf/organize',
+    title: 'Rotate & Reorder Pages',
+    shortTitle: 'Organize',
+    description: 'Rotate pages and drag them into a new order. Nothing leaves your device.',
+    seoTitle: 'Rotate & Reorder PDF Pages — Free, In Your Browser',
+    seoDescription:
+      'Rotate individual PDF pages or the whole document and drag pages into a new order. Links, forms and bookmarks are kept. Files never leave your device.',
+    keywords: ['rotate pdf', 'reorder pdf pages', 'rearrange pdf pages', 'organize pdf'],
+    emptyTitle: 'Choose a PDF to organize',
+    emptyDescription: 'Preview every page, then rotate or drag pages into the order you want.',
+    processing: 'browser',
+    icon: RotateCw,
   },
   {
     id: 'pdf-compress',

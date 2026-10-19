@@ -20,6 +20,7 @@ https://filemite.com
 - Merge: https://filemite.com/pdf/merge
 - Split: https://filemite.com/pdf/split
 - Extract / remove pages: https://filemite.com/pdf/extract
+- Rotate & reorder pages: https://filemite.com/pdf/organize
 - Compress: https://filemite.com/pdf/compress
 
 ## Limits

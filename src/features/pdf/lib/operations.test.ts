@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { getPageCount, openPdf, PdfError } from "./document";
-import { extractPages, mergePdfs, renderPage, splitPdf } from "./operations";
+import { extractPages, mergePdfs, organizePages, renderPage, splitPdf } from "./operations";
 import { makePdf, pageWidths } from "./test-pdf";
 
 const source = (bytes: Uint8Array, extra: object = {}) => ({ bytes, ...extra });
@@ -120,5 +120,77 @@ describe("renderPage", () => {
     const jpeg = renderPage(doc, 0, 50);
     doc.destroy();
     expect([jpeg[0], jpeg[1]]).toEqual([0xff, 0xd8]);
+  });
+});
+
+describe("organizePages", () => {
+  const rotationOf = async (bytes: Uint8Array, index: number) => {
+    const mupdf = await import("mupdf");
+    const doc = new mupdf.PDFDocument(bytes);
+    try {
+      const value = doc.findPage(index).getInheritable("Rotate");
+      return value.isNumber() ? value.asNumber() : 0;
+    } finally {
+      doc.destroy();
+    }
+  };
+
+  test("reorders pages and rotates only the ones asked for", async () => {
+    const out = organizePages(source(makePdf(3)), [
+      { index: 2, rotate: 90 },
+      { index: 0, rotate: 0 },
+      { index: 1, rotate: 270 },
+    ]);
+    // A page rotated by 90° or 270° reports its height as its width.
+    expect(pageWidths(out)).toEqual([200, 100, 200]);
+    expect(await rotationOf(out, 0)).toBe(90);
+    expect(await rotationOf(out, 1)).toBe(0);
+    expect(await rotationOf(out, 2)).toBe(270);
+  });
+
+  test("adds to a page's existing rotation, wrapping at 360", async () => {
+    const once = organizePages(source(makePdf(1)), [{ index: 0, rotate: 270 }]);
+    const twice = organizePages(source(once), [{ index: 0, rotate: 180 }]);
+    expect(await rotationOf(twice, 0)).toBe(90);
+    const full = organizePages(source(twice), [{ index: 0, rotate: 270 }]);
+    expect(await rotationOf(full, 0)).toBe(0);
+  });
+
+  test("rotates counter-clockwise with negative steps", async () => {
+    const out = organizePages(source(makePdf(1)), [{ index: 0, rotate: -90 }]);
+    expect(await rotationOf(out, 0)).toBe(270);
+  });
+
+  test("keeps rotations attached to the right page after reordering", async () => {
+    const first = organizePages(source(makePdf(2)), [
+      { index: 0, rotate: 90 },
+      { index: 1, rotate: 0 },
+    ]);
+    const swapped = organizePages(source(first), [
+      { index: 1, rotate: 0 },
+      { index: 0, rotate: 0 },
+    ]);
+    expect(await rotationOf(swapped, 0)).toBe(0);
+    expect(await rotationOf(swapped, 1)).toBe(90);
+  });
+
+  test("drops pages that are left out", () => {
+    const out = organizePages(source(makePdf(4)), [
+      { index: 3, rotate: 0 },
+      { index: 1, rotate: 0 },
+    ]);
+    expect(pageWidths(out)).toEqual([103, 101]);
+  });
+
+  test.each([
+    ["a repeated page", [{ index: 0, rotate: 0 }, { index: 0, rotate: 0 }]],
+    ["a page that doesn’t exist", [{ index: 9, rotate: 0 }]],
+    ["an empty list", []],
+    ["a rotation that isn’t a multiple of 90", [{ index: 0, rotate: 45 }]],
+    ["a fractional rotation", [{ index: 0, rotate: 90.5 }]],
+  ])("rejects %s", (_label, edits) => {
+    expect(() => organizePages(source(makePdf(2)), edits)).toThrow(
+      expect.objectContaining({ code: "invalid" }),
+    );
   });
 });
