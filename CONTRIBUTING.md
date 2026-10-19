@@ -7,14 +7,12 @@ Thank you for your interest in contributing to Filemite! We welcome contribution
 1.  **Fork the repository** on GitHub.
 2.  **Clone your fork** locally:
     ```bash
-    git clone https://github.com/your-username/micro-tools.git
-    cd micro-tools
+    git clone https://github.com/your-username/filemite.git
+    cd filemite
     ```
 3.  **Install dependencies**:
     ```bash
-    npm install
-    # or
-    bun install
+    pnpm install
     ```
 4.  **Create a new branch** for your feature or bugfix:
     ```bash
@@ -22,13 +20,13 @@ Thank you for your interest in contributing to Filemite! We welcome contribution
     ```
 5.  **Make your changes** and ensure the project still builds:
     ```bash
-    npm run build
+    pnpm build
     ```
-6.  **Run the checks**:
+6.  **Run the checks** (CI runs the same ones):
     ```bash
-    bun run lint
-    bun run typecheck
-    bun test
+    pnpm typecheck   # needs a prior pnpm build for the generated route tree
+    pnpm lint
+    pnpm test
     ```
 
 ## 🛠️ Development Guidelines
