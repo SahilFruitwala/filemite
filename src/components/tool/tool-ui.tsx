@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useEffect, useId, useState } from 'react';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -121,6 +121,77 @@ export function Message({
   );
 }
 
+const MUNCH_LINES = [
+  'Feeding the mite…',
+  'Teaching pixels to diet…',
+  'Convincing bytes to leave…',
+  'Shaking out the extra weight…',
+  'Ironing out the wrinkles…',
+  'Politely asking bits to squish…',
+  'Nom nom nom…',
+  'Counting every last byte…',
+];
+
+/** A tiny critter chomping through files, with a rotating quirky caption. */
+export function Munching({ lines = MUNCH_LINES, className }: { lines?: string[]; className?: string }) {
+  const [index, setIndex] = useState(() => Math.floor(Math.random() * lines.length));
+  useEffect(() => {
+    const timer = setInterval(() => setIndex((value) => (value + 1) % lines.length), 2200);
+    return () => clearInterval(timer);
+  }, [lines.length]);
+
+  return (
+    <div className={cn('flex items-center gap-3 overflow-hidden', className)} aria-hidden>
+      <div className="relative h-16 w-36 shrink-0">
+        {[0, 550, 1100].map((delay) => (
+          <svg
+            key={delay}
+            viewBox="0 0 16 20"
+            className="mite-file absolute top-[22px] left-[58px] h-5 w-4 text-muted-foreground"
+            style={{ '--delay': `${delay}ms` } as React.CSSProperties}
+          >
+            <path
+              d="M2 1h8l4 4v13a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1Z"
+              fill="var(--card)"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <path d="M4 10h8M4 13h6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
+        ))}
+        <svg viewBox="0 0 64 64" className="absolute top-0 right-0 size-16 overflow-visible">
+          <g className="mite-jaw-top">
+            <path d="M32 32 L4 32 A28 28 0 0 1 60 32 Z" transform="rotate(0 32 32)" fill="var(--primary)" />
+          </g>
+          <g className="mite-jaw-bottom">
+            <path d="M32 32 L4 32 A28 28 0 0 0 60 32 Z" fill="var(--primary)" />
+          </g>
+          <circle cx="36" cy="16" r="3.4" fill="var(--card)" />
+          <circle cx="37" cy="16" r="1.6" fill="var(--foreground)" />
+          {[
+            { delay: 0, dx: -8 },
+            { delay: 370, dx: 4 },
+            { delay: 740, dx: 14 },
+          ].map(({ delay, dx }) => (
+            <circle
+              key={delay}
+              cx="6"
+              cy="30"
+              r="2"
+              className="mite-crumb"
+              fill="var(--primary)"
+              style={{ '--delay': `${delay}ms`, '--dx': `${dx}px` } as React.CSSProperties}
+            />
+          ))}
+        </svg>
+      </div>
+      <p key={index} className="animate-in fade-in slide-in-from-bottom-1 text-sm text-muted-foreground duration-300">
+        {lines[index]}
+      </p>
+    </div>
+  );
+}
+
 export function ProgressBar({ progress }: { progress: number | null }) {
   return (
     <div className="h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden>
@@ -167,7 +238,8 @@ export function ActionPanel({
         )}
       </Button>
       {running && (
-        <div className="mt-3">
+        <div className="mt-3 space-y-3">
+          <Munching />
           <ProgressBar progress={progress} />
         </div>
       )}
