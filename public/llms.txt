@@ -44,4 +44,3 @@ https://www.filemite.com
 ## Other pages
 - Privacy: https://www.filemite.com/privacy
 - Terms: https://www.filemite.com/terms
-- Source code (AGPL-3.0): https://github.com/SahilFruitwala/filemite

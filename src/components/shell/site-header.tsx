@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
+import { FileText, Image as ImageIcon, type LucideIcon } from 'lucide-react';
 
 import { LogoMark, Wordmark } from '@/components/shell/logo';
 import { ThemeSwitch } from '@/components/shell/theme';
@@ -7,25 +8,33 @@ import { SECTIONS, sectionForPath, toolsIn, type Section } from '@/lib/tools';
 import { cn } from '@/lib/utils';
 
 const SECTION_ORDER: Section[] = ['image', 'pdf'];
+const SECTION_ICONS: Record<Section, LucideIcon> = {
+  image: ImageIcon,
+  pdf: FileText,
+};
 
 export function SiteHeader() {
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
   const section = sectionForPath(pathname);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70">
-      <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-3 px-4 sm:gap-6 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2 rounded-md" aria-label="Home">
+      <div className="mx-auto grid h-14 w-full max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 sm:px-6 lg:px-8">
+        <Link
+          to="/"
+          className="flex items-center gap-2 justify-self-start rounded-md"
+          aria-label="Home"
+        >
           <LogoMark />
           <Wordmark />
         </Link>
 
-        <nav
-          aria-label="Sections"
-          className="flex items-center gap-1 rounded-full border border-border bg-card p-0.5"
-        >
+        <nav aria-label="Sections" className="flex items-center gap-0.5 rounded-lg bg-muted p-0.5">
           {SECTION_ORDER.map((id) => {
             const active = section === id;
+            const SectionIcon = SECTION_ICONS[id];
             return (
               <Link
                 key={id}
@@ -33,24 +42,18 @@ export function SiteHeader() {
                 data-section={id}
                 aria-current={active ? 'true' : undefined}
                 className={cn(
-                  'flex h-7 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground',
-                  active && 'bg-primary text-primary-foreground hover:text-primary-foreground',
+                  'flex h-8 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground',
+                  active && 'bg-background text-foreground shadow-sm ring-1 ring-border',
                 )}
               >
-                <span
-                  aria-hidden
-                  className={cn(
-                    'size-1.5 rounded-full bg-primary',
-                    active && 'bg-primary-foreground',
-                  )}
-                />
+                <SectionIcon aria-hidden className={cn('size-4', active && 'text-primary')} />
                 {SECTIONS[id].label}
               </Link>
             );
           })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex items-center justify-self-end gap-2">
           <ThemeSwitch />
         </div>
       </div>
