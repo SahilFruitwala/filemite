@@ -65,7 +65,7 @@ The browser client (`src/features/image/lib/api.ts`) shares one upload limiter a
 
 Shared numbers live in `src/lib/limits.ts`. Server values can be tuned with environment variables: `RATE_LIMIT_BURST`, `RATE_LIMIT_PER_MINUTE`, `RATE_LIMIT_PER_HOUR`, `RATE_LIMIT_IP_CONCURRENCY`, `IMAGE_JOB_CONCURRENCY`, `IMAGE_JOB_QUEUE`, `IMAGE_JOB_QUEUE_TIMEOUT_MS`.
 
-Limits are kept in memory per server instance. On serverless hosts each warm instance enforces them independently — that stops one client hogging an instance, but for a hard global cap add a shared limiter in front (e.g. Vercel WAF rate limiting or Redis).
+Burst, concurrency and queue limits are kept in memory per server instance — they protect that instance's CPU. The hourly quota can also be shared across every instance: set `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (or the `KV_REST_API_URL` / `KV_REST_API_TOKEN` that Vercel's Upstash integration adds) and it is counted in Redis. It fails open — if Redis is unreachable, requests are still served under the per-instance limits.
 
 ## Development
 

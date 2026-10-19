@@ -10,6 +10,7 @@ import {
   MAX_IMAGE_BYTES,
 } from '@/lib/limits';
 import { BusyError, InFlight, Semaphore, TokenBucket } from './rate-limit';
+import { sharedLimiterFromEnv } from './shared-limit';
 
 function envNumber(name: string, fallback: number): number {
   const value = Number(process.env[name]);
@@ -44,6 +45,8 @@ const hourly = new TokenBucket({
 });
 const inFlight = new InFlight();
 const jobs = new Semaphore(config.concurrency, config.queueSize);
+/** Hourly quota counted across all instances, when Redis is configured. */
+const shared = sharedLimiterFromEnv();
 
 /** Multipart overhead on top of the file itself. */
 const FORM_OVERHEAD_BYTES = 64 * 1024;
@@ -106,13 +109,34 @@ export async function guardImageRequest(
     );
   }
 
+  // Quota is only spent on requests that get processed, so every later rejection gives it back.
+  const refundQuota = () => {
+    hourly.refund(ip, cost);
+    void shared?.refund(ip, cost);
+  };
+
+  if (shared) {
+    const global = await shared.take(ip, cost, config.perHour);
+    if (!global.ok) {
+      // The attempt was counted on the way in; a rejected one shouldn't use up quota.
+      hourly.refund(ip, cost);
+      void shared.refund(ip, cost);
+      const minutes = Math.ceil(global.retryAfter / 60);
+      return jsonError(
+        `Hourly limit reached (${config.perHour} images). Try again in ${minutes} minute${minutes === 1 ? '' : 's'}.`,
+        429,
+        { 'Retry-After': String(global.retryAfter) },
+      );
+    }
+  }
+
   const rate = buckets.take(ip, cost);
   const rateHeaders = {
     'RateLimit-Limit': String(rate.limit),
     'RateLimit-Remaining': String(Math.max(0, rate.remaining)),
   };
   if (!rate.ok) {
-    hourly.refund(ip, cost);
+    refundQuota();
     return jsonError(`Too many requests. Try again in ${rate.retryAfter}s.`, 429, {
       ...rateHeaders,
       'Retry-After': String(rate.retryAfter),
@@ -122,7 +146,7 @@ export async function guardImageRequest(
   if (!inFlight.tryEnter(ip, config.perIpConcurrency)) {
     // Not processed, so it shouldn't count against the visitor's quotas.
     buckets.refund(ip, cost);
-    hourly.refund(ip, cost);
+    refundQuota();
     return jsonError('Too many uploads at once. Wait for the current ones to finish.', 429, {
       ...rateHeaders,
       'Retry-After': '2',
@@ -136,7 +160,7 @@ export async function guardImageRequest(
     } catch (error) {
       if (error instanceof BusyError) {
         buckets.refund(ip, cost);
-        hourly.refund(ip, cost);
+        refundQuota();
         return jsonError('The server is busy right now. Please try again in a moment.', 503, {
           ...rateHeaders,
           'Retry-After': '5',
