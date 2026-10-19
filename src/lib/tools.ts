@@ -5,14 +5,18 @@
 import {
   Crop,
   Eraser,
+  EyeOff,
   FileArchive,
   FileOutput,
+  FlipHorizontal2,
   Gem,
   ImageDown,
   Layers,
   Palette,
+  RotateCw,
   Scaling,
   SplitSquareHorizontal,
+  Stamp,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -25,12 +29,16 @@ export type ToolId =
   | 'image-compress'
   | 'image-resize'
   | 'image-crop'
+  | 'image-rotate'
+  | 'image-redact'
+  | 'image-watermark'
   | 'image-scrub'
   | 'image-palette'
   | 'image-favicon'
   | 'pdf-merge'
   | 'pdf-split'
   | 'pdf-extract'
+  | 'pdf-organize'
   | 'pdf-compress';
 
 export type Tool = {
@@ -58,13 +66,13 @@ export const SECTIONS: Record<
   image: {
     label: 'Image',
     title: 'Image tools',
-    description: 'Compress, resize, crop and clean up PNG, JPEG, WebP and HEIC.',
+    description: 'Compress, resize, crop, rotate and clean up PNG, JPEG, WebP and HEIC.',
     href: '/image/compress',
   },
   pdf: {
     label: 'PDF',
     title: 'PDF tools',
-    description: 'Merge, split, extract and compress PDFs — entirely in your browser.',
+    description: 'Merge, split, extract, organize and compress PDFs — entirely in your browser.',
     href: '/pdf/merge',
   },
 };
@@ -123,6 +131,54 @@ export const tools: Tool[] = [
     emptyDescription: 'We’ll find the focal point and frame it for each format.',
     processing: 'browser',
     icon: Crop,
+  },
+  {
+    id: 'image-rotate',
+    section: 'image',
+    href: '/image/rotate',
+    title: 'Rotate & Flip Image',
+    shortTitle: 'Rotate',
+    description: 'Turn a photo upright or mirror it, then save it at full resolution.',
+    seoTitle: 'Rotate & Flip Image Online — Free, In Your Browser',
+    seoDescription:
+      'Rotate photos left or right and flip them horizontally or vertically. Saved at full resolution and never uploaded — it all runs in your browser.',
+    keywords: ['rotate image', 'flip image', 'mirror image', 'rotate photo', 'turn picture'],
+    emptyTitle: 'Choose an image to rotate',
+    emptyDescription: 'Turn it, mirror it, then save it at full size.',
+    processing: 'browser',
+    icon: FlipHorizontal2,
+  },
+  {
+    id: 'image-redact',
+    section: 'image',
+    href: '/image/redact',
+    title: 'Blur & Redact Image',
+    shortTitle: 'Redact',
+    description: 'Hide faces, names and numbers with a black box, pixelation or blur.',
+    seoTitle: 'Blur & Redact Parts of an Image — Private, In Your Browser',
+    seoDescription:
+      'Draw boxes over faces, license plates, names or numbers and hide them with a solid block, pixelation or blur. The image never leaves your device.',
+    keywords: ['blur image', 'redact image', 'pixelate image', 'blur face', 'hide text in screenshot'],
+    emptyTitle: 'Choose an image to redact',
+    emptyDescription: 'Then draw boxes over anything you want to hide.',
+    processing: 'browser',
+    icon: EyeOff,
+  },
+  {
+    id: 'image-watermark',
+    section: 'image',
+    href: '/image/watermark',
+    title: 'Add Watermark',
+    shortTitle: 'Watermark',
+    description: 'Stamp text or your logo on a photo — once, or tiled across it.',
+    seoTitle: 'Add a Watermark to Photos — Text or Logo, In Your Browser',
+    seoDescription:
+      'Add a text or logo watermark to your images. Choose size, opacity, position and angle, or tile it across the picture. Runs entirely in your browser.',
+    keywords: ['add watermark', 'watermark photo', 'watermark image', 'logo on image', 'text on photo'],
+    emptyTitle: 'Choose an image to watermark',
+    emptyDescription: 'Add text or a logo, then place it where you want it.',
+    processing: 'browser',
+    icon: Stamp,
   },
   {
     id: 'image-scrub',
@@ -219,6 +275,22 @@ export const tools: Tool[] = [
     emptyDescription: 'Click pages or type ranges like 1-3, 8, 10-z.',
     processing: 'browser',
     icon: FileOutput,
+  },
+  {
+    id: 'pdf-organize',
+    section: 'pdf',
+    href: '/pdf/organize',
+    title: 'Rotate & Reorder Pages',
+    shortTitle: 'Organize',
+    description: 'Rotate pages and drag them into a new order. Nothing leaves your device.',
+    seoTitle: 'Rotate & Reorder PDF Pages — Free, In Your Browser',
+    seoDescription:
+      'Rotate individual PDF pages or the whole document and drag pages into a new order. Links, forms and bookmarks are kept. Files never leave your device.',
+    keywords: ['rotate pdf', 'reorder pdf pages', 'rearrange pdf pages', 'organize pdf'],
+    emptyTitle: 'Choose a PDF to organize',
+    emptyDescription: 'Preview every page, then rotate or drag pages into the order you want.',
+    processing: 'browser',
+    icon: RotateCw,
   },
   {
     id: 'pdf-compress',

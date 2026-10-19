@@ -4,12 +4,15 @@ Live at [filemite.com](https://filemite.com).
 
 Small, fast tools for images and PDFs — one app, one design system.
 
-| Image tools (server, in-memory) | PDF tools (in the browser) |
+| Image tools (server, in memory, unless marked *browser*) | PDF tools (in the browser) |
 | --- | --- |
 | **Compress** — PNG, JPEG, WebP, HEIC; batch of 10; Best / Balanced / Smallest | **Merge** — drag to reorder; links, forms and bookmarks kept |
 | **Resize** — exact pixels or presets; cover / contain / fit / stretch | **Split** — every N pages, custom ranges, or click to cut |
 | **Smart crop** — content-aware crops for social formats *(browser)* | **Extract** — keep or remove pages; `1-3, 8, 10-z` ranges |
-| **Remove metadata** — shows then strips EXIF, GPS, XMP, IPTC | **Compress** — by quality or to a target size; text stays sharp |
+| **Rotate & flip** — quarter turns and mirrors at full resolution *(browser)* | **Compress** — by quality or to a target size; text stays sharp |
+| **Blur & redact** — black box, pixelate or blur; hidden pixels are really replaced *(browser)* | **Organize** — rotate pages and drag them into a new order |
+| **Watermark** — text or logo, placed once or tiled *(browser)* | |
+| **Remove metadata** — shows then strips EXIF, GPS, XMP, IPTC | |
 | **Color palette** — HEX / RGB / HSL, copy as CSS variables *(browser)* | |
 | **Favicon** — 16–256 px PNGs, `favicon.ico`, Apple touch icon | |
 
@@ -66,22 +69,25 @@ Limits are kept in memory per server instance. On serverless hosts each warm ins
 
 ## Development
 
-Requires Node 20+ (or Bun).
+Requires Node 22+ and [pnpm](https://pnpm.io) (the version is pinned in `package.json`; `corepack enable` picks it up).
 
 ```bash
-bun install
-bun run dev         # http://localhost:3000
-bun run lint
-bun run typecheck
-bun test            # rate limiter unit tests
-bun run build && bun run start
+pnpm install
+pnpm dev            # http://localhost:3000
+pnpm build          # also generates src/routeTree.gen.ts, which typecheck needs
+pnpm typecheck
+pnpm lint
+pnpm test           # Vitest: server guard, Sharp pipeline, PDF operations
+pnpm start          # serve the production build
 ```
+
+CI (`.github/workflows/ci.yml`) runs build, typecheck, lint and tests on every pull request. `GET /api/health` returns 200 once Sharp has loaded, for uptime monitors.
 
 Optional env: `VITE_SITE_URL` (canonical origin), `VITE_PUBLIC_POSTHOG_PROJECT_TOKEN`, `VITE_PUBLIC_POSTHOG_HOST`.
 
 ## Deployment
 
-Built with [TanStack Start](https://tanstack.com/start) and Nitro. On Vercel the `vercel` preset is used automatically; Sharp needs the **Node.js** runtime (not Edge), and uploads stay under Vercel's ~4.5 MB body limit. Elsewhere `bun run start` serves the Node build.
+Built with [TanStack Start](https://tanstack.com/start) and Nitro. On Vercel the `vercel` preset is used automatically; Sharp needs the **Node.js** runtime (not Edge), and uploads stay under Vercel's ~4.5 MB body limit. Function duration is raised to 60 s in `vite.config.ts` so a busy server answers with a clean 503 instead of a platform timeout. Elsewhere `pnpm start` serves the Node build.
 
 Old MicroPNG (`/crop`, `/resize`, …) and microPDF (`/merge`, `/split`, …) paths 301-redirect to their new homes.
 

@@ -293,6 +293,19 @@ export async function extractFromFile(file: JobFile, pages: number[]) {
   );
 }
 
+/** `edits` use 1-based page numbers, in output order; `rotate` is extra clockwise degrees. */
+export async function organizeFile(
+  file: JobFile,
+  edits: { page: number; rotate: number }[]
+) {
+  const source = await toSource(file);
+  return runJob(
+    "organize",
+    { source, edits: edits.map(({ page, rotate }) => ({ index: page - 1, rotate })) },
+    { transfer: transfers(source) }
+  );
+}
+
 export async function compressFile(
   file: JobFile,
   options: EngineArgs<"compress">["options"],

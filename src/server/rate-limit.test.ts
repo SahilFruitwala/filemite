@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import { BusyError, InFlight, Semaphore, TokenBucket } from './rate-limit';
 
 describe('TokenBucket', () => {
