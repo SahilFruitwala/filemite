@@ -6,7 +6,14 @@ import { SiteFooter } from '@/components/shell/site-footer';
 import { SiteHeader } from '@/components/shell/site-header';
 import { ThemeProvider, themeBootScript } from '@/components/shell/theme';
 import { NotFoundPage } from '@/pages/not-found';
-import { AUTHOR, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from '@/lib/site';
+import {
+  AUTHOR,
+  OG_IMAGE,
+  OG_IMAGE_ALT,
+  SITE_DESCRIPTION,
+  SITE_NAME, SITE_TAGLINE,
+  SITE_URL,
+} from '@/lib/site';
 import appCss from '@/styles/app.css?url';
 
 const TITLE = `${SITE_NAME} — ${SITE_TAGLINE}`;
@@ -31,11 +38,16 @@ export const Route = createRootRoute({
       { property: 'og:url', content: SITE_URL },
       { property: 'og:site_name', content: SITE_NAME },
       { property: 'og:type', content: 'website' },
-      { property: 'og:image', content: `${SITE_URL}/opengraph.webp` },
+      { property: 'og:image', content: OG_IMAGE },
+      { property: 'og:image:type', content: 'image/png' },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '630' },
+      { property: 'og:image:alt', content: OG_IMAGE_ALT },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: TITLE },
       { name: 'twitter:description', content: SITE_DESCRIPTION },
-      { name: 'twitter:image', content: `${SITE_URL}/opengraph.webp` },
+      { name: 'twitter:image', content: OG_IMAGE },
+      { name: 'twitter:image:alt', content: OG_IMAGE_ALT },
     ],
     links: [
       { rel: 'stylesheet', href: appCss },

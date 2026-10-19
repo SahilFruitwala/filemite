@@ -10,6 +10,10 @@ export const SITE_URL = String(
   import.meta.env.VITE_SITE_URL || 'https://filemite.com',
 ).replace(/\/$/, '');
 
+/** Social preview card (1200×630 PNG in /public). */
+export const OG_IMAGE = `${SITE_URL}/opengraph.png`;
+export const OG_IMAGE_ALT = `${SITE_NAME} — ${SITE_TAGLINE}`;
+
 /** Public source — the AGPL requires offering it to users of the site. */
 export const SOURCE_URL = 'https://github.com/SahilFruitwala/filemite';
 
