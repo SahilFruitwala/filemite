@@ -317,6 +317,7 @@ export function ResizeTool() {
           disabledReason={disabledReason}
           job={job.state}
           onRun={run}
+          animation="squish"
         />
       )}
     </>

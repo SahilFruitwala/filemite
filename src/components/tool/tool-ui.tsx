@@ -132,6 +132,85 @@ const MUNCH_LINES = [
   'Counting every last byte…',
 ];
 
+const SQUISH_LINES = [
+  'Squishing pixels…',
+  'Applying maximum squeeze…',
+  'Sit on it, bytes!',
+  'Vacuum-sealing your file…',
+  'Fitting it into skinny jeans…',
+  'Pixels in the trash compactor…',
+  'Squeeze harder!',
+  'Shrinking, not sinking…',
+];
+
+/** A chubby file with a face gets flattened by a press and pops out small and smug. */
+export function Squishing({ className }: { className?: string }) {
+  const [index, setIndex] = useState(() => Math.floor(Math.random() * SQUISH_LINES.length));
+  useEffect(() => {
+    const timer = setInterval(() => setIndex((value) => (value + 1) % SQUISH_LINES.length), 2400);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className={cn('flex items-center gap-3 overflow-hidden', className)} aria-hidden>
+      <svg viewBox="0 0 150 64" className="h-16 w-[150px] shrink-0 overflow-visible">
+        {/* anvil */}
+        <rect x="14" y="54" width="60" height="6" rx="3" fill="var(--foreground)" />
+        {/* the big, worried file */}
+        <g className="squish-big">
+          <path
+            d="M36 15h18l10 10v28a2 2 0 0 1-2 2H36a2 2 0 0 1-2-2V17a2 2 0 0 1 2-2Z"
+            fill="var(--card)"
+            stroke="var(--primary)"
+            strokeWidth="2.5"
+            strokeLinejoin="round"
+          />
+          <circle cx="42" cy="34" r="3.2" fill="var(--card)" stroke="var(--foreground)" strokeWidth="1.2" />
+          <circle cx="54" cy="34" r="3.2" fill="var(--card)" stroke="var(--foreground)" strokeWidth="1.2" />
+          <circle cx="42.6" cy="34.4" r="1.4" fill="var(--foreground)" />
+          <circle cx="53.4" cy="34.4" r="1.4" fill="var(--foreground)" />
+          <path d="M43 45q5-3 10 0" fill="none" stroke="var(--foreground)" strokeWidth="1.5" strokeLinecap="round" />
+        </g>
+        {/* the press */}
+        <g className="squish-press">
+          <rect x="14" y="0" width="60" height="7" rx="3" fill="var(--foreground)" />
+          <rect x="42" y="-14" width="4" height="14" fill="var(--foreground)" />
+        </g>
+        {/* squish sparks */}
+        <g className="squish-sparks" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round">
+          <path d="M20 46l-8-3M78 46l8-3M22 38l-9 0M76 38l9 0" />
+        </g>
+        {/* the small, smug result */}
+        <g className="squish-small">
+          <path
+            d="M104 34h9l6 6v14a1.5 1.5 0 0 1-1.5 1.5H104a1.5 1.5 0 0 1-1.5-1.5V35.5A1.5 1.5 0 0 1 104 34Z"
+            fill="var(--primary)"
+          />
+          <circle cx="107" cy="46" r="1.2" fill="var(--primary-foreground)" />
+          <circle cx="114" cy="46" r="1.2" fill="var(--primary-foreground)" />
+          <path d="M107 50q3.5 3 7 0" fill="none" stroke="var(--primary-foreground)" strokeWidth="1.3" strokeLinecap="round" />
+          <text
+            x="124"
+            y="38"
+            fontFamily="var(--font-mono)"
+            fontSize="11"
+            fontWeight="600"
+            fill="var(--primary)"
+          >
+            −87%
+          </text>
+        </g>
+      </svg>
+      <p
+        key={index}
+        className="animate-in fade-in slide-in-from-bottom-1 text-sm text-muted-foreground duration-300"
+      >
+        {SQUISH_LINES[index]}
+      </p>
+    </div>
+  );
+}
+
 /** A tiny critter chomping through files, with a rotating quirky caption. */
 export function Munching({ lines = MUNCH_LINES, className }: { lines?: string[]; className?: string }) {
   const [index, setIndex] = useState(() => Math.floor(Math.random() * lines.length));
@@ -212,6 +291,7 @@ export function ActionPanel({
   disabledReason,
   job,
   onRun,
+  animation = 'mite',
   children,
 }: {
   label: string;
@@ -219,6 +299,8 @@ export function ActionPanel({
   disabledReason: string | null;
   job: JobState<unknown>;
   onRun: () => void;
+  /** Which quirky loader to show while running; compression-like jobs use "squish". */
+  animation?: 'mite' | 'squish';
   children?: React.ReactNode;
 }) {
   const running = job.status === 'running';
@@ -239,7 +321,7 @@ export function ActionPanel({
       </Button>
       {running && (
         <div className="mt-3 space-y-3">
-          <Munching />
+          {animation === 'squish' ? <Squishing /> : <Munching />}
           <ProgressBar progress={progress} />
         </div>
       )}

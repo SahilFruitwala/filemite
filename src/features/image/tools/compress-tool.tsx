@@ -3,7 +3,7 @@ import posthog from 'posthog-js';
 import { ChevronDown, Download, ImageUp, Loader2, RotateCcw, Trash2, X } from 'lucide-react';
 
 import { AddFilesButton, DropTarget, FileDrop } from '@/components/tool/file-drop';
-import { Field, Message, Munching, Panel, Segmented, ToolLayout } from '@/components/tool/tool-ui';
+import { Field, Message, Panel, Segmented, Squishing, ToolLayout } from '@/components/tool/tool-ui';
 import { Button } from '@/components/ui/button';
 import ImageCompare from '@/features/image/components/ImageCompare';
 import { isQuotaError, postImageForm, runQueue } from '@/features/image/lib/api';
@@ -357,7 +357,7 @@ export function CompressTool() {
             </div>
           ) : (
             <div className="text-sm text-muted-foreground">
-              {busy ? <Munching /> : 'Nothing finished yet.'}
+              {busy ? <Squishing /> : 'Nothing finished yet.'}
             </div>
           )}
           {failed.length > 0 && (
