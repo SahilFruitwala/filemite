@@ -28,6 +28,7 @@ import {
   outputDetail,
 } from "@/components/tool/tool-ui";
 import { Button } from "@/components/ui/button";
+import { PdfOutputPreview } from "@/features/pdf/components/output-preview";
 import { PageThumbnail } from "@/features/pdf/components/page-thumbnail";
 import { PageGrid, SingleDocumentWorkspace } from "@/features/pdf/components/single-document";
 import { usePdfDocuments } from "@/features/pdf/hooks/use-pdf-documents";
@@ -230,7 +231,7 @@ export function OrganizeTool() {
     </>
   );
 
-  return <ToolLayout main={main} sidebar={sidebar} active={!!doc} />;
+  return <ToolLayout main={result ? <PdfOutputPreview files={[result]} onEdit={job.reset} /> : main} sidebar={sidebar} active={!!doc} />;
 }
 
 function PageCard({

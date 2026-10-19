@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Check } from "lucide-react";
 
+import { PdfOutputPreview } from "@/features/pdf/components/output-preview";
 import { PageThumbnail } from "@/features/pdf/components/page-thumbnail";
 import { PageGrid, SingleDocumentWorkspace } from "@/features/pdf/components/single-document";
 import {
@@ -272,5 +273,5 @@ export function ExtractTool() {
     </>
   );
 
-  return <ToolLayout main={main} sidebar={sidebar} active={!!doc} />;
+  return <ToolLayout main={result ? <PdfOutputPreview files={[result]} onEdit={job.reset} /> : main} sidebar={sidebar} active={!!doc} />;
 }

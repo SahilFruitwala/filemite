@@ -47,9 +47,10 @@ const FORMATS: { value: Format; label: string; hint: string }[] = [
   { value: 'webp', label: 'WebP', hint: 'Small files that keep transparency. Works on all modern browsers.' },
 ];
 
-function Thumb({ file }: { file: File }) {
-  const url = useObjectUrl(file);
-  const isHeic = /hei[cf]/i.test(`${file.type} ${file.name}`);
+/** Shows the converted image once it exists, so the output can be checked before it's saved. */
+function Thumb({ file, converted }: { file: File; converted?: Blob }) {
+  const url = useObjectUrl(converted ?? file);
+  const isHeic = !converted && /hei[cf]/i.test(`${file.type} ${file.name}`);
   return (
     <div className="bg-checker flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border">
       {url && !isHeic ? (
@@ -225,7 +226,7 @@ export function ConvertTool() {
               key={item.id}
               className="flex animate-in fade-in items-center gap-3 rounded-xl border border-border bg-card p-2.5 shadow-sm duration-300"
             >
-              <Thumb file={item.file} />
+              <Thumb file={item.file} converted={item.result?.blob} />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium" title={item.file.name}>
                   {item.result?.name ?? item.file.name}

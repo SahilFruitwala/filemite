@@ -1,3 +1,4 @@
+import { PdfOutputPreview } from "@/features/pdf/components/output-preview";
 import { useState } from "react";
 import { ArrowDownAZ, ImageUp, Trash2 } from "lucide-react";
 
@@ -232,5 +233,5 @@ export function FromImagesTool() {
     </>
   );
 
-  return <ToolLayout main={main} sidebar={sidebar} active={images.length > 0} />;
+  return <ToolLayout main={result ? <PdfOutputPreview files={[result]} onEdit={job.reset} /> : main} sidebar={sidebar} active={images.length > 0} />;
 }
