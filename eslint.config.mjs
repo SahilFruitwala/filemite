@@ -32,4 +32,17 @@ export default defineConfig([
       ],
     },
   },
+  {
+    // Hand-written service worker served as-is from /public.
+    files: ['public/sw.js'],
+    languageOptions: {
+      globals: {
+        self: 'readonly',
+        caches: 'readonly',
+        fetch: 'readonly',
+        URL: 'readonly',
+        Response: 'readonly',
+      },
+    },
+  },
 ]);
