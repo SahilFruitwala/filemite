@@ -51,7 +51,7 @@ Only the image endpoints touch the server, and every request goes through `src/s
 | Layer | Default | Response |
 | --- | --- | --- |
 | Batch size (browser) | 10 images per batch, 20 PDFs per merge | rejected in the UI |
-| Body size (from `Content-Length`) | 4 MB file | 413 / 411 |
+| Body size (from `Content-Length`) | 4 MB file (the Compress tool handles larger files in the browser) | 413 / 411 |
 | Per-IP concurrent requests (running or queued) | 2 — the browser never sends more | 429 |
 | Per-IP burst bucket | 12, refills 12/min; favicon costs 3 | 429 + `Retry-After` |
 | Per-IP hourly quota | 100 images/hour across all image tools | 429 + `Retry-After` |
