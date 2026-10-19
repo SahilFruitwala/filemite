@@ -79,11 +79,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-const OPTIONS = [
-  { value: 'light', label: 'Light', icon: Sun },
-  { value: 'dark', label: 'Dark', icon: Moon },
-] as const;
-
 /** Tracks the OS colour scheme, so an unset preference still shows the right button. */
 function useSystemDark() {
   return useSyncExternalStore(
@@ -101,35 +96,24 @@ export function ThemeSwitch({ className }: { className?: string }) {
   const { preference, setPreference } = useContext(ThemeContext);
   const mounted = useHydrated();
   const systemDark = useSystemDark();
-  // Until the visitor picks one, the OS setting decides which button is on.
+  // Until the visitor picks one, the OS setting decides which theme is showing.
   const resolved = preference === 'system' ? (systemDark ? 'dark' : 'light') : preference;
+  const next = resolved === 'dark' ? 'light' : 'dark';
+  const label = `Switch to ${next} theme`;
+  const Icon = mounted && resolved === 'dark' ? Moon : Sun;
 
   return (
-    <div
-      role="radiogroup"
-      aria-label="Color theme"
-      className={cn('inline-flex rounded-full border border-border bg-card p-0.5', className)}
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={() => setPreference(next)}
+      className={cn(
+        'flex size-8 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:text-foreground',
+        className,
+      )}
     >
-      {OPTIONS.map(({ value, label, icon: Icon }) => {
-        const active = mounted && resolved === value;
-        return (
-          <button
-            key={value}
-            type="button"
-            role="radio"
-            aria-checked={active}
-            aria-label={label}
-            title={label}
-            onClick={() => setPreference(value)}
-            className={cn(
-              'flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground',
-              active && 'bg-foreground text-background hover:text-background',
-            )}
-          >
-            <Icon className="size-3.5" />
-          </button>
-        );
-      })}
-    </div>
+      <Icon className="size-4" />
+    </button>
   );
 }
