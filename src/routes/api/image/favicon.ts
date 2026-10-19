@@ -18,9 +18,9 @@ export const Route = createFileRoute('/api/image/favicon')({
             const files = await generateFavicons(upload.buffer);
             // PNG and ICO are already compressed — store them as-is.
             const zip = zipSync(files, { level: 0 });
-            captureServerEvent('server_favicons_generated', {
+            await captureServerEvent('server_favicons_generated', {
               original_size_bytes: upload.buffer.byteLength,
-            });
+            }, request);
             return binaryResponse(zip, 'application/zip', 'favicons.zip');
           } catch (error) {
             return processingError(error, 'Favicon generation');

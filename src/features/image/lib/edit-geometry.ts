@@ -100,3 +100,46 @@ export function tilePositions(
   }
   return points;
 }
+
+export type ArrowKey = 'ArrowLeft' | 'ArrowRight' | 'ArrowUp' | 'ArrowDown';
+
+/**
+ * Moves a rectangle one step in an arrow direction, or — when `resize` is set —
+ * grows it (right/down) or shrinks it (left/up) from its bottom-right corner.
+ * The result always stays inside the image and is at least one pixel in each direction.
+ */
+export function nudgeRect(
+  rect: Rect,
+  key: ArrowKey,
+  step: number,
+  resize: boolean,
+  image: { width: number; height: number },
+): Rect {
+  const dx = key === 'ArrowLeft' ? -step : key === 'ArrowRight' ? step : 0;
+  const dy = key === 'ArrowUp' ? -step : key === 'ArrowDown' ? step : 0;
+
+  if (resize) {
+    return {
+      ...rect,
+      width: Math.min(image.width - rect.x, Math.max(1, rect.width + dx)),
+      height: Math.min(image.height - rect.y, Math.max(1, rect.height + dy)),
+    };
+  }
+  return {
+    ...rect,
+    x: Math.min(image.width - rect.width, Math.max(0, rect.x + dx)),
+    y: Math.min(image.height - rect.height, Math.max(0, rect.y + dy)),
+  };
+}
+
+/** A box centred on the image, `fraction` of its size in each direction — a starting point to adjust. */
+export function centeredRect(image: { width: number; height: number }, fraction: number): Rect {
+  const width = Math.max(1, Math.round(image.width * fraction));
+  const height = Math.max(1, Math.round(image.height * fraction));
+  return {
+    x: Math.round((image.width - width) / 2),
+    y: Math.round((image.height - height) / 2),
+    width,
+    height,
+  };
+}

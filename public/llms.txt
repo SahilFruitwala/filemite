@@ -33,4 +33,4 @@ https://filemite.com
 ## Other pages
 - Privacy: https://filemite.com/privacy
 - Terms: https://filemite.com/terms
-- Source code (AGPL-3.0): https://github.com/SahilFruitwala/micro-tools
+- Source code (AGPL-3.0): https://github.com/SahilFruitwala/filemite

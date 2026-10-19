@@ -70,7 +70,7 @@ export const Route = createFileRoute('/api/image/compress')({
               crop,
             });
 
-            captureServerEvent('server_image_compressed', {
+            await captureServerEvent('server_image_compressed', {
               input_format: inputFormat,
               output_format: output.format,
               compression_level: level,
@@ -81,7 +81,7 @@ export const Route = createFileRoute('/api/image/compress')({
               ),
               did_resize: shouldResize,
               did_crop: !!crop,
-            });
+            }, request);
 
             return binaryResponse(
               output.data,

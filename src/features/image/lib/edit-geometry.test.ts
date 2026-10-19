@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import {
   MAX_TILES,
+  centeredRect,
+  nudgeRect,
   WATERMARK_POSITIONS,
   clampRect,
   placeWatermark,
@@ -115,5 +117,53 @@ describe('tilePositions', () => {
     expect(tilePositions({ width: 100, height: 100 }, { width: 0, height: 0 }, { x: 0, y: 0 }).length).toBeLessThanOrEqual(
       MAX_TILES,
     );
+  });
+});
+
+describe('nudgeRect', () => {
+  const image = { width: 100, height: 80 };
+  const box = { x: 20, y: 30, width: 40, height: 20 };
+
+  test('moves in the arrow direction', () => {
+    expect(nudgeRect(box, 'ArrowRight', 5, false, image)).toEqual({ ...box, x: 25 });
+    expect(nudgeRect(box, 'ArrowLeft', 5, false, image)).toEqual({ ...box, x: 15 });
+    expect(nudgeRect(box, 'ArrowUp', 5, false, image)).toEqual({ ...box, y: 25 });
+    expect(nudgeRect(box, 'ArrowDown', 5, false, image)).toEqual({ ...box, y: 35 });
+  });
+
+  test('stops at the image edges without changing size', () => {
+    expect(nudgeRect({ ...box, x: 2 }, 'ArrowLeft', 5, false, image).x).toBe(0);
+    expect(nudgeRect({ ...box, x: 58 }, 'ArrowRight', 5, false, image)).toEqual({ ...box, x: 60 });
+    expect(nudgeRect({ ...box, y: 58 }, 'ArrowDown', 5, false, image)).toEqual({ ...box, y: 60 });
+  });
+
+  test('resizing grows right and down and shrinks left and up, keeping the corner fixed', () => {
+    expect(nudgeRect(box, 'ArrowRight', 5, true, image)).toEqual({ ...box, width: 45 });
+    expect(nudgeRect(box, 'ArrowLeft', 5, true, image)).toEqual({ ...box, width: 35 });
+    expect(nudgeRect(box, 'ArrowDown', 5, true, image)).toEqual({ ...box, height: 25 });
+    expect(nudgeRect(box, 'ArrowUp', 5, true, image)).toEqual({ ...box, height: 15 });
+  });
+
+  test('resizing never leaves the image or collapses below one pixel', () => {
+    expect(nudgeRect({ ...box, x: 90, width: 8 }, 'ArrowRight', 50, true, image).width).toBe(10);
+    expect(nudgeRect(box, 'ArrowLeft', 500, true, image).width).toBe(1);
+    expect(nudgeRect(box, 'ArrowUp', 500, true, image).height).toBe(1);
+  });
+});
+
+describe('centeredRect', () => {
+  test('is centred and a fraction of the image', () => {
+    expect(centeredRect({ width: 1000, height: 600 }, 0.25)).toEqual({
+      x: 375,
+      y: 225,
+      width: 250,
+      height: 150,
+    });
+  });
+
+  test('stays inside tiny images', () => {
+    const rect = centeredRect({ width: 2, height: 2 }, 0.1);
+    expect(rect.width).toBeGreaterThanOrEqual(1);
+    expect(rect.x + rect.width).toBeLessThanOrEqual(2);
   });
 });

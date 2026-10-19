@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const ENV_KEYS = [
+  'UPSTASH_REDIS_REST_URL',
+  'UPSTASH_REDIS_REST_TOKEN',
   'RATE_LIMIT_BURST',
   'RATE_LIMIT_PER_MINUTE',
   'RATE_LIMIT_PER_HOUR',
@@ -184,6 +186,57 @@ describe('guardImageRequest', () => {
     const { guardImageRequest } = await loadGuard({ RATE_LIMIT_BURST: 'abc' });
     const response = await guardImageRequest(upload(), {}, ok);
     expect(response.headers.get('RateLimit-Limit')).toBe('12');
+  });
+});
+
+describe('shared hourly quota (Redis configured)', () => {
+  const redisEnv = { UPSTASH_REDIS_REST_URL: 'https://redis.example', UPSTASH_REDIS_REST_TOKEN: 't' };
+
+  /** Redis reply for the next INCRBY: the visitor's running total across all instances. */
+  function mockRedis(total: () => number) {
+    const sent: string[] = [];
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (_url: unknown, init?: RequestInit) => {
+        const commands = JSON.parse(String(init?.body)) as string[][];
+        sent.push(commands[0][0]);
+        return new Response(JSON.stringify(commands.map(() => ({ result: total() }))));
+      }),
+    );
+    return sent;
+  }
+
+  afterEach(() => vi.unstubAllGlobals());
+
+  test('rejects with 429 when other instances already used the quota', async () => {
+    mockRedis(() => 999);
+    const { guardImageRequest } = await loadGuard({ ...redisEnv, RATE_LIMIT_PER_HOUR: '100' });
+    const handler = vi.fn(ok);
+    const response = await guardImageRequest(upload(), {}, handler);
+    expect(response.status).toBe(429);
+    expect(handler).not.toHaveBeenCalled();
+    expect(Number(response.headers.get('Retry-After'))).toBeGreaterThan(0);
+  });
+
+  test('gives the shared quota back for a rejected attempt', async () => {
+    const sent = mockRedis(() => 999);
+    const { guardImageRequest } = await loadGuard(redisEnv);
+    await guardImageRequest(upload(), {}, ok);
+    await Promise.resolve();
+    expect(sent).toContain('INCRBY');
+    expect(sent).toContain('DECRBY');
+  });
+
+  test('processes the request when the shared count is within the limit', async () => {
+    mockRedis(() => 1);
+    const { guardImageRequest } = await loadGuard(redisEnv);
+    expect((await guardImageRequest(upload(), {}, ok)).status).toBe(200);
+  });
+
+  test('still serves requests when Redis is down', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('offline'))));
+    const { guardImageRequest } = await loadGuard(redisEnv);
+    expect((await guardImageRequest(upload(), {}, ok)).status).toBe(200);
   });
 });
 

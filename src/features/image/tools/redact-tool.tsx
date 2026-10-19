@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Eraser, Undo2 } from 'lucide-react';
+import { Eraser, Plus, Undo2 } from 'lucide-react';
 
 import {
   ActionPanel,
@@ -21,9 +21,12 @@ import {
   paintBackground,
 } from '@/features/image/lib/canvas';
 import {
+  centeredRect,
   clampRect,
+  nudgeRect,
   rectFromPoints,
   toImagePoint,
+  type ArrowKey,
   type Point,
 } from '@/features/image/lib/edit-geometry';
 import {
@@ -54,6 +57,8 @@ const tool = getTool('image-redact');
 /** Smallest box worth keeping, in on-screen pixels; smaller drags are treated as stray clicks. */
 const MIN_BOX_SCREEN_PX = 8;
 
+const ARROW_KEYS: string[] = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+
 const MODES: { value: RedactMode; label: string; description: string; badge?: string }[] = [
   {
     value: 'blackout',
@@ -82,6 +87,9 @@ export function RedactTool() {
   const [draft, setDraft] = useState<{ start: Point; current: Point } | null>(null);
   const job = useJob<void>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const boxRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // Which box to move keyboard focus to once it has rendered (a new box, or the next after a delete).
+  const [focusIndex, setFocusIndex] = useState<number | null>(null);
 
   const previewUrl = useObjectUrl(file);
   const { image, error, loading } = useDecodedImage(previewUrl);
@@ -106,6 +114,14 @@ export function RedactTool() {
     });
     applyRedactions(context, regions, mode, amount, scale);
   }, [image, regions, mode, strength]);
+
+  useEffect(() => {
+    if (focusIndex === null) return;
+    boxRefs.current[focusIndex]?.focus();
+    // One-shot request: clearing it after the focus call is the point of this effect.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFocusIndex(null);
+  }, [focusIndex, regions]);
 
   const edit = (update: () => void) => {
     job.reset();
@@ -166,6 +182,33 @@ export function RedactTool() {
     }
   };
 
+  const addBox = () => {
+    if (!natural) return;
+    edit(() => setRegions((existing) => [...existing, centeredRect(natural, 0.25)]));
+    setFocusIndex(regions.length);
+  };
+
+  const onBoxKeyDown = (index: number) => (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!natural) return;
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      event.preventDefault();
+      edit(() => setRegions((existing) => existing.filter((_, i) => i !== index)));
+      // The next box slides into this slot; fall back to the previous one at the end.
+      if (regions.length > 1) setFocusIndex(Math.min(index, regions.length - 2));
+      return;
+    }
+    if (!ARROW_KEYS.includes(event.key)) return;
+    event.preventDefault();
+    const step = Math.max(1, Math.round(Math.max(natural.width, natural.height) * 0.01));
+    edit(() =>
+      setRegions((existing) =>
+        existing.map((box, i) =>
+          i === index ? nudgeRect(box, event.key as ArrowKey, step, event.shiftKey, natural) : box,
+        ),
+      ),
+    );
+  };
+
   const save = () => {
     if (!file || !image) return;
     void job.run(async () => {
@@ -217,7 +260,18 @@ export function RedactTool() {
               onPointerCancel={() => setDraft(null)}
             >
               {regions.map((region, index) => (
-                <Outline key={index} box={region} natural={natural} />
+                <Outline
+                  key={index}
+                  box={region}
+                  natural={natural}
+                  keyboard={{
+                    label: `Hidden area ${index + 1} of ${regions.length}. Arrow keys move it, Shift and arrow keys resize it, Delete removes it.`,
+                    onKeyDown: onBoxKeyDown(index),
+                    ref: (element) => {
+                      boxRefs.current[index] = element;
+                    },
+                  }}
+                />
               ))}
               {draftBox && <Outline box={draftBox} natural={natural} draft />}
             </div>
@@ -233,6 +287,10 @@ export function RedactTool() {
         title="Hidden areas"
         action={
           <div className="flex gap-1">
+            <Button variant="ghost" size="xs" disabled={!image} onClick={addBox}>
+              <Plus />
+              Add box
+            </Button>
             <Button
               variant="ghost"
               size="xs"
@@ -263,6 +321,10 @@ export function RedactTool() {
           ) : (
             'None yet — draw a box on the image.'
           )}
+        </p>
+        <p className="mt-3 border-t border-border pt-3 text-xs leading-5 text-muted-foreground">
+          Without a mouse: choose Add box, then use the arrow keys to move it and Shift with the
+          arrows to resize it. Tab switches between boxes; Delete removes one.
         </p>
       </Panel>
       <Panel title="How to hide it">
@@ -307,18 +369,33 @@ function Outline({
   box,
   natural,
   draft = false,
+  keyboard,
 }: {
   box: Rect;
   natural: { width: number; height: number };
   draft?: boolean;
+  /** Makes the box a keyboard-operable control. */
+  keyboard?: {
+    label: string;
+    onKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+    ref: (element: HTMLDivElement | null) => void;
+  };
 }) {
   return (
     <div
-      aria-hidden
+      {...(keyboard
+        ? {
+            ref: keyboard.ref,
+            role: 'group',
+            tabIndex: 0,
+            'aria-label': keyboard.label,
+            onKeyDown: keyboard.onKeyDown,
+          }
+        : { 'aria-hidden': true })}
       className={
         draft
           ? 'pointer-events-none absolute border-2 border-dashed border-primary bg-primary/10'
-          : 'pointer-events-none absolute border-2 border-dashed border-white/90 shadow-[0_0_0_1px_rgb(0_0_0/0.45)]'
+          : 'pointer-events-none absolute border-2 border-dashed border-white/90 shadow-[0_0_0_1px_rgb(0_0_0/0.45)] outline-none focus-visible:border-primary focus-visible:ring-4 focus-visible:ring-primary/40'
       }
       style={{
         left: `${(box.x / natural.width) * 100}%`,

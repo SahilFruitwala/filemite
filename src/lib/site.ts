@@ -11,7 +11,7 @@ export const SITE_URL = String(
 ).replace(/\/$/, '');
 
 /** Public source — the AGPL requires offering it to users of the site. */
-export const SOURCE_URL = 'https://github.com/SahilFruitwala/micro-tools';
+export const SOURCE_URL = 'https://github.com/SahilFruitwala/filemite';
 
 export const AUTHOR = { name: 'Sahil Fruitwala', url: 'https://github.com/SahilFruitwala' };
 
