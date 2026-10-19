@@ -1,3 +1,4 @@
+import { PdfOutputPreview } from "@/features/pdf/components/output-preview";
 import { useState } from "react";
 import {
   DndContext,
@@ -214,7 +215,7 @@ export function MergeTool() {
     </>
   );
 
-  return <ToolLayout main={main} sidebar={sidebar} active={docs.length > 0} />;
+  return <ToolLayout main={job.state.status === "done" ? <PdfOutputPreview files={[job.state.result]} onEdit={job.reset} /> : main} sidebar={sidebar} active={docs.length > 0} />;
 }
 
 function MergeCard({

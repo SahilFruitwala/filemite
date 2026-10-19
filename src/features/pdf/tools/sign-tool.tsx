@@ -13,6 +13,7 @@ import {
   outputDetail,
 } from "@/components/tool/tool-ui";
 import { Button } from "@/components/ui/button";
+import { PdfOutputPreview } from "@/features/pdf/components/output-preview";
 import { PageEditor, type ToolStyle } from "@/features/pdf/components/page-editor";
 import { SignatureMaker, type Signature } from "@/features/pdf/components/signature-maker";
 import { SingleDocumentWorkspace } from "@/features/pdf/components/single-document";
@@ -294,5 +295,5 @@ export function SignTool() {
     </>
   );
 
-  return <ToolLayout main={main} sidebar={sidebar} active={!!doc} />;
+  return <ToolLayout main={result ? <PdfOutputPreview files={[result]} onEdit={job.reset} /> : main} sidebar={sidebar} active={!!doc} />;
 }

@@ -12,6 +12,7 @@ import {
   outputDetail,
 } from "@/components/tool/tool-ui";
 import { Button } from "@/components/ui/button";
+import { PdfOutputPreview } from "@/features/pdf/components/output-preview";
 import { PageEditor, type ToolStyle } from "@/features/pdf/components/page-editor";
 import { SingleDocumentWorkspace } from "@/features/pdf/components/single-document";
 import { useEditorItems } from "@/features/pdf/hooks/use-editor-items";
@@ -230,5 +231,5 @@ export function RedactTool() {
     </>
   );
 
-  return <ToolLayout main={main} sidebar={sidebar} active={!!doc} />;
+  return <ToolLayout main={result ? <PdfOutputPreview files={[result]} onEdit={job.reset} /> : main} sidebar={sidebar} active={!!doc} />;
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { PdfOutputPreview } from "@/features/pdf/components/output-preview";
 import { PageThumbnail } from "@/features/pdf/components/page-thumbnail";
 import { SingleDocumentWorkspace } from "@/features/pdf/components/single-document";
 import {
@@ -284,6 +285,6 @@ export function CompressTool() {
     />
   );
 
-  return <ToolLayout main={main} sidebar={sidebar} active={!!doc} />;
+  return <ToolLayout main={result && worthwhile ? <PdfOutputPreview files={[result]} onEdit={job.reset} /> : main} sidebar={sidebar} active={!!doc} />;
 }
 

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Scissors } from "lucide-react";
 
+import { PdfOutputPreview } from "@/features/pdf/components/output-preview";
 import { PageThumbnail } from "@/features/pdf/components/page-thumbnail";
 import { PageGrid, SingleDocumentWorkspace } from "@/features/pdf/components/single-document";
 import {
@@ -302,5 +303,5 @@ export function SplitTool() {
     </>
   );
 
-  return <ToolLayout main={main} sidebar={sidebar} active={!!doc} />;
+  return <ToolLayout main={result ? <PdfOutputPreview files={result.files} onEdit={job.reset} /> : main} sidebar={sidebar} active={!!doc} />;
 }

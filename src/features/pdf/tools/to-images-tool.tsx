@@ -14,6 +14,7 @@ import {
 } from "@/components/tool/tool-ui";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ImagesOutputPreview } from "@/features/pdf/components/images-output-preview";
 import { PageThumbnail } from "@/features/pdf/components/page-thumbnail";
 import { PageGrid, SingleDocumentWorkspace } from "@/features/pdf/components/single-document";
 import { usePdfDocuments } from "@/features/pdf/hooks/use-pdf-documents";
@@ -345,5 +346,5 @@ export function ToImagesTool() {
     </>
   );
 
-  return <ToolLayout main={main} sidebar={sidebar} active={!!doc} />;
+  return <ToolLayout main={result ? <ImagesOutputPreview files={result.files} mime={result.format === "png" ? "image/png" : "image/jpeg"} onEdit={job.reset} /> : main} sidebar={sidebar} active={!!doc} />;
 }
