@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useEffect, useId, useState } from 'react';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -99,7 +99,7 @@ export function Message({
     <div
       role={tone === 'error' ? 'alert' : 'status'}
       className={cn(
-        'flex items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm',
+        'flex animate-in fade-in slide-in-from-top-1 items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm duration-300',
         tone === 'error' && 'border-danger/25 bg-danger-soft text-foreground [&>svg]:text-danger',
         tone === 'info' && 'border-border bg-muted text-foreground [&>svg]:text-muted-foreground',
         tone === 'success' &&
@@ -121,16 +121,82 @@ export function Message({
   );
 }
 
-export function ProgressBar({ progress }: { progress: number | null }) {
+const SQUISH_LINES = [
+  'Squishing pixels…',
+  'Applying maximum squeeze…',
+  'Sit on it, bytes!',
+  'Vacuum-sealing your file…',
+  'Fitting it into skinny jeans…',
+  'Squeeze harder!',
+  'Nom nom nom…',
+  'Shrinking, not sinking…',
+];
+
+/** A tiny file with a face; it squashes and stretches as it rides the progress bar. */
+function Mascot() {
   return (
-    <div className="h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden>
-      <div
-        className={cn(
-          'h-full rounded-full bg-primary transition-[width] duration-300',
-          progress === null && 'w-1/3 animate-pulse',
-        )}
-        style={progress === null ? undefined : { width: `${Math.max(4, progress * 100)}%` }}
+    <svg viewBox="0 0 24 28" className="mascot size-6 overflow-visible" aria-hidden>
+      <path
+        d="M5 2h10l6 6v17a1.5 1.5 0 0 1-1.5 1.5h-14A1.5 1.5 0 0 1 4 25V3.5A1.5 1.5 0 0 1 5.5 2Z"
+        fill="var(--card)"
+        stroke="var(--primary)"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
+      <circle cx="9.5" cy="15" r="1.6" fill="var(--foreground)" />
+      <circle cx="16" cy="15" r="1.6" fill="var(--foreground)" />
+      <path d="M10 20q3 2.6 6 0" fill="none" stroke="var(--foreground)" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/**
+ * Progress track with a squishing file riding its leading edge. With no known
+ * progress the fill sweeps along on a loop instead of sitting still.
+ */
+export function ProgressBar({
+  progress,
+  caption = false,
+  className,
+}: {
+  progress: number | null;
+  /** Show a rotating quirky line underneath. */
+  caption?: boolean;
+  className?: string;
+}) {
+  const [index, setIndex] = useState(() => Math.floor(Math.random() * SQUISH_LINES.length));
+  useEffect(() => {
+    if (!caption) return;
+    const timer = setInterval(() => setIndex((value) => (value + 1) % SQUISH_LINES.length), 2400);
+    return () => clearInterval(timer);
+  }, [caption]);
+
+  const determinate = progress !== null;
+  return (
+    <div className={className} aria-hidden>
+      <div className="relative flex h-8 items-center">
+        <div className="progress-stripes h-2.5 w-full overflow-hidden rounded-full bg-muted" />
+        <div
+          className={cn(
+            'absolute inset-y-0 left-0 flex items-center justify-end',
+            determinate ? 'transition-[width] duration-300' : 'progress-sweep',
+          )}
+          style={determinate ? { width: `${Math.max(8, progress * 100)}%` } : undefined}
+        >
+          <div className="progress-fill absolute inset-x-0 h-2.5 rounded-full bg-primary" />
+          <div className="relative -mr-3">
+            <Mascot />
+          </div>
+        </div>
+      </div>
+      {caption && (
+        <p
+          key={index}
+          className="animate-in fade-in slide-in-from-bottom-1 mt-1 text-center font-mono text-[11px] text-muted-foreground duration-300"
+        >
+          {SQUISH_LINES[index]}
+        </p>
+      )}
     </div>
   );
 }
@@ -167,9 +233,7 @@ export function ActionPanel({
         )}
       </Button>
       {running && (
-        <div className="mt-3">
-          <ProgressBar progress={progress} />
-        </div>
+        <ProgressBar className="mt-2" progress={progress} caption />
       )}
       {disabledReason && !running && (
         <p className="mt-3 text-center text-xs text-muted-foreground">{disabledReason}</p>
@@ -195,7 +259,7 @@ export function FileRow({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-border bg-background p-2.5">
+    <div className="flex animate-in fade-in slide-in-from-bottom-1 items-center gap-3 rounded-lg border border-border bg-background p-2.5 duration-300">
       <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary">
         {icon ?? <FileText className="size-4" />}
       </div>

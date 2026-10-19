@@ -21,6 +21,7 @@ import {
   Panel,
   Segmented,
   ToolLayout,
+  ProgressBar,
 } from "@/components/tool/tool-ui";
 import { Button } from "@/components/ui/button";
 import ImageCompare from "@/features/image/components/ImageCompare";
@@ -430,10 +431,10 @@ export function CompressTool() {
               )}
             </div>
           ) : (
-            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               {busy && <Loader2 className="size-4 animate-spin" />}
               {busy ? "Compressing…" : "Nothing finished yet."}
-            </p>
+            </div>
           )}
           {failed.length > 0 && (
             <p className="mt-3 text-xs text-danger">
@@ -577,9 +578,7 @@ function ResultRow({
       </div>
 
       {item.status === "working" && (
-        <div className="h-0.5 overflow-hidden bg-muted">
-          <div className="h-full w-1/3 animate-pulse bg-primary" />
-        </div>
+        <ProgressBar className="px-3 pb-1 sm:px-4" progress={null} />
       )}
 
       {open && result && previewable && (

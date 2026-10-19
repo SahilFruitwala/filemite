@@ -85,21 +85,26 @@ export function FileDrop({
     <div
       {...handlers}
       className={cn(
-        'group relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border-strong bg-card px-6 py-16 text-center transition-[border-color,background-color] sm:py-24',
-        isDragging && 'border-primary bg-primary-soft',
+        'group relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border-strong bg-card px-6 py-16 text-center transition-[border-color,background-color,transform,box-shadow] duration-200 sm:py-24',
+        isDragging && 'scale-[1.01] border-primary bg-primary-soft shadow-lg',
       )}
     >
       <div
         aria-hidden
         className="bg-dots pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]"
       />
-      <div
-        className={cn(
-          'relative mb-6 flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md transition-transform duration-300 group-hover:-rotate-3',
-          isDragging && 'scale-110 -rotate-6',
+      <div className="relative mb-6">
+        {isDragging && (
+          <span aria-hidden className="animate-ping-soft absolute inset-0 rounded-2xl bg-primary" />
         )}
-      >
-        <Icon className="size-6" />
+        <div
+          className={cn(
+            'relative flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md transition-transform duration-300 group-hover:-rotate-3',
+            isDragging ? 'scale-110 -rotate-6' : 'animate-float',
+          )}
+        >
+          <Icon className="size-6" />
+        </div>
       </div>
       <h2 className="relative font-display text-2xl font-semibold tracking-tight">
         {isDragging ? 'Drop to add' : title}
@@ -133,7 +138,7 @@ export function DropTarget({
     <div {...handlers} className={cn('relative', className)}>
       {children}
       {isDragging && (
-        <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center rounded-2xl border-2 border-dashed border-primary bg-primary-soft/90 font-display text-lg font-semibold backdrop-blur-sm">
+        <div className="pointer-events-none absolute inset-0 z-20 flex animate-in fade-in zoom-in-95 items-center justify-center rounded-2xl border-2 border-dashed border-primary bg-primary-soft/90 font-display text-lg font-semibold backdrop-blur-sm">
           Drop to add
         </div>
       )}

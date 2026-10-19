@@ -42,7 +42,7 @@ function HomePage() {
   return (
     <>
       <section className="relative overflow-hidden border-b border-border">
-        <div aria-hidden className="bg-glow absolute inset-0" />
+        <div aria-hidden className="bg-glow animate-drift absolute -inset-[5%]" />
         <div
           aria-hidden
           className="bg-dots absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
@@ -58,13 +58,13 @@ function HomePage() {
             <h1 className="font-display text-[2.9rem] leading-[0.98] font-bold tracking-tighter sm:text-6xl lg:text-[5.25rem]">
               Tiny tools for
               <br />
-              <span className="text-gradient">mighty files.</span>
+              <span className="text-gradient text-gradient-animated">mighty files.</span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-muted-foreground">
+            <p className="mt-6 max-w-xl animate-in fade-in slide-in-from-bottom-2 text-lg leading-8 text-muted-foreground delay-150 duration-700 fill-mode-both">
               Compress, resize and clean up images. Merge, split and shrink PDFs. Focused tools that
               do one job well — free, private and instant.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 flex animate-in fade-in slide-in-from-bottom-2 flex-wrap gap-3 delay-300 duration-700 fill-mode-both">
               <Link
                 to={SECTIONS.image.href}
                 data-section="image"
@@ -92,10 +92,10 @@ function HomePage() {
         <SectionGrid section="image" />
         <SectionGrid section="pdf" />
 
-        <section className="grid gap-px overflow-hidden rounded-3xl border border-border bg-border shadow-sm md:grid-cols-3">
+        <section className="reveal grid gap-px overflow-hidden rounded-3xl border border-border bg-border shadow-sm md:grid-cols-3">
           {PROMISES.map(({ icon: Icon, title, text }) => (
             <div key={title} className="bg-card p-6 sm:p-8">
-              <span className="flex size-10 items-center justify-center rounded-xl bg-foreground text-background">
+              <span className="flex size-10 items-center justify-center rounded-xl bg-foreground text-background transition-transform duration-300 hover:scale-110 hover:-rotate-6">
                 <Icon className="size-5" />
               </span>
               <h3 className="mt-4 font-display text-lg font-semibold tracking-tight">{title}</h3>
@@ -104,7 +104,7 @@ function HomePage() {
           ))}
         </section>
 
-        <section className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-border bg-muted/60 p-6 sm:flex-row sm:items-center sm:p-8">
+        <section className="reveal flex flex-col items-start justify-between gap-4 rounded-2xl border border-border bg-muted/60 p-6 sm:flex-row sm:items-center sm:p-8">
           <div>
             <h2 className="font-display text-xl font-semibold tracking-tight">Free software</h2>
             <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
@@ -126,7 +126,7 @@ function SectionGrid({ section }: { section: Section }) {
   const meta = SECTIONS[section];
   const list = toolsIn(section);
   return (
-    <section data-section={section} aria-labelledby={`${section}-heading`}>
+    <section data-section={section} aria-labelledby={`${section}-heading`} className="reveal">
       <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="eyebrow mb-2 flex items-center gap-2">
@@ -158,7 +158,8 @@ function SectionGrid({ section }: { section: Section }) {
             <Link
               key={tool.id}
               to={tool.href}
-              className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-[border-color,box-shadow,transform] duration-200 before:pointer-events-none before:absolute before:-top-16 before:-right-16 before:size-40 before:rounded-full before:bg-primary before:opacity-0 before:blur-3xl before:transition-opacity hover:-translate-y-1 hover:border-primary-line hover:shadow-lg hover:before:opacity-15"
+              style={{ animationDelay: `${index * 60}ms` }}
+              className="group relative animate-in fade-in slide-in-from-bottom-3 fill-mode-both flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-[border-color,box-shadow,transform] duration-200 before:pointer-events-none before:absolute before:-top-16 before:-right-16 before:size-40 before:rounded-full before:bg-primary before:opacity-0 before:blur-3xl before:transition-opacity hover:-translate-y-1 hover:border-primary-line hover:shadow-lg hover:before:opacity-15"
             >
               <div className="flex items-start justify-between">
                 <span className="flex size-11 items-center justify-center rounded-xl bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
@@ -210,7 +211,7 @@ function HeroSpecimen() {
         </span>
       </div>
       <ul className="space-y-1.5">
-        {rows.map((row) => {
+        {rows.map((row, i) => {
           const saved = Math.round((1 - row.to / row.from) * 100);
           return (
             <li
@@ -226,8 +227,8 @@ function HeroSpecimen() {
               </div>
               <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-muted">
                 <div
-                  className="h-full rounded-full bg-primary"
-                  style={{ width: `${100 - saved}%` }}
+                  className="animate-grow-x h-full rounded-full bg-primary"
+                  style={{ width: `${100 - saved}%`, '--delay': `${500 + i * 180}ms` } as React.CSSProperties}
                 />
               </div>
               <div className="mt-1.5 flex justify-between font-mono text-[10px] text-muted-foreground">
