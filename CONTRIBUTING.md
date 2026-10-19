@@ -27,6 +27,7 @@ Thank you for your interest in contributing to Filemite! We welcome contribution
     pnpm typecheck   # needs a prior pnpm build for the generated route tree
     pnpm lint
     pnpm test
+    pnpm test:e2e    # after pnpm build; needs `pnpm exec playwright install chromium` once
     ```
 
 ## 🛠️ Development Guidelines
@@ -44,7 +45,7 @@ Thank you for your interest in contributing to Filemite! We welcome contribution
 4.  Once submitted, wait for a maintainer to review your PR.
 
 ## 🐛 Reporting Issues
-If you find a bug or have a feature request, please [open an issue](https://github.com/SahilFruitwala/micro-tools/issues) on GitHub. Provide as much detail as possible, including steps to reproduce the bug.
+If you find a bug or have a feature request, please [open an issue](https://github.com/SahilFruitwala/filemite/issues) on GitHub. Provide as much detail as possible, including steps to reproduce the bug.
 
 ## 📄 Code of Conduct
 Please be respectful and professional in your interactions within the project.

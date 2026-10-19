@@ -78,10 +78,11 @@ pnpm build          # also generates src/routeTree.gen.ts, which typecheck needs
 pnpm typecheck
 pnpm lint
 pnpm test           # Vitest: server guard, Sharp pipeline, PDF operations
+pnpm test:e2e       # Playwright against the production build (run pnpm build first)
 pnpm start          # serve the production build
 ```
 
-CI (`.github/workflows/ci.yml`) runs build, typecheck, lint and tests on every pull request. `GET /api/health` returns 200 once Sharp has loaded, for uptime monitors.
+The first time, run `pnpm exec playwright install chromium` for the browser tests. CI (`.github/workflows/ci.yml`) runs build, typecheck, lint and unit tests, plus the browser tests in a second job, on every pull request. `GET /api/health` returns 200 once Sharp has loaded, for uptime monitors.
 
 Optional env: `VITE_SITE_URL` (canonical origin), `VITE_PUBLIC_POSTHOG_PROJECT_TOKEN`, `VITE_PUBLIC_POSTHOG_HOST`.
 
