@@ -9,8 +9,9 @@ Small, fast tools for images and PDFs — one app, one design system.
 | **Compress** — PNG, JPEG, WebP, HEIC; batch of 10; Best / Balanced / Smallest | **Merge** — drag to reorder; links, forms and bookmarks kept |
 | **Resize** — exact pixels or presets; cover / contain / fit / stretch | **Split** — every N pages, custom ranges, or click to cut |
 | **Smart crop** — content-aware crops for social formats *(browser)* | **Extract** — keep or remove pages; `1-3, 8, 10-z` ranges |
-| **Remove metadata** — shows then strips EXIF, GPS, XMP, IPTC | **Compress** — by quality or to a target size; text stays sharp |
-| **Color palette** — HEX / RGB / HSL, copy as CSS variables *(browser)* | **Organize** — rotate pages and drag them into a new order |
+| **Rotate & flip** — quarter turns and mirrors at full resolution *(browser)* | **Compress** — by quality or to a target size; text stays sharp |
+| **Remove metadata** — shows then strips EXIF, GPS, XMP, IPTC | **Organize** — rotate pages and drag them into a new order |
+| **Color palette** — HEX / RGB / HSL, copy as CSS variables *(browser)* | |
 | **Favicon** — 16–256 px PNGs, `favicon.ico`, Apple touch icon | |
 
 Images sent to the server are processed in memory with [Sharp](https://sharp.pixelplumbing.com/) and never stored. PDFs never leave the device: they're handled by [MuPDF](https://mupdf.com) compiled to WebAssembly, running in Web Workers.

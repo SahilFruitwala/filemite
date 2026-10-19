@@ -12,6 +12,7 @@ https://filemite.com
 - Compress: https://filemite.com/image/compress
 - Resize: https://filemite.com/image/resize
 - Smart crop: https://filemite.com/image/crop
+- Rotate & flip: https://filemite.com/image/rotate
 - Remove metadata (EXIF/GPS): https://filemite.com/image/scrub
 - Color palette: https://filemite.com/image/palette
 - Favicon generator: https://filemite.com/image/favicon

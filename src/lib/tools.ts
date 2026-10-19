@@ -7,6 +7,7 @@ import {
   Eraser,
   FileArchive,
   FileOutput,
+  FlipHorizontal2,
   Gem,
   ImageDown,
   Layers,
@@ -26,6 +27,7 @@ export type ToolId =
   | 'image-compress'
   | 'image-resize'
   | 'image-crop'
+  | 'image-rotate'
   | 'image-scrub'
   | 'image-palette'
   | 'image-favicon'
@@ -60,7 +62,7 @@ export const SECTIONS: Record<
   image: {
     label: 'Image',
     title: 'Image tools',
-    description: 'Compress, resize, crop and clean up PNG, JPEG, WebP and HEIC.',
+    description: 'Compress, resize, crop, rotate and clean up PNG, JPEG, WebP and HEIC.',
     href: '/image/compress',
   },
   pdf: {
@@ -125,6 +127,22 @@ export const tools: Tool[] = [
     emptyDescription: 'We’ll find the focal point and frame it for each format.',
     processing: 'browser',
     icon: Crop,
+  },
+  {
+    id: 'image-rotate',
+    section: 'image',
+    href: '/image/rotate',
+    title: 'Rotate & Flip Image',
+    shortTitle: 'Rotate',
+    description: 'Turn a photo upright or mirror it, then save it at full resolution.',
+    seoTitle: 'Rotate & Flip Image Online — Free, In Your Browser',
+    seoDescription:
+      'Rotate photos left or right and flip them horizontally or vertically. Saved at full resolution and never uploaded — it all runs in your browser.',
+    keywords: ['rotate image', 'flip image', 'mirror image', 'rotate photo', 'turn picture'],
+    emptyTitle: 'Choose an image to rotate',
+    emptyDescription: 'Turn it, mirror it, then save it at full size.',
+    processing: 'browser',
+    icon: FlipHorizontal2,
   },
   {
     id: 'image-scrub',
