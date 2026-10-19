@@ -10,7 +10,8 @@ Small, fast tools for images and PDFs — one app, one design system.
 | **Resize** — exact pixels or presets; cover / contain / fit / stretch | **Split** — every N pages, custom ranges, or click to cut |
 | **Smart crop** — content-aware crops for social formats *(browser)* | **Extract** — keep or remove pages; `1-3, 8, 10-z` ranges |
 | **Rotate & flip** — quarter turns and mirrors at full resolution *(browser)* | **Compress** — by quality or to a target size; text stays sharp |
-| **Remove metadata** — shows then strips EXIF, GPS, XMP, IPTC | **Organize** — rotate pages and drag them into a new order |
+| **Blur & redact** — black box, pixelate or blur; hidden pixels are really replaced *(browser)* | **Organize** — rotate pages and drag them into a new order |
+| **Remove metadata** — shows then strips EXIF, GPS, XMP, IPTC | |
 | **Color palette** — HEX / RGB / HSL, copy as CSS variables *(browser)* | |
 | **Favicon** — 16–256 px PNGs, `favicon.ico`, Apple touch icon | |
 

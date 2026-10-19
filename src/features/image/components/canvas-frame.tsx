@@ -14,7 +14,7 @@ export const CanvasFrame = forwardRef<
           ref={ref}
           role="img"
           aria-label={label}
-          className="block h-auto max-h-[70vh] max-w-full"
+          className="block h-auto max-w-full"
         />
         {children}
       </div>

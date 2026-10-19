@@ -425,3 +425,46 @@ export function SizeBar({
     </div>
   );
 }
+
+/** Labelled range input with a live value readout. */
+export function Slider({
+  label,
+  value,
+  min,
+  max,
+  step = 1,
+  format = (current) => String(current),
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  format?: (value: number) => string;
+  onChange: (value: number) => void;
+}) {
+  const id = useId();
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-baseline justify-between text-[13px]">
+        <label htmlFor={id} className="font-medium">
+          {label}
+        </label>
+        <output htmlFor={id} className="font-mono text-xs text-muted-foreground tabular">
+          {format(value)}
+        </output>
+      </div>
+      <input
+        id={id}
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+        className="block h-5 w-full cursor-pointer accent-primary"
+      />
+    </div>
+  );
+}

@@ -5,6 +5,7 @@
 import {
   Crop,
   Eraser,
+  EyeOff,
   FileArchive,
   FileOutput,
   FlipHorizontal2,
@@ -28,6 +29,7 @@ export type ToolId =
   | 'image-resize'
   | 'image-crop'
   | 'image-rotate'
+  | 'image-redact'
   | 'image-scrub'
   | 'image-palette'
   | 'image-favicon'
@@ -143,6 +145,22 @@ export const tools: Tool[] = [
     emptyDescription: 'Turn it, mirror it, then save it at full size.',
     processing: 'browser',
     icon: FlipHorizontal2,
+  },
+  {
+    id: 'image-redact',
+    section: 'image',
+    href: '/image/redact',
+    title: 'Blur & Redact Image',
+    shortTitle: 'Redact',
+    description: 'Hide faces, names and numbers with a black box, pixelation or blur.',
+    seoTitle: 'Blur & Redact Parts of an Image — Private, In Your Browser',
+    seoDescription:
+      'Draw boxes over faces, license plates, names or numbers and hide them with a solid block, pixelation or blur. The image never leaves your device.',
+    keywords: ['blur image', 'redact image', 'pixelate image', 'blur face', 'hide text in screenshot'],
+    emptyTitle: 'Choose an image to redact',
+    emptyDescription: 'Then draw boxes over anything you want to hide.',
+    processing: 'browser',
+    icon: EyeOff,
   },
   {
     id: 'image-scrub',
