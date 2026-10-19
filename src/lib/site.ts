@@ -1,13 +1,13 @@
 /** Brand and deployment settings — rename the product here. */
 
-export const SITE_NAME = 'Micro Tools';
-export const SITE_TAGLINE = 'Small, fast tools for images and PDFs.';
+export const SITE_NAME = 'Filemite';
+export const SITE_TAGLINE = 'Tiny tools for images and PDFs.';
 export const SITE_DESCRIPTION =
   'Compress, resize, crop and clean up images. Merge, split, extract and compress PDFs. Free, no sign-up, nothing stored.';
 
 /** Absolute site origin (no trailing slash); override with VITE_SITE_URL. */
 export const SITE_URL = String(
-  import.meta.env.VITE_SITE_URL || 'https://micropng.sahilfruitwala.com',
+  import.meta.env.VITE_SITE_URL || 'https://filemite.com',
 ).replace(/\/$/, '');
 
 /** Public source — the AGPL requires offering it to users of the site. */

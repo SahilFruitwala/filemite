@@ -6,13 +6,13 @@ import {
   useState,
   useSyncExternalStore,
 } from 'react';
-import { Monitor, Moon, Sun } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
 export type ThemePreference = 'light' | 'dark' | 'system';
 
-const STORAGE_KEY = 'micro-tools-theme';
+const STORAGE_KEY = 'filemite-theme';
 
 /**
  * Runs before first paint (inlined in <head>) so the page never flashes the
@@ -81,13 +81,28 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 const OPTIONS = [
   { value: 'light', label: 'Light', icon: Sun },
-  { value: 'system', label: 'System', icon: Monitor },
   { value: 'dark', label: 'Dark', icon: Moon },
 ] as const;
+
+/** Tracks the OS colour scheme, so an unset preference still shows the right button. */
+function useSystemDark() {
+  return useSyncExternalStore(
+    (notify) => {
+      const query = window.matchMedia('(prefers-color-scheme: dark)');
+      query.addEventListener('change', notify);
+      return () => query.removeEventListener('change', notify);
+    },
+    () => window.matchMedia('(prefers-color-scheme: dark)').matches,
+    () => false,
+  );
+}
 
 export function ThemeSwitch({ className }: { className?: string }) {
   const { preference, setPreference } = useContext(ThemeContext);
   const mounted = useHydrated();
+  const systemDark = useSystemDark();
+  // Until the visitor picks one, the OS setting decides which button is on.
+  const resolved = preference === 'system' ? (systemDark ? 'dark' : 'light') : preference;
 
   return (
     <div
@@ -96,7 +111,7 @@ export function ThemeSwitch({ className }: { className?: string }) {
       className={cn('inline-flex rounded-full border border-border bg-card p-0.5', className)}
     >
       {OPTIONS.map(({ value, label, icon: Icon }) => {
-        const active = mounted && preference === value;
+        const active = mounted && resolved === value;
         return (
           <button
             key={value}

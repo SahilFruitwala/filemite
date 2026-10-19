@@ -1,6 +1,6 @@
-# Contributing to Micro Tools
+# Contributing to Filemite
 
-Thank you for your interest in contributing to Micro Tools! We welcome contributions from everyone.
+Thank you for your interest in contributing to Filemite! We welcome contributions from everyone.
 
 ## 🚀 Getting Started
 
