@@ -27,7 +27,7 @@ function PrivacyPage() {
       eyebrow="Legal"
       title="Privacy"
       intro="Your files are yours. Here is exactly what happens to them."
-      updated="October 18, 2026"
+      updated="October 19, 2026"
       sections={[
         {
           heading: 'Server tools process in memory',
@@ -61,11 +61,40 @@ function PrivacyPage() {
         {
           heading: 'Analytics',
           body: (
+            <>
+              <p>
+                We use PostHog for anonymous usage analytics, sent through our own server so your
+                browser only talks to {SITE_NAME}. We collect:
+              </p>
+              <ul className="list-disc space-y-1 pl-5">
+                <li>
+                  Page views and the page you leave, with the page address, referrer, browser, OS,
+                  device type and screen size.
+                </li>
+                <li>
+                  Tool events such as a compression starting or finishing, the preset used, image
+                  dimensions, file sizes and how much smaller the file got. Server tools send the
+                  same kind of event from our server.
+                </li>
+                <li>Errors raised in the page, to help us fix bugs.</li>
+              </ul>
+              <p>
+                We never send file contents or file names. There are no session recordings, no
+                autocapture of clicks or text, and no heatmaps. We do not identify visitors, and
+                your IP address is removed before events reach PostHog.
+              </p>
+            </>
+          ),
+        },
+        {
+          heading: 'Cookies and local storage',
+          body: (
             <p>
-              We use PostHog for anonymous usage analytics — for example, that a compression
-              finished, which preset was used and how much smaller the file got. We never send file
-              contents or file names, there are no session recordings, and your IP address is
-              stripped before events reach PostHog.
+              Analytics are cookieless: the random ID PostHog uses is kept in your browser’s memory
+              only and is gone when you close or reload the tab, so it cannot follow you between
+              visits. The only things we store on your device are your light or dark theme choice
+              in local storage and the offline cache for the installable app. Because no tracking
+              cookies are set, there is no cookie banner.
             </p>
           ),
         },

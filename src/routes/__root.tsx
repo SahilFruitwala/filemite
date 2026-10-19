@@ -111,6 +111,12 @@ function RootLayout() {
         mask_all_text: true,
         mask_all_element_attributes: true,
         person_profiles: 'identified_only',
+        // Cookieless: the anonymous ID lives in memory only, so nothing is written to
+        // cookies or localStorage and no consent banner is needed. See /privacy.
+        persistence: 'memory',
+        capture_heatmaps: false,
+        capture_dead_clicks: false,
+        capture_performance: false,
         capture_exceptions: true,
         debug: import.meta.env.DEV,
       });
