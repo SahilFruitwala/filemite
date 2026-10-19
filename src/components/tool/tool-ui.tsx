@@ -99,7 +99,7 @@ export function Message({
     <div
       role={tone === 'error' ? 'alert' : 'status'}
       className={cn(
-        'flex items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm',
+        'flex animate-in fade-in slide-in-from-top-1 items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm duration-300',
         tone === 'error' && 'border-danger/25 bg-danger-soft text-foreground [&>svg]:text-danger',
         tone === 'info' && 'border-border bg-muted text-foreground [&>svg]:text-muted-foreground',
         tone === 'success' &&
@@ -126,7 +126,7 @@ export function ProgressBar({ progress }: { progress: number | null }) {
     <div className="h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden>
       <div
         className={cn(
-          'h-full rounded-full bg-primary transition-[width] duration-300',
+          'progress-shine h-full rounded-full bg-primary transition-[width] duration-300',
           progress === null && 'w-1/3 animate-pulse',
         )}
         style={progress === null ? undefined : { width: `${Math.max(4, progress * 100)}%` }}
@@ -195,7 +195,7 @@ export function FileRow({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-border bg-background p-2.5">
+    <div className="flex animate-in fade-in slide-in-from-bottom-1 items-center gap-3 rounded-lg border border-border bg-background p-2.5 duration-300">
       <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary">
         {icon ?? <FileText className="size-4" />}
       </div>

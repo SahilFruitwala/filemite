@@ -209,6 +209,56 @@
     background-position: 0 0, 0 8px, 8px -8px, -8px 0;
   }
 
+  /* Slow drifting of the hero wash so the page feels alive. */
+  .animate-drift {
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+
+  /* Gentle idle bob for icons that invite a click or a drop. */
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  /* Highlighted headline word: the gradient slowly slides across the ink. */
+  .text-gradient-animated {
+    background-size: 200% 100%;
+    animation: gradient-slide 6s ease-in-out infinite alternate;
+  }
+
+  /* Bars that grow from the left once they appear. */
+  .animate-grow-x {
+    transform-origin: left;
+    animation: grow-x 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--delay, 0ms);
+  }
+
+  /* Expanding ring behind the drop-zone icon while a file is dragged over. */
+  .animate-ping-soft {
+    animation: ping-soft 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* Moving highlight across a running progress bar. */
+  .progress-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.45), transparent);
+    animation: shine 1.4s linear infinite;
+  }
+
+  /* Fade-and-rise as an element scrolls into view; no effect where unsupported. */
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+
   .scrollbar-none {
     scrollbar-width: none;
   }
@@ -223,11 +273,41 @@
   }
 }
 
+@keyframes drift {
+  from { transform: translate3d(-2%, -1%, 0) scale(1); }
+  to { transform: translate3d(2%, 2%, 0) scale(1.06); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes gradient-slide {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes ping-soft {
+  0% { transform: scale(1); opacity: 0.45; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+@keyframes shine {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
