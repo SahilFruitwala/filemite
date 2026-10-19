@@ -17,11 +17,11 @@ export const Route = createFileRoute('/api/image/scrub')({
           try {
             const scrubbed = await scrubImage(buffer, outputFormat);
 
-            captureServerEvent('server_metadata_scrubbed', {
+            await captureServerEvent('server_metadata_scrubbed', {
               file_format: format,
               original_size_bytes: buffer.byteLength,
               scrubbed_size_bytes: scrubbed.byteLength,
-            });
+            }, request);
 
             const extension = outputFormat === 'jpeg' ? 'jpg' : outputFormat;
             const stem = file.name.replace(/\.[^.]+$/, '') || 'image';
