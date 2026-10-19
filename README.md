@@ -95,7 +95,7 @@ pnpm start          # serve the production build
 
 The first time, run `pnpm exec playwright install chromium` for the browser tests. CI (`.github/workflows/ci.yml`) runs build, typecheck, lint and unit tests, plus the browser tests in a second job, on every pull request. `GET /api/health` returns 200 once Sharp has loaded, for uptime monitors.
 
-Optional env: `VITE_SITE_URL` (canonical origin), `VITE_PUBLIC_POSTHOG_PROJECT_TOKEN`, `VITE_PUBLIC_POSTHOG_HOST`.
+Optional env: `VITE_PUBLIC_POSTHOG_PROJECT_TOKEN`, `VITE_PUBLIC_POSTHOG_HOST`.
 
 ## Deployment
 

@@ -5,10 +5,12 @@ export const SITE_TAGLINE = 'Tiny tools for images and PDFs.';
 export const SITE_DESCRIPTION =
   'Compress, convert, resize, crop and annotate images. Merge, split, sign, redact and compress PDFs. Free, no sign-up, nothing stored.';
 
-/** Absolute site origin (no trailing slash); override with VITE_SITE_URL. */
-export const SITE_URL = String(
-  import.meta.env.VITE_SITE_URL || 'https://filemite.com',
-).replace(/\/$/, '');
+/**
+ * Absolute site origin (no trailing slash). Deliberately not an env var: a stale
+ * VITE_SITE_URL once pointed og:image and canonical links at a retired domain.
+ * `filemite.com` redirects here, so this is the host that serves pages directly.
+ */
+export const SITE_URL = 'https://www.filemite.com';
 
 /** Social preview card (1200×630 PNG in /public). */
 export const OG_IMAGE = `${SITE_URL}/opengraph.png`;
