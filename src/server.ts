@@ -1,5 +1,7 @@
 import handler, { createServerEntry } from '@tanstack/react-start/server-entry';
 
+import { SITE_URL } from '@/lib/site';
+
 /** Permanent redirects from the old MicroPNG and microPDF URLs. */
 const REDIRECTS: Record<string, string> = {
   '/resize': '/image/resize',
@@ -23,9 +25,18 @@ const SECURITY_HEADERS: Record<string, string> = {
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
 };
 
+/** Hosts that used to serve the app; they permanently redirect to the canonical origin. */
+const LEGACY_HOSTS = new Set(['micropng.sahilfruitwala.com']);
+
 export default createServerEntry({
   async fetch(request) {
     const url = new URL(request.url);
+    if (LEGACY_HOSTS.has(url.hostname)) {
+      return new Response(null, {
+        status: 301,
+        headers: { Location: `${SITE_URL}${url.pathname}${url.search}` },
+      });
+    }
     const target = REDIRECTS[url.pathname.replace(/\/$/, '') || '/'];
     if (target) {
       return new Response(null, {

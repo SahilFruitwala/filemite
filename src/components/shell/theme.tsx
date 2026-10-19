@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 
 export type ThemePreference = 'light' | 'dark' | 'system';
 
-const STORAGE_KEY = 'micro-tools-theme';
+const STORAGE_KEY = 'filemite-theme';
 
 /**
  * Runs before first paint (inlined in <head>) so the page never flashes the

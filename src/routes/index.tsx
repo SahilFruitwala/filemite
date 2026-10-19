@@ -42,23 +42,23 @@ function HomePage() {
   return (
     <>
       <section className="relative overflow-hidden border-b border-border">
+        <div aria-hidden className="bg-glow absolute inset-0" />
         <div
           aria-hidden
           className="bg-dots absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
         />
         <div className="relative mx-auto grid w-full max-w-7xl gap-12 px-4 pt-14 pb-16 sm:px-6 sm:pt-20 sm:pb-24 lg:grid-cols-[1.25fr_1fr] lg:items-end lg:px-8">
           <div className="animate-in fade-in slide-in-from-bottom-3 duration-500">
-            <p className="eyebrow mb-5 flex items-center gap-2">
-              <span className="inline-flex size-1.5 rounded-full bg-tangerine" />
-              {toolsIn('image').length} image tools
-              <span className="text-border-strong">/</span>
-              <span className="inline-flex size-1.5 rounded-full bg-cobalt" />
-              {toolsIn('pdf').length} PDF tools
+            <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card/80 py-1 pr-3 pl-1 text-xs text-muted-foreground shadow-xs backdrop-blur">
+              <span className="rounded-full bg-foreground px-2 py-0.5 font-mono text-[11px] text-background">
+                {toolsIn('image').length + toolsIn('pdf').length} tools
+              </span>
+              Free · no sign-up · nothing stored
             </p>
-            <h1 className="font-display text-[2.75rem] leading-[1.02] font-semibold tracking-tight sm:text-6xl lg:text-7xl">
-              Smaller files.
+            <h1 className="font-display text-[2.9rem] leading-[0.98] font-bold tracking-tighter sm:text-6xl lg:text-[5.25rem]">
+              Tiny tools for
               <br />
-              <span className="text-muted-foreground">Zero fuss.</span>
+              <span className="text-gradient">mighty files.</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-8 text-muted-foreground">
               Compress, resize and clean up images. Merge, split and shrink PDFs. Focused tools that
@@ -92,10 +92,12 @@ function HomePage() {
         <SectionGrid section="image" />
         <SectionGrid section="pdf" />
 
-        <section className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-3">
+        <section className="grid gap-px overflow-hidden rounded-3xl border border-border bg-border shadow-sm md:grid-cols-3">
           {PROMISES.map(({ icon: Icon, title, text }) => (
             <div key={title} className="bg-card p-6 sm:p-8">
-              <Icon className="size-5 text-foreground" />
+              <span className="flex size-10 items-center justify-center rounded-xl bg-foreground text-background">
+                <Icon className="size-5" />
+              </span>
               <h3 className="mt-4 font-display text-lg font-semibold tracking-tight">{title}</h3>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
             </div>
@@ -133,7 +135,7 @@ function SectionGrid({ section }: { section: Section }) {
           </p>
           <h2
             id={`${section}-heading`}
-            className="font-display text-3xl font-semibold tracking-tight"
+            className="font-display text-3xl font-bold tracking-tight sm:text-4xl"
           >
             {meta.title}
           </h2>
@@ -156,7 +158,7 @@ function SectionGrid({ section }: { section: Section }) {
             <Link
               key={tool.id}
               to={tool.href}
-              className="group relative flex flex-col rounded-2xl border border-border bg-card p-5 shadow-xs transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-primary-line hover:shadow-md"
+              className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-[border-color,box-shadow,transform] duration-200 before:pointer-events-none before:absolute before:-top-16 before:-right-16 before:size-40 before:rounded-full before:bg-primary before:opacity-0 before:blur-3xl before:transition-opacity hover:-translate-y-1 hover:border-primary-line hover:shadow-lg hover:before:opacity-15"
             >
               <div className="flex items-start justify-between">
                 <span className="flex size-11 items-center justify-center rounded-xl bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
@@ -197,10 +199,10 @@ function HeroSpecimen() {
   return (
     <div
       aria-hidden
-      className="animate-in fade-in slide-in-from-bottom-4 rounded-2xl border border-border bg-card/90 p-2 shadow-lg backdrop-blur delay-150 duration-700 fill-mode-both"
+      className="animate-in fade-in slide-in-from-bottom-4 rounded-3xl border border-border bg-card/90 p-2.5 shadow-lg backdrop-blur delay-150 duration-700 fill-mode-both lg:rotate-1"
     >
       <div className="flex items-center justify-between px-3 py-2">
-        <span className="eyebrow">Output</span>
+        <span className="eyebrow">filemite.com</span>
         <span className="flex gap-1">
           <span className="size-2 rounded-full bg-border-strong" />
           <span className="size-2 rounded-full bg-border-strong" />

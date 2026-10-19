@@ -1,32 +1,32 @@
-Micro Tools
+Filemite
 
 ## What this is
-Micro Tools is a free web app with small, focused tools for images and PDFs.
+Filemite is a free web app with small, focused tools for images and PDFs.
 Image tools (PNG, JPEG, WebP, HEIC) run on the server in memory and never store files.
 PDF tools run entirely in the browser with MuPDF (WebAssembly); PDFs are never uploaded.
 
 ## Canonical site
-https://micropng.sahilfruitwala.com
+https://filemite.com
 
 ## Image tools
-- Compress: https://micropng.sahilfruitwala.com/image/compress
-- Resize: https://micropng.sahilfruitwala.com/image/resize
-- Smart crop: https://micropng.sahilfruitwala.com/image/crop
-- Remove metadata (EXIF/GPS): https://micropng.sahilfruitwala.com/image/scrub
-- Color palette: https://micropng.sahilfruitwala.com/image/palette
-- Favicon generator: https://micropng.sahilfruitwala.com/image/favicon
+- Compress: https://filemite.com/image/compress
+- Resize: https://filemite.com/image/resize
+- Smart crop: https://filemite.com/image/crop
+- Remove metadata (EXIF/GPS): https://filemite.com/image/scrub
+- Color palette: https://filemite.com/image/palette
+- Favicon generator: https://filemite.com/image/favicon
 
 ## PDF tools
-- Merge: https://micropng.sahilfruitwala.com/pdf/merge
-- Split: https://micropng.sahilfruitwala.com/pdf/split
-- Extract / remove pages: https://micropng.sahilfruitwala.com/pdf/extract
-- Compress: https://micropng.sahilfruitwala.com/pdf/compress
+- Merge: https://filemite.com/pdf/merge
+- Split: https://filemite.com/pdf/split
+- Extract / remove pages: https://filemite.com/pdf/extract
+- Compress: https://filemite.com/pdf/compress
 
 ## Limits
 - Images: 10 per batch, 4 MB each, 50 megapixels max, 2 processed at a time, 100 per hour per visitor.
 - PDFs: up to 250 MB each, 20 per merge; processed on the visitor's device.
 
 ## Other pages
-- Privacy: https://micropng.sahilfruitwala.com/privacy
-- Terms: https://micropng.sahilfruitwala.com/terms
+- Privacy: https://filemite.com/privacy
+- Terms: https://filemite.com/terms
 - Source code (AGPL-3.0): https://github.com/SahilFruitwala/micro-tools

@@ -31,7 +31,7 @@ export function ToolPage({ tool, children }: { tool: Tool; children: React.React
             <p className="eyebrow mb-1.5">
               {SECTIONS[tool.section].label} · {String(index).padStart(2, '0')}
             </p>
-            <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+            <h1 className="font-display text-3xl font-bold tracking-tight sm:text-5xl">
               {tool.title}
             </h1>
             <p className="mt-1.5 max-w-xl text-[15px] leading-6 text-muted-foreground">

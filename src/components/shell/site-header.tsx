@@ -17,7 +17,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-3 px-4 sm:gap-6 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2 rounded-md" aria-label="Home">
           <LogoMark />
-          <Wordmark className="hidden sm:inline" />
+          <Wordmark />
         </Link>
 
         <nav
