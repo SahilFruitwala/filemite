@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowRight, Cloud, Gauge, Laptop, LockKeyhole, UserX } from 'lucide-react';
 
-import { Mite } from '@/components/shell/mite';
+import { HeroDemo } from '@/components/home/hero-demo';
 import { buttonVariants } from '@/components/ui/button';
 import { formatBytes } from '@/lib/format';
 import { IMAGES_PER_HOUR, MAX_IMAGE_BATCH, MAX_IMAGE_BYTES } from '@/lib/limits';
@@ -110,7 +110,7 @@ function HomePage() {
             </div>
           </div>
 
-          <HeroSpecimen />
+          <HeroDemo />
         </div>
       </section>
 
@@ -211,74 +211,5 @@ function SectionGrid({ section }: { section: Section }) {
         })}
       </div>
     </section>
-  );
-}
-
-/** Decorative "before → after" readout that shows what the tools do at a glance. */
-function HeroSpecimen() {
-  const rows = [
-    {
-      section: 'image' as const,
-      name: 'holiday-0142.heic',
-      from: 4.2,
-      to: 0.61,
-    },
-    { section: 'image' as const, name: 'banner@2x.png', from: 2.9, to: 0.38 },
-    { section: 'pdf' as const, name: 'contract-scan.pdf', from: 18.4, to: 2.7 },
-  ];
-  return (
-    <div
-      aria-hidden
-      className="sticker relative animate-in fade-in slide-in-from-bottom-4 rounded-3xl bg-card p-2.5 delay-150 duration-700 fill-mode-both lg:rotate-2"
-    >
-      <div className="absolute -top-[4.6rem] right-6 flex items-end gap-1">
-        <span className="mb-12 rotate-3 rounded-lg border-2 border-ink bg-card px-2 py-0.5 font-mono text-[10px] font-semibold shadow-pop-sm">
-          hi, I'm Mite!
-        </span>
-        <Mite mood="idle" className="size-20" />
-      </div>
-      <div className="flex items-center justify-between px-3 py-2">
-        <span className="eyebrow">filemite.com</span>
-        <span className="flex gap-1">
-          <span className="size-2 rounded-full bg-border-strong" />
-          <span className="size-2 rounded-full bg-border-strong" />
-          <span className="size-2 rounded-full bg-border-strong" />
-        </span>
-      </div>
-      <ul className="space-y-1.5">
-        {rows.map((row, i) => {
-          const saved = Math.round((1 - row.to / row.from) * 100);
-          return (
-            <li
-              key={row.name}
-              data-section={row.section}
-              className="rounded-xl border-2 border-border bg-background p-3"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <span className="truncate font-mono text-xs">{row.name}</span>
-                <span className="shrink-0 rounded-full border-2 border-ink bg-primary px-2 py-0.5 font-mono text-[11px] font-semibold text-primary-foreground">
-                  −{saved}%
-                </span>
-              </div>
-              <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-muted">
-                <div
-                  className="animate-grow-x h-full rounded-full bg-primary"
-                  style={
-                    {
-                      width: `${100 - saved}%`,
-                      '--delay': `${500 + i * 180}ms`,
-                    } as React.CSSProperties
-                  }
-                />
-              </div>
-              <div className="mt-1.5 flex justify-between font-mono text-[10px] text-muted-foreground">
-                <span>{row.from} MB</span>
-                <span className="text-foreground">{row.to} MB</span>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
   );
 }
