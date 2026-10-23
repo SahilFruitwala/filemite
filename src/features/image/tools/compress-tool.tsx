@@ -21,7 +21,7 @@ import {
   Panel,
   Segmented,
   ToolLayout,
-  ProgressBar,
+  WorkingLine,
 } from "@/components/tool/tool-ui";
 import { Button } from "@/components/ui/button";
 import ImageCompare from "@/features/image/components/ImageCompare";
@@ -578,7 +578,7 @@ function ResultRow({
       </div>
 
       {item.status === "working" && (
-        <ProgressBar className="px-3 pb-1 sm:px-4" progress={null} />
+        <WorkingLine className="px-3 pb-2 sm:px-4" />
       )}
 
       {open && result && previewable && (

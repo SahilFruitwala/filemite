@@ -77,14 +77,42 @@ export function Mite({ mood = 'idle', className }: { mood?: MiteMood; className?
  * A little factory scene for long-running work: sheets ride in on a conveyor,
  * Mite chomps them, and squished cubes pop out the back into a tray.
  */
-export function MiteStage({ className }: { className?: string }) {
+// Where cubes stack in the tray as work progresses: bottom row first.
+const PILE = [
+  [13, 85], [22, 85], [31, 85], [40, 85],
+  [17.5, 78], [26.5, 78], [35.5, 78],
+  [22, 71], [31, 71],
+  [26.5, 64],
+];
+
+export function MiteStage({
+  progress = null,
+  className,
+}: {
+  /** 0–1 fills the tray; null keeps a small pile that bounces as cubes land. */
+  progress?: number | null;
+  className?: string;
+}) {
+  const cubes =
+    progress === null
+      ? PILE.slice(0, 2)
+      : PILE.slice(0, Math.max(1, Math.round(progress * PILE.length)));
   return (
     <svg viewBox="0 0 260 120" className={cn('w-full overflow-visible', className)} aria-hidden>
       {/* Tray the output lands in. */}
       <g className="stage-tray">
         <path d="M8 92h44l-4 14H12Z" />
-        <rect className="stage-cube stage-pile" x="20" y="86" width="9" height="7" rx="1.5" />
-        <rect className="stage-cube stage-pile" x="31" y="87" width="8" height="6" rx="1.5" />
+        {cubes.map(([x, y]) => (
+          <rect
+            key={`${x}-${y}`}
+            className="stage-cube stage-pile"
+            x={x}
+            y={y}
+            width="8"
+            height="7"
+            rx="1.5"
+          />
+        ))}
       </g>
 
       {/* Squished cubes flying from Mite's back into the tray. */}

@@ -252,51 +252,6 @@
     animation: ping-soft 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
   }
 
-  /* Moving highlight across a running progress bar. */
-  .progress-shine {
-    position: relative;
-    overflow: hidden;
-  }
-  .progress-shine::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.45), transparent);
-    animation: shine 1.4s linear infinite;
-  }
-
-  /* Barber-pole stripes drifting across the progress track. */
-  .progress-stripes {
-    background-image: repeating-linear-gradient(
-      -45deg,
-      transparent 0 8px,
-      color-mix(in oklch, var(--foreground) 6%, transparent) 8px 16px
-    );
-    background-size: 22.6px 22.6px;
-    animation: stripes 0.8s linear infinite;
-  }
-  .progress-fill {
-    background-image: repeating-linear-gradient(
-      -45deg,
-      transparent 0 8px,
-      rgb(255 255 255 / 0.22) 8px 16px
-    );
-    background-size: 22.6px 22.6px;
-    animation: stripes 0.5s linear infinite;
-  }
-
-  /* With unknown progress the fill repeatedly "squeezes" from nothing to full. */
-  .progress-sweep {
-    animation: sweep 2.4s cubic-bezier(0.6, 0, 0.3, 1) infinite;
-  }
-
-  /* The mascot squashes down, then stretches up as it bounces along. */
-  .mascot {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-    animation: mascot-hop 0.7s ease-in-out infinite;
-  }
-
   /* Fade-and-rise as an element scrolls into view; no effect where unsupported. */
   @supports (animation-timeline: view()) {
     .reveal {
@@ -457,7 +412,11 @@
   /* ---------- MiteStage: the chomping factory ---------- */
   .stage-tray path { fill: var(--muted); stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
   .stage-cube { fill: var(--primary); stroke: var(--ink); stroke-width: 2; }
-  .stage-pile { transform-box: fill-box; transform-origin: center bottom; animation: stage-land 0.8s 0.95s ease-out infinite; }
+  .stage-pile {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both, stage-land 0.8s 0.95s ease-out infinite;
+  }
   .stage-fly {
     offset-path: path("M70 64 Q 52 6 30 82");
     offset-rotate: 0deg;
@@ -520,21 +479,6 @@
 @keyframes ping-soft {
   0% { transform: scale(1); opacity: 0.45; }
   100% { transform: scale(1.9); opacity: 0; }
-}
-@keyframes shine {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(100%); }
-}
-@keyframes stripes {
-  to { background-position: 22.6px 0; }
-}
-@keyframes sweep {
-  from { width: 6%; }
-  to { width: 100%; }
-}
-@keyframes mascot-hop {
-  0%, 100% { transform: translateY(0) scale(1.2, 0.78); }
-  45% { transform: translateY(-5px) scale(0.9, 1.15); }
 }
 @keyframes draw {
   to { stroke-dashoffset: 0; }

@@ -173,53 +173,40 @@ export function Confetti({ pieces = 18 }: { pieces?: number }) {
   );
 }
 
-/**
- * Progress track with a squishing file riding its leading edge. With no known
- * progress the fill sweeps along on a loop instead of sitting still.
- */
-export function ProgressBar({
-  progress,
-  caption = false,
-  className,
-}: {
-  progress: number | null;
-  /** Show a rotating quirky line underneath. */
-  caption?: boolean;
-  className?: string;
-}) {
+function useWorkingLine() {
   const [index, setIndex] = useState(() => Math.floor(Math.random() * WORKING_LINES.length));
   useEffect(() => {
-    if (!caption) return;
     const timer = setInterval(() => setIndex((value) => (value + 1) % WORKING_LINES.length), 2400);
     return () => clearInterval(timer);
-  }, [caption]);
+  }, []);
+  return WORKING_LINES[index];
+}
 
-  const determinate = progress !== null;
+/** Compact "Mite is on it" line for inline spots like a file row. */
+export function WorkingLine({ className }: { className?: string }) {
+  const line = useWorkingLine();
   return (
-    <div className={className} aria-hidden>
-      <div className="relative flex h-10 items-center">
-        <div className="progress-stripes h-3 w-full overflow-hidden rounded-full border-2 border-ink bg-muted" />
-        <div
-          className={cn(
-            'absolute inset-y-0 left-0 flex items-center justify-end',
-            determinate ? 'transition-[width] duration-300' : 'progress-sweep',
-          )}
-          style={determinate ? { width: `${Math.max(8, progress * 100)}%` } : undefined}
-        >
-          <div className="progress-fill absolute inset-x-0 h-3 rounded-full border-2 border-ink bg-primary" />
-          <div className="relative -mr-5 -mt-5">
-            <Mite mood="work" className="size-9" />
-          </div>
-        </div>
-      </div>
-      {caption && (
-        <p
-          key={index}
-          className="animate-in fade-in slide-in-from-bottom-1 mt-1 text-center font-mono text-[11px] text-muted-foreground duration-300"
-        >
-          {WORKING_LINES[index]}
-        </p>
+    <div className={cn('flex items-center gap-2', className)} aria-hidden>
+      <Mite mood="work" className="size-8 shrink-0" />
+      <p key={line} className="animate-in fade-in slide-in-from-bottom-1 font-mono text-[11px] text-muted-foreground duration-300">
+        {line}
+      </p>
+    </div>
+  );
+}
+
+/** Mite's factory scene; the tray fills up as the job progresses. */
+function WorkingScene({ progress }: { progress: number | null }) {
+  const line = useWorkingLine();
+  return (
+    <div className="mt-3 animate-in fade-in zoom-in-95 text-center duration-300" aria-hidden>
+      <MiteStage progress={progress} className="mx-auto max-w-72" />
+      {progress !== null && (
+        <p className="mt-1 font-display text-2xl font-bold tabular">{Math.round(progress * 100)}%</p>
       )}
+      <p key={line} className="animate-in fade-in slide-in-from-bottom-1 mt-0.5 font-mono text-[11px] text-muted-foreground duration-300">
+        {line}
+      </p>
     </div>
   );
 }
@@ -263,12 +250,7 @@ export function ActionPanel({
           label
         )}
       </Button>
-      {running && (
-        <div className="mt-3 animate-in fade-in zoom-in-95 duration-300">
-          <MiteStage className="mx-auto max-w-72" />
-          <ProgressBar progress={progress} caption />
-        </div>
-      )}
+      {running && <WorkingScene progress={progress} />}
       {disabledReason && !running && (
         <p className="mt-3 text-center text-xs text-muted-foreground">{disabledReason}</p>
       )}
