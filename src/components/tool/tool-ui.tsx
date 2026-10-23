@@ -5,10 +5,10 @@ import {
   Download,
   FileText,
   Info,
-  Loader2,
   RotateCcw,
 } from 'lucide-react';
 
+import { Mite, MiteStage } from '@/components/shell/mite';
 import { Button } from '@/components/ui/button';
 import type { JobState } from '@/hooks/use-job';
 import { formatBytes } from '@/lib/format';
@@ -121,82 +121,92 @@ export function Message({
   );
 }
 
-const SQUISH_LINES = [
-  'Squishing pixels…',
+const WORKING_LINES = [
+  'Chewing on your bytes…',
+  'Om nom nom nom…',
+  'Herding stray pixels…',
+  'Bribing the PDF gremlins…',
+  'Polishing every last byte…',
   'Applying maximum squeeze…',
-  'Sit on it, bytes!',
-  'Vacuum-sealing your file…',
-  'Fitting it into skinny jeans…',
-  'Squeeze harder!',
-  'Nom nom nom…',
-  'Shrinking, not sinking…',
+  'Asking the bytes nicely…',
+  'Tiny mite, mighty bite…',
+  'Almost there, no peeking…',
 ];
 
-/** A tiny file with a face; it squashes and stretches as it rides the progress bar. */
-function Mascot() {
+/** One-shot burst of paper confetti from the centre of its parent. */
+export function Confetti({ pieces = 18 }: { pieces?: number }) {
+  const [bits] = useState(() =>
+    Array.from({ length: pieces }, (_, i) => {
+      const angle = (i / pieces) * Math.PI * 2 + Math.random() * 0.4;
+      const distance = 50 + Math.random() * 60;
+      return {
+        x: `${Math.cos(angle) * distance}px`,
+        y: `${Math.sin(angle) * distance - 20}px`,
+        r: `${(Math.random() - 0.5) * 900}deg`,
+        d: `${Math.random() * 0.12}s`,
+        color: ['var(--tangerine)', 'var(--cobalt)', 'var(--sun)', 'var(--mint)'][i % 4],
+        round: i % 3 === 0,
+      };
+    }),
+  );
   return (
-    <svg viewBox="0 0 24 28" className="mascot size-6 overflow-visible" aria-hidden>
-      <path
-        d="M5 2h10l6 6v17a1.5 1.5 0 0 1-1.5 1.5h-14A1.5 1.5 0 0 1 4 25V3.5A1.5 1.5 0 0 1 5.5 2Z"
-        fill="var(--card)"
-        stroke="var(--primary)"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      <circle cx="9.5" cy="15" r="1.6" fill="var(--foreground)" />
-      <circle cx="16" cy="15" r="1.6" fill="var(--foreground)" />
-      <path d="M10 20q3 2.6 6 0" fill="none" stroke="var(--foreground)" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
+    <span aria-hidden className="pointer-events-none absolute inset-0 z-10">
+      {bits.map((bit, i) => (
+        <span
+          key={i}
+          className="confetti-piece"
+          style={
+            {
+              '--x': bit.x,
+              '--y': bit.y,
+              '--r': bit.r,
+              '--d': bit.d,
+              background: bit.color,
+              borderRadius: bit.round ? '999px' : undefined,
+              width: bit.round ? 8 : undefined,
+              height: bit.round ? 8 : undefined,
+            } as React.CSSProperties
+          }
+        />
+      ))}
+    </span>
   );
 }
 
-/**
- * Progress track with a squishing file riding its leading edge. With no known
- * progress the fill sweeps along on a loop instead of sitting still.
- */
-export function ProgressBar({
-  progress,
-  caption = false,
-  className,
-}: {
-  progress: number | null;
-  /** Show a rotating quirky line underneath. */
-  caption?: boolean;
-  className?: string;
-}) {
-  const [index, setIndex] = useState(() => Math.floor(Math.random() * SQUISH_LINES.length));
+function useWorkingLine() {
+  const [index, setIndex] = useState(() => Math.floor(Math.random() * WORKING_LINES.length));
   useEffect(() => {
-    if (!caption) return;
-    const timer = setInterval(() => setIndex((value) => (value + 1) % SQUISH_LINES.length), 2400);
+    const timer = setInterval(() => setIndex((value) => (value + 1) % WORKING_LINES.length), 2400);
     return () => clearInterval(timer);
-  }, [caption]);
+  }, []);
+  return WORKING_LINES[index];
+}
 
-  const determinate = progress !== null;
+/** Compact "Mite is on it" line for inline spots like a file row. */
+export function WorkingLine({ className }: { className?: string }) {
+  const line = useWorkingLine();
   return (
-    <div className={className} aria-hidden>
-      <div className="relative flex h-8 items-center">
-        <div className="progress-stripes h-2.5 w-full overflow-hidden rounded-full bg-muted" />
-        <div
-          className={cn(
-            'absolute inset-y-0 left-0 flex items-center justify-end',
-            determinate ? 'transition-[width] duration-300' : 'progress-sweep',
-          )}
-          style={determinate ? { width: `${Math.max(8, progress * 100)}%` } : undefined}
-        >
-          <div className="progress-fill absolute inset-x-0 h-2.5 rounded-full bg-primary" />
-          <div className="relative -mr-3">
-            <Mascot />
-          </div>
-        </div>
-      </div>
-      {caption && (
-        <p
-          key={index}
-          className="animate-in fade-in slide-in-from-bottom-1 mt-1 text-center font-mono text-[11px] text-muted-foreground duration-300"
-        >
-          {SQUISH_LINES[index]}
-        </p>
+    <div className={cn('flex items-center gap-2', className)} aria-hidden>
+      <Mite mood="work" className="size-8 shrink-0" />
+      <p key={line} className="animate-in fade-in slide-in-from-bottom-1 font-mono text-[11px] text-muted-foreground duration-300">
+        {line}
+      </p>
+    </div>
+  );
+}
+
+/** Mite's factory scene; the tray fills up as the job progresses. */
+function WorkingScene({ progress }: { progress: number | null }) {
+  const line = useWorkingLine();
+  return (
+    <div className="mt-3 animate-in fade-in zoom-in-95 text-center duration-300" aria-hidden>
+      <MiteStage progress={progress} className="mx-auto max-w-72" />
+      {progress !== null && (
+        <p className="mt-1 font-display text-2xl font-bold tabular">{Math.round(progress * 100)}%</p>
       )}
+      <p key={line} className="animate-in fade-in slide-in-from-bottom-1 mt-0.5 font-mono text-[11px] text-muted-foreground duration-300">
+        {line}
+      </p>
     </div>
   );
 }
@@ -220,21 +230,27 @@ export function ActionPanel({
   const progress = running ? job.progress : null;
 
   return (
-    <Panel>
+    <Panel className="sticker">
       {children && <div className="mb-4 space-y-4">{children}</div>}
       <Button size="xl" block disabled={!!disabledReason || running} onClick={onRun}>
         {running ? (
           <>
-            <Loader2 className="animate-spin" />
+            <span className="flex gap-0.5" aria-hidden>
+              {[0, 1, 2].map((dot) => (
+                <span
+                  key={dot}
+                  className="size-1.5 animate-bounce rounded-full bg-current"
+                  style={{ animationDelay: `${dot * 120}ms` }}
+                />
+              ))}
+            </span>
             {progress === null ? 'Working…' : `Working… ${Math.round(progress * 100)}%`}
           </>
         ) : (
           label
         )}
       </Button>
-      {running && (
-        <ProgressBar className="mt-2" progress={progress} caption />
-      )}
+      {running && <WorkingScene progress={progress} />}
       {disabledReason && !running && (
         <p className="mt-3 text-center text-xs text-muted-foreground">{disabledReason}</p>
       )}
@@ -274,6 +290,19 @@ export function FileRow({
   );
 }
 
+const DONE_LINES = [
+  'Ta-da! Fresh out of the oven.',
+  'Done. The mite is very proud.',
+  'Nailed it. *chef’s kiss*',
+  'All done, crumbs swept up.',
+  'Ding! Your file is ready.',
+];
+
+function useDoneLine() {
+  const [line] = useState(() => DONE_LINES[Math.floor(Math.random() * DONE_LINES.length)]);
+  return line;
+}
+
 export function ResultPanel({
   title,
   children,
@@ -289,13 +318,18 @@ export function ResultPanel({
   onStartOver: () => void;
   startOverLabel?: string;
 }) {
+  const doneLine = useDoneLine();
   return (
-    <Panel className="border-primary-line">
+    <Panel className="sticker animate-in fade-in zoom-in-95 duration-300">
       <div className="mb-4 flex items-center gap-2.5">
-        <span className="flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
-          <CheckCircle2 className="size-4" />
+        <span className="relative">
+          <Confetti />
+          <Mite mood="happy" className="animate-pop -my-2 size-14" />
         </span>
-        <h2 className="font-display text-lg font-semibold tracking-tight">{title}</h2>
+        <div>
+          <h2 className="font-display text-lg leading-tight font-semibold tracking-tight">{title}</h2>
+          <p className="font-mono text-[11px] text-muted-foreground">{doneLine}</p>
+        </div>
       </div>
       <div className="space-y-3">{children}</div>
       {onDownload && (

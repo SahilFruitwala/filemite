@@ -47,6 +47,8 @@ const PREVIEW_HEIGHT = 420;
 type Framing = { zoom: number; x: number; y: number };
 const START: Framing = { zoom: 1, x: 0, y: 0 };
 
+const SHEET_PREVIEW_WIDTH = 340;
+
 export function PassportTool() {
   const [file, setFile] = useState<File | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -59,6 +61,7 @@ export function PassportTool() {
   const [guides, setGuides] = useState(true);
   const job = useJob<void>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sheetRef = useRef<HTMLCanvasElement>(null);
   const drag = useRef<{ x: number; y: number; framing: Framing } | null>(null);
 
   const previewUrl = useObjectUrl(file);
@@ -108,6 +111,33 @@ export function PassportTool() {
     // paintPhoto reads these values; the dependency list names them directly.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [image, framing, background, previewWidth]);
+
+  // Miniature of the print sheet, built from the framed preview above so it updates live.
+  const sheetPreview = layout && layout.positions.length > 0 ? layout : null;
+  const sheetScale = sheetPreview ? SHEET_PREVIEW_WIDTH / Math.max(sheetPreview.width, sheetPreview.height) : 0;
+  useEffect(() => {
+    const source = canvasRef.current;
+    const canvas = sheetRef.current;
+    const context = canvas?.getContext('2d');
+    if (!source || !canvas || !context || !sheetPreview || !image) return;
+    const ratio = window.devicePixelRatio || 1;
+    const scale = sheetScale * ratio;
+    canvas.width = Math.round(sheetPreview.width * scale);
+    canvas.height = Math.round(sheetPreview.height * scale);
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.imageSmoothingQuality = 'high';
+    context.strokeStyle = 'rgb(0 0 0 / 0.25)';
+    context.lineWidth = 1;
+    for (const { x, y } of sheetPreview.positions) {
+      const w = sheetPreview.photoWidth * scale;
+      const h = sheetPreview.photoHeight * scale;
+      context.drawImage(source, x * scale, y * scale, w, h);
+      context.strokeRect(x * scale - 0.5, y * scale - 0.5, w + 1, h + 1);
+    }
+    // sheetPreview is rebuilt every render; these are the values it depends on.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [image, framing, background, previewWidth, sheetId, widthMm, heightMm, sheetScale]);
 
   const change = (update: () => void) => {
     job.reset();
@@ -239,6 +269,26 @@ export function PassportTool() {
             {validSize ? `${mmToPx(widthMm)}×${mmToPx(heightMm)} px at ${DPI} dpi` : 'Choose a valid size'}
             {layout && layout.positions.length > 0 && ` · ${plural(layout.positions.length, 'photo')} per sheet`}
           </p>
+          {sheetPreview && (
+            <div className="animate-in fade-in slide-in-from-bottom-2 space-y-2 pt-2 duration-300">
+              <p className="eyebrow text-center">Print sheet preview · {sheet.label}</p>
+              <div className="flex justify-center rounded-xl border border-border bg-muted/60 p-5">
+                <canvas
+                  ref={sheetRef}
+                  role="img"
+                  aria-label={`Print sheet with ${plural(sheetPreview.positions.length, 'photo')}`}
+                  className="sticker max-w-full rounded-[3px] bg-white"
+                  style={{
+                    width: Math.round(sheetPreview.width * sheetScale),
+                    height: Math.round(sheetPreview.height * sheetScale),
+                  }}
+                />
+              </div>
+            </div>
+          )}
+          {layout && layout.positions.length === 0 && (
+            <Message tone="error">That photo is too big for this sheet. Pick a bigger sheet.</Message>
+          )}
         </div>
       )}
     </SingleImageWorkspace>
