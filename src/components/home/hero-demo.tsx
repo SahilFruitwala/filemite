@@ -1,171 +1,271 @@
-import { useEffect, useState } from 'react';
-import { ImageDown, MousePointer2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ImageDown, RotateCcw } from 'lucide-react';
 
 import { Mite, MiteStage } from '@/components/shell/mite';
 import { Confetti } from '@/components/tool/tool-ui';
+import { formatBytes } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
-/** Sample files the demo cycles through. Sizes in MB. */
-const FILES = [
-  { name: 'holiday-0142.heic', from: 4.2, to: 0.61, hue: 205 },
-  { name: 'banner@2x.png', from: 2.9, to: 0.38, hue: 35 },
-  { name: 'cat-on-keyboard.jpg', from: 6.8, to: 0.94, hue: 150 },
+type DemoFile = { name: string; bytes: number; hue: number };
+
+/** Pretend files lying on the "desk" next to the browser card. */
+const DESK: DemoFile[] = [
+  { name: 'holiday-0142.heic', bytes: 4.2e6, hue: 205 },
+  { name: 'banner@2x.png', bytes: 2.9e6, hue: 35 },
+  { name: 'cat-on-keyboard.jpg', bytes: 6.8e6, hue: 150 },
 ];
+const TILTS = ['-rotate-6', 'rotate-3', '-rotate-2'];
 
-// Timeline of one loop, in ms.
-const DRAG = 1800;
-const DROP = 2500;
-const WORK = 5600;
-const LOOP = 9000;
-const TICK = 50;
+const DRAG_TYPE = 'application/x-filemite-demo';
+const WORK_MS = 3000;
 
-type Phase = 'drag' | 'drop' | 'work' | 'done';
-
-function phaseAt(t: number): Phase {
-  if (t < DRAG) return 'drag';
-  if (t < DROP) return 'drop';
-  if (t < WORK) return 'work';
-  return 'done';
-}
+type State =
+  | { phase: 'idle' }
+  | { phase: 'work'; file: DemoFile }
+  | { phase: 'done'; file: DemoFile; after: number; round: number };
 
 /**
- * Decorative, looping walkthrough of the compress tool: a file is dragged in,
- * Mite chews it, and the smaller result pops out.
+ * A pretend compress tool on the landing page. Visitors drag one of the sample
+ * files (or tap it, or drop a real file) onto Mite to watch it get compressed.
+ * Nothing is uploaded or read beyond a dropped file's name and size.
  */
 export function HeroDemo() {
-  const [t, setT] = useState(0);
-  const [round, setRound] = useState(0);
+  const [state, setState] = useState<State>({ phase: 'idle' });
+  const [hovering, setHovering] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [eaten, setEaten] = useState<string[]>([]);
+  const depth = useRef(0);
+  const rounds = useRef(0);
 
+  // Run the work phase: count progress up, then land the result.
   useEffect(() => {
-    // Respect reduced motion: hold on the finished state.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const hold = setTimeout(() => setT(LOOP - 1));
-      return () => clearTimeout(hold);
-    }
+    if (state.phase !== 'work') return;
+    const { file } = state;
+    const started = performance.now();
     const timer = setInterval(() => {
-      setT((value) => {
-        if (value + TICK < LOOP) return value + TICK;
-        setRound((r) => r + 1);
-        return 0;
+      const value = Math.min(1, (performance.now() - started) / WORK_MS);
+      setProgress(value);
+      if (value < 1) return;
+      clearInterval(timer);
+      rounds.current += 1;
+      setState({
+        phase: 'done',
+        file,
+        after: Math.round(file.bytes * (0.1 + Math.random() * 0.1)),
+        round: rounds.current,
       });
-    }, TICK);
+    }, 50);
     return () => clearInterval(timer);
-  }, []);
+  }, [state]);
 
-  const file = FILES[round % FILES.length];
-  const phase = phaseAt(t);
-  const progress = phase === 'work' ? Math.min(1, (t - DROP) / (WORK - DROP - 200)) : null;
-  const saved = Math.round((1 - file.to / file.from) * 100);
-  // The dragged file starts off to the side, then glides onto the drop zone.
-  const arrived = t > 250;
+  const feed = (file: DemoFile) => {
+    if (state.phase === 'work') return;
+    setProgress(0);
+    setHovering(false);
+    setEaten((list) => (DESK.some((d) => d.name === file.name) ? [...list, file.name] : list));
+    setState({ phase: 'work', file });
+  };
+
+  const reset = () => {
+    setEaten([]);
+    setState({ phase: 'idle' });
+  };
+
+  const accepts = (event: React.DragEvent) =>
+    event.dataTransfer.types.includes(DRAG_TYPE) || event.dataTransfer.types.includes('Files');
+
+  const dropHandlers = {
+    onDragEnter: (event: React.DragEvent) => {
+      if (!accepts(event) || state.phase === 'work') return;
+      event.preventDefault();
+      depth.current++;
+      setHovering(true);
+    },
+    onDragOver: (event: React.DragEvent) => {
+      if (accepts(event) && state.phase !== 'work') event.preventDefault();
+    },
+    onDragLeave: () => {
+      depth.current = Math.max(0, depth.current - 1);
+      if (!depth.current) setHovering(false);
+    },
+    onDrop: (event: React.DragEvent) => {
+      event.preventDefault();
+      depth.current = 0;
+      setHovering(false);
+      const demo = DESK.find((d) => d.name === event.dataTransfer.getData(DRAG_TYPE));
+      const real = event.dataTransfer.files[0];
+      if (demo) feed(demo);
+      else if (real) feed({ name: real.name, bytes: real.size || 1.5e6, hue: 280 });
+    },
+  };
+
+  const desk = DESK.filter((file) => !eaten.includes(file.name));
 
   return (
-    <div
-      aria-hidden
-      className="sticker relative animate-in fade-in slide-in-from-bottom-4 rounded-3xl bg-card p-2.5 delay-150 duration-700 fill-mode-both lg:rotate-2"
-    >
-      <div className="flex items-center justify-between px-3 py-2">
-        <span className="eyebrow">filemite.com/image/compress</span>
-        <span className="flex gap-1">
-          <span className="size-2 rounded-full bg-border-strong" />
-          <span className="size-2 rounded-full bg-border-strong" />
-          <span className="size-2 rounded-full bg-border-strong" />
+    <div className="relative animate-in fade-in slide-in-from-bottom-4 delay-150 duration-700 fill-mode-both">
+      <div {...dropHandlers} className="sticker relative rounded-3xl bg-card p-2.5 lg:rotate-2">
+        <div className="flex items-center justify-between px-3 py-2">
+          <span className="eyebrow">filemite.com/image/compress</span>
+          <span className="flex gap-1" aria-hidden>
+            <span className="size-2 rounded-full bg-border-strong" />
+            <span className="size-2 rounded-full bg-border-strong" />
+            <span className="size-2 rounded-full bg-border-strong" />
+          </span>
+        </div>
+
+        <div
+          data-section="image"
+          className="relative h-[19rem] overflow-hidden rounded-2xl border-2 border-border bg-background"
+          aria-live="polite"
+        >
+          {state.phase === 'idle' && (
+            <div
+              className={cn(
+                'absolute inset-3 flex flex-col items-center justify-center rounded-xl border-2 border-dashed text-center transition-[background-color,border-color,transform] duration-300',
+                hovering ? 'scale-[1.02] border-ink bg-primary-soft' : 'border-border-strong',
+              )}
+            >
+              <Mite mood={hovering ? 'hungry' : 'idle'} className="size-24" />
+              <p className="mt-2 font-display text-xl font-semibold">
+                {hovering ? 'Feed me! 🍪' : 'Drop a file on me'}
+              </p>
+              <p className="mt-0.5 px-4 text-xs text-muted-foreground">
+                {hovering
+                  ? 'Let go, I’m starving.'
+                  : 'Try one of the files below. It’s a demo, nothing gets uploaded.'}
+              </p>
+            </div>
+          )}
+
+          {state.phase === 'work' && (
+            <div className="absolute inset-0 flex animate-in fade-in zoom-in-95 flex-col items-center justify-center px-6 duration-300">
+              <MiteStage progress={progress} className="max-w-72" />
+              <p className="mt-1 font-display text-3xl font-bold tabular">
+                {Math.round(progress * 100)}%
+              </p>
+              <p className="max-w-full truncate font-mono text-[11px] text-muted-foreground">
+                Chewing on {state.file.name}…
+              </p>
+            </div>
+          )}
+
+          {state.phase === 'done' && (
+            <Result
+              file={state.file}
+              after={state.after}
+              round={state.round}
+              hovering={hovering}
+              onAgain={reset}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* The "desk": pretend files to drag (or tap) into the card. */}
+      <div className="relative mt-6 flex min-h-16 flex-wrap items-center justify-center gap-3 lg:-mr-4">
+        {desk.map((file, i) => (
+          <button
+            key={file.name}
+            type="button"
+            draggable
+            disabled={state.phase === 'work'}
+            onDragStart={(event) => {
+              event.dataTransfer.setData(DRAG_TYPE, file.name);
+              event.dataTransfer.effectAllowed = 'move';
+            }}
+            onClick={() => feed(file)}
+            aria-label={`Compress the sample file ${file.name}`}
+            className={cn(
+              'sticker flex animate-in zoom-in-50 fade-in fill-mode-both cursor-grab items-center gap-2 rounded-xl bg-card p-2 pr-3 text-left duration-300 active:cursor-grabbing disabled:opacity-50',
+              TILTS[i % TILTS.length],
+            )}
+            style={{ animationDelay: `${400 + i * 120}ms` }}
+          >
+            <FileThumb hue={file.hue} />
+            <span>
+              <span className="block font-mono text-[11px] font-semibold">{file.name}</span>
+              <span className="block font-mono text-[10px] text-muted-foreground">
+                {formatBytes(file.bytes)}
+              </span>
+            </span>
+          </button>
+        ))}
+        {desk.length === 0 && state.phase !== 'work' && (
+          <p className="font-mono text-xs text-muted-foreground">
+            Mite ate everything. Hit “Feed another”, or drop your own file.
+          </p>
+        )}
+        <span className="pointer-events-none absolute -top-5 left-0 hidden -rotate-6 font-mono text-[11px] text-muted-foreground lg:block">
+          ↑ drag one up, or tap
         </span>
       </div>
+    </div>
+  );
+}
 
-      <div data-section="image" className="relative h-[19rem] overflow-hidden rounded-2xl border-2 border-border bg-background">
-        {/* 1. Drop zone, waiting then hungry. */}
-        {(phase === 'drag' || phase === 'drop') && (
-          <div
-            className={cn(
-              'absolute inset-3 flex flex-col items-center justify-center rounded-xl border-2 border-dashed transition-[background-color,border-color,transform] duration-300',
-              phase === 'drop' || t > DRAG - 500
-                ? 'scale-[1.02] border-ink bg-primary-soft'
-                : 'border-border-strong',
-            )}
-          >
-            <Mite mood={t > DRAG - 500 ? 'hungry' : 'idle'} className="size-20" />
-            <p className="mt-2 font-display text-lg font-semibold">
-              {t > DRAG - 500 ? 'Feed me! 🍪' : 'Drop images here'}
-            </p>
-            <p className="font-mono text-[10px] text-muted-foreground">PNG · JPEG · WebP · HEIC</p>
-          </div>
-        )}
+function FileThumb({ hue }: { hue: number }) {
+  return (
+    <span
+      aria-hidden
+      className="size-9 shrink-0 rounded-md border-2 border-ink"
+      style={{
+        background: `linear-gradient(160deg, oklch(0.85 0.1 ${hue}), oklch(0.6 0.15 ${hue + 40}))`,
+      }}
+    />
+  );
+}
 
-        {/* The file being dragged in by a cursor. */}
-        {phase === 'drag' || phase === 'drop' ? (
-          <div
-            className="absolute top-0 left-0 transition-[transform,opacity] ease-[cubic-bezier(0.5,0,0.2,1)]"
-            style={{
-              transitionDuration: phase === 'drop' ? '400ms' : '1400ms',
-              transform: arrived
-                ? phase === 'drop'
-                  ? 'translate(10rem, 6rem) scale(0.2) rotate(20deg)'
-                  : 'translate(8.5rem, 12rem) rotate(-4deg)'
-                : 'translate(24rem, 15rem) rotate(8deg)',
-              opacity: phase === 'drop' ? 0 : 1,
-            }}
-          >
-            <div className="flex items-center gap-2 rounded-xl border-2 border-ink bg-card p-2 pr-3 shadow-pop">
-              <span
-                className="size-9 rounded-md border-2 border-ink"
-                style={{
-                  background: `linear-gradient(160deg, oklch(0.85 0.1 ${file.hue}), oklch(0.6 0.15 ${file.hue + 40}))`,
-                }}
-              />
-              <span>
-                <span className="block font-mono text-[11px] font-semibold">{file.name}</span>
-                <span className="block font-mono text-[10px] text-muted-foreground">{file.from} MB</span>
-              </span>
-            </div>
-            <MousePointer2 className="absolute -right-3 -bottom-4 size-6 fill-foreground stroke-background" />
-          </div>
-        ) : null}
-
-        {/* 2. Mite at work. */}
-        {phase === 'work' && (
-          <div className="absolute inset-0 flex animate-in fade-in zoom-in-95 flex-col items-center justify-center px-6 duration-300">
-            <MiteStage progress={progress} className="max-w-72" />
-            <p className="mt-1 font-display text-3xl font-bold tabular">
-              {Math.round((progress ?? 0) * 100)}%
-            </p>
-            <p className="font-mono text-[11px] text-muted-foreground">
-              Chewing on {file.name}…
-            </p>
-          </div>
-        )}
-
-        {/* 3. Result. */}
-        {phase === 'done' && (
-          <div className="absolute inset-0 flex animate-in fade-in zoom-in-95 flex-col items-center justify-center gap-3 px-6 duration-300">
-            <span className="relative">
-              <Confetti key={round} pieces={22} />
-              <Mite mood="happy" className="size-20" />
-            </span>
-            <div className="w-full max-w-72 rounded-xl border-2 border-ink bg-card p-3 shadow-pop">
-              <div className="flex items-center justify-between gap-2">
-                <span className="flex min-w-0 items-center gap-1.5">
-                  <ImageDown className="size-4 shrink-0 text-primary" />
-                  <span className="truncate font-mono text-xs">{file.name}</span>
-                </span>
-                <span className="animate-pop shrink-0 -rotate-3 rounded-full border-2 border-ink bg-primary px-2 py-0.5 font-mono text-[11px] font-semibold text-primary-foreground">
-                  −{saved}%
-                </span>
-              </div>
-              <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-muted">
-                <div
-                  className="animate-grow-x h-full rounded-full bg-primary"
-                  style={{ width: `${100 - saved}%` }}
-                />
-              </div>
-              <div className="mt-1.5 flex justify-between font-mono text-[10px] text-muted-foreground">
-                <span className="line-through">{file.from} MB</span>
-                <span className="font-semibold text-foreground">{file.to} MB</span>
-              </div>
-            </div>
-          </div>
-        )}
+function Result({
+  file,
+  after,
+  round,
+  hovering,
+  onAgain,
+}: {
+  file: DemoFile;
+  after: number;
+  round: number;
+  hovering: boolean;
+  onAgain: () => void;
+}) {
+  const saved = Math.round((1 - after / file.bytes) * 100);
+  return (
+    <div
+      className={cn(
+        'absolute inset-0 flex animate-in fade-in zoom-in-95 flex-col items-center justify-center gap-3 px-6 transition-colors duration-300',
+        hovering && 'bg-primary-soft',
+      )}
+    >
+      <span className="relative">
+        <Confetti key={round} pieces={22} />
+        <Mite mood={hovering ? 'hungry' : 'happy'} className="size-20" />
+      </span>
+      <div className="w-full max-w-72 rounded-xl border-2 border-ink bg-card p-3 shadow-pop">
+        <div className="flex items-center justify-between gap-2">
+          <span className="flex min-w-0 items-center gap-1.5">
+            <ImageDown className="size-4 shrink-0 text-primary" />
+            <span className="truncate font-mono text-xs">{file.name}</span>
+          </span>
+          <span className="animate-pop shrink-0 -rotate-3 rounded-full border-2 border-ink bg-primary px-2 py-0.5 font-mono text-[11px] font-semibold text-primary-foreground">
+            −{saved}%
+          </span>
+        </div>
+        <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-muted">
+          <div className="animate-grow-x h-full rounded-full bg-primary" style={{ width: `${100 - saved}%` }} />
+        </div>
+        <div className="mt-1.5 flex justify-between font-mono text-[10px] text-muted-foreground">
+          <span className="line-through">{formatBytes(file.bytes)}</span>
+          <span className="font-semibold text-foreground">{formatBytes(after)}</span>
+        </div>
       </div>
+      <button
+        type="button"
+        onClick={onAgain}
+        className="inline-flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+      >
+        <RotateCcw className="size-3" />
+        Feed another
+      </button>
     </div>
   );
 }
