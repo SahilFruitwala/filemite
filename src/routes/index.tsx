@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowRight, Cloud, Gauge, Laptop, LockKeyhole, UserX } from 'lucide-react';
 
-import { Muncher } from '@/components/tool/tool-ui';
+import { Mite } from '@/components/shell/mite';
 import { buttonVariants } from '@/components/ui/button';
 import { formatBytes } from '@/lib/format';
 import { IMAGES_PER_HOUR, MAX_IMAGE_BATCH, MAX_IMAGE_BYTES } from '@/lib/limits';
@@ -231,11 +231,11 @@ function HeroSpecimen() {
       aria-hidden
       className="sticker relative animate-in fade-in slide-in-from-bottom-4 rounded-3xl bg-card p-2.5 delay-150 duration-700 fill-mode-both lg:rotate-2"
     >
-      <div className="absolute -top-9 right-8 flex items-end gap-1.5">
-        <span className="mb-6 rotate-3 rounded-lg border-2 border-ink bg-card px-2 py-0.5 font-mono text-[10px] font-semibold shadow-pop-sm">
-          nom nom
+      <div className="absolute -top-[4.6rem] right-6 flex items-end gap-1">
+        <span className="mb-12 rotate-3 rounded-lg border-2 border-ink bg-card px-2 py-0.5 font-mono text-[10px] font-semibold shadow-pop-sm">
+          hi, I'm Mite!
         </span>
-        <Muncher className="size-12" />
+        <Mite mood="idle" className="size-20" />
       </div>
       <div className="flex items-center justify-between px-3 py-2">
         <span className="eyebrow">filemite.com</span>

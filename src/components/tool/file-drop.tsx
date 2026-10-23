@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Plus, Upload } from 'lucide-react';
 
-import { Muncher } from '@/components/tool/tool-ui';
+import { Mite } from '@/components/shell/mite';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -106,9 +106,10 @@ export function FileDrop({
         >
           <Icon className="size-7" />
         </div>
-        {isDragging && (
-          <Muncher className="absolute -top-5 -right-7 size-10 animate-in zoom-in-50 spin-in-12 duration-300" />
-        )}
+        <Mite
+          mood={isDragging ? 'hungry' : 'idle'}
+          className="absolute -right-12 -bottom-3 size-14"
+        />
       </div>
       <h2 className="relative font-display text-2xl font-semibold tracking-tight">
         {isDragging ? 'Feed me! 🍪' : title}
@@ -143,7 +144,7 @@ export function DropTarget({
       {children}
       {isDragging && (
         <div className="pointer-events-none absolute inset-0 z-20 flex animate-in fade-in zoom-in-95 items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-ink bg-primary-soft/90 font-display text-lg font-semibold backdrop-blur-sm">
-          <Muncher className="size-10" />
+          <Mite mood="hungry" className="size-14" />
           Feed me more!
         </div>
       )}

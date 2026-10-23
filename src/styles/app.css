@@ -374,28 +374,6 @@
     animation: wiggle 0.5s ease-in-out;
   }
 
-  /* Muncher: the mite chews; crumbs fly out of its mouth. */
-  .muncher-jaw {
-    transform-box: fill-box;
-    transform-origin: 50% 0%;
-    animation: chomp 0.32s ease-in-out infinite alternate;
-  }
-  .muncher-body {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-    animation: mascot-hop 0.64s ease-in-out infinite;
-  }
-  .muncher-crumb {
-    animation: crumb 0.9s ease-out infinite;
-    animation-delay: var(--d, 0s);
-    opacity: 0;
-  }
-  .muncher-food {
-    transform-box: fill-box;
-    transform-origin: 0% 50%;
-    animation: eaten 2.6s steps(5, end) infinite;
-  }
-
   /* One-shot confetti burst: each piece flies along --x/--y and spins. */
   .confetti-piece {
     position: absolute;
@@ -412,6 +390,101 @@
   /* Pop-in for success badges. */
   .animate-pop {
     animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+
+  /* ---------- Mite, the mascot ---------- */
+  .mite * {
+    transform-box: fill-box;
+  }
+  .mite-shadow { fill: color-mix(in oklch, var(--foreground) 14%, transparent); transform-origin: center; }
+  .mite-paper { fill: var(--card); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+  .dark .mite-paper { fill: oklch(0.96 0.006 85); }
+  .mite-fold { fill: var(--primary); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+  .mite-cheek { fill: var(--tangerine); opacity: 0.35; transform-origin: center; }
+  .mite-white { fill: #fff; stroke: var(--ink); stroke-width: 2.5; }
+  .mite-pupils circle { fill: var(--ink); }
+  .mite-pupils .mite-glint { fill: #fff; }
+  .mite-eye { transform-origin: center; animation: blink 4.2s infinite; }
+  .mite-brow { stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; fill: none; opacity: 0; transform-origin: center; }
+  .mite-squint path { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; fill: none; }
+  .mite-mouth path { fill: var(--ink); }
+  .mite-mouth { transform-origin: 50% 0%; }
+  .mite-tooth { fill: #fff; }
+  .mite-foot { fill: var(--cobalt); stroke: var(--ink); stroke-width: 2.4; transform-origin: center bottom; }
+  .mite-arm { fill: none; stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; }
+  .mite-arm-l { transform-origin: 100% 100%; }
+  .mite-arm-r { transform-origin: 0% 100%; }
+  .mite-sweat { fill: oklch(0.75 0.12 230); stroke: var(--ink); stroke-width: 1.2; opacity: 0; transform-origin: center; }
+  .mite-body, .mite-bob { transform-origin: 50% 100%; }
+
+  /* idle: sway, glance around, arms relaxed */
+  .mite-idle .mite-bob { animation: mite-sway 3.2s ease-in-out infinite; }
+  .mite-idle .mite-pupils { animation: mite-look 6s ease-in-out infinite; }
+  .mite-idle .mite-arm-l { animation: mite-wave 6s ease-in-out infinite; }
+  .mite-idle .mite-mouth { transform: scaleY(0.45); }
+
+  /* work: lean in, chomp, puff cheeks, stomp, sweat */
+  .mite-work .mite-bob { animation: mite-stomp 0.4s ease-in-out infinite alternate; }
+  .mite-work .mite-body { animation: mite-lean 0.8s ease-in-out infinite; }
+  .mite-work .mite-pupils { transform: translate(3px, 1px); }
+  .mite-work .mite-brow { opacity: 1; }
+  .mite-work .mite-brow-l { transform: rotate(12deg); }
+  .mite-work .mite-brow-r { transform: rotate(-12deg); }
+  .mite-work .mite-mouth { animation: mite-chomp 0.2s ease-in-out infinite alternate; }
+  .mite-work .mite-cheek { animation: mite-puff 0.4s ease-in-out infinite alternate; }
+  .mite-work .mite-arm-r { animation: mite-grab 0.8s ease-in-out infinite; }
+  .mite-work .mite-arm-l { animation: mite-grab-l 0.4s ease-in-out infinite alternate; }
+  .mite-work .mite-foot-l { animation: tap 0.4s ease-in-out infinite; }
+  .mite-work .mite-foot-r { animation: tap 0.4s 0.2s ease-in-out infinite; }
+  .mite-work .mite-sweat { animation: mite-sweat 2.4s ease-in infinite; }
+
+  /* hungry: mouth wide, bouncing, arms up */
+  .mite-hungry .mite-bob { animation: mite-bounce 0.45s ease-in-out infinite alternate; }
+  .mite-hungry .mite-mouth { transform: scale(1.7, 2.6); }
+  .mite-hungry .mite-eye { transform: scale(1.12); animation: none; }
+  .mite-hungry .mite-arm-l { transform: rotate(40deg); animation: mite-flail 0.25s ease-in-out infinite alternate; }
+  .mite-hungry .mite-arm-r { transform: rotate(-40deg); animation: mite-flail 0.25s 0.12s ease-in-out infinite alternate; }
+
+  /* happy: big jump with squash, arms up */
+  .mite-happy .mite-bob { animation: mite-jump 0.9s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
+  .mite-happy .mite-shadow { animation: mite-shadow 0.9s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
+  .mite-happy .mite-mouth { transform: scale(1.2, 1.5); }
+  .mite-happy .mite-arm-l { transform: rotate(55deg); }
+  .mite-happy .mite-arm-r { transform: rotate(-55deg); }
+  .mite-happy .mite-cheek { opacity: 0.65; }
+
+  /* ---------- MiteStage: the chomping factory ---------- */
+  .stage-tray path { fill: var(--muted); stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+  .stage-cube { fill: var(--primary); stroke: var(--ink); stroke-width: 2; }
+  .stage-pile { transform-box: fill-box; transform-origin: center bottom; animation: stage-land 0.8s 0.95s ease-out infinite; }
+  .stage-fly {
+    offset-path: path("M70 64 Q 52 6 30 82");
+    offset-rotate: 0deg;
+    animation: stage-fly 1.6s ease-in infinite both;
+    opacity: 0;
+  }
+  .stage-belt rect { fill: var(--muted); stroke: var(--ink); stroke-width: 2.5; }
+  .stage-belt circle { fill: var(--ink); }
+  .stage-belt-dash {
+    stroke: var(--border-strong); stroke-width: 2; stroke-dasharray: 6 6;
+    animation: belt 0.4s linear infinite;
+  }
+  .stage-sheet {
+    transform-box: fill-box;
+    transform-origin: 0% 100%;
+    animation: stage-sheet 1.6s linear infinite both;
+  }
+  .stage-sheet rect { fill: var(--card); stroke: var(--ink); stroke-width: 2.2; }
+  .stage-sheet path { stroke: var(--border-strong); stroke-width: 2; stroke-linecap: round; fill: none; }
+  .stage-sfx {
+    font: 700 13px var(--font-display);
+    fill: var(--primary);
+    stroke: var(--ink);
+    stroke-width: 0.6;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: sfx 0.8s ease-out infinite;
   }
 
   .scrollbar-none {
@@ -480,18 +553,6 @@
   92% { transform: rotate(-3deg); }
   96% { transform: rotate(2deg); }
 }
-@keyframes chomp {
-  from { transform: scaleY(0.25); }
-  to { transform: scaleY(1); }
-}
-@keyframes crumb {
-  0% { opacity: 1; transform: translate(0, 0) scale(1); }
-  100% { opacity: 0; transform: translate(var(--x, 10px), var(--y, -12px)) scale(0.4); }
-}
-@keyframes eaten {
-  from { transform: scaleX(1); }
-  to { transform: scaleX(0.1); }
-}
 @keyframes confetti {
   0% { opacity: 1; transform: translate(-50%, -50%) rotate(0); }
   100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) rotate(var(--r, 540deg)); }
@@ -499,6 +560,96 @@
 @keyframes pop {
   0% { transform: scale(0) rotate(-20deg); }
   100% { transform: scale(1) rotate(0); }
+}
+@keyframes mite-sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+@keyframes mite-look {
+  0%, 20% { transform: translate(0, 0); }
+  25%, 45% { transform: translate(-3px, -1px); }
+  50%, 70% { transform: translate(3px, -2px); }
+  75%, 100% { transform: translate(0, 1px); }
+}
+@keyframes mite-wave {
+  0%, 60%, 100% { transform: rotate(0); }
+  66%, 78% { transform: rotate(70deg); }
+  72%, 84% { transform: rotate(40deg); }
+}
+@keyframes mite-stomp {
+  from { transform: translateY(0) scale(1.04, 0.96); }
+  to { transform: translateY(-3px) scale(0.98, 1.03); }
+}
+@keyframes mite-lean {
+  0%, 100% { transform: rotate(4deg); }
+  50% { transform: rotate(9deg) translateX(2px); }
+}
+@keyframes mite-chomp {
+  from { transform: scaleY(0.15); }
+  to { transform: scale(1.15, 1.6); }
+}
+@keyframes mite-puff {
+  from { transform: scale(0.8); }
+  to { transform: scale(1.35); }
+}
+@keyframes mite-grab {
+  0%, 100% { transform: rotate(-10deg); }
+  45% { transform: rotate(-60deg); }
+  60% { transform: rotate(20deg); }
+}
+@keyframes mite-grab-l {
+  from { transform: rotate(-10deg); }
+  to { transform: rotate(25deg); }
+}
+@keyframes mite-sweat {
+  0%, 40% { opacity: 0; transform: translateY(-4px); }
+  50% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(14px); }
+  100% { opacity: 0; transform: translateY(16px); }
+}
+@keyframes mite-bounce {
+  from { transform: translateY(0) scale(1.06, 0.94); }
+  to { transform: translateY(-8px) scale(0.96, 1.05); }
+}
+@keyframes mite-flail {
+  to { rotate: 20deg; }
+}
+@keyframes mite-jump {
+  0%, 100% { transform: translateY(0) scale(1.15, 0.85); }
+  15% { transform: translateY(0) scale(0.9, 1.12); }
+  45% { transform: translateY(-26px) scale(1) rotate(-6deg); }
+  75% { transform: translateY(0) scale(0.95, 1.06); }
+}
+@keyframes mite-shadow {
+  0%, 15%, 75%, 100% { transform: scale(1); opacity: 1; }
+  45% { transform: scale(0.55); opacity: 0.5; }
+}
+@keyframes stage-sheet {
+  0% { transform: translate(236px, 100px); opacity: 1; }
+  55% { transform: translate(134px, 100px); }
+  70% { transform: translate(116px, 86px) rotate(-25deg) scale(0.6); }
+  78% { transform: translate(104px, 80px) rotate(-40deg) scale(0); opacity: 1; }
+  79%, 100% { transform: translate(104px, 80px) scale(0); opacity: 0; }
+}
+@keyframes stage-fly {
+  0% { offset-distance: 0%; opacity: 0; transform: scale(0.3) rotate(0); }
+  6% { opacity: 1; }
+  42% { offset-distance: 100%; opacity: 1; transform: scale(1) rotate(-200deg); }
+  50%, 100% { offset-distance: 100%; opacity: 0; }
+}
+@keyframes stage-land {
+  0%, 100% { transform: scale(1); }
+  12% { transform: scale(1.25, 0.7); }
+  30% { transform: scale(0.95, 1.1); }
+}
+@keyframes belt {
+  to { stroke-dashoffset: -12; }
+}
+@keyframes sfx {
+  0%, 40% { opacity: 0; transform: scale(0.4) rotate(-10deg); }
+  55% { opacity: 1; transform: scale(1.15) rotate(6deg); }
+  85% { opacity: 1; transform: scale(1) rotate(4deg) translateY(-4px); }
+  100% { opacity: 0; transform: scale(1) translateY(-8px); }
 }
 @keyframes reveal {
   from { opacity: 0; transform: translateY(24px); }

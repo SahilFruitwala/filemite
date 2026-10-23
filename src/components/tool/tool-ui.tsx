@@ -8,6 +8,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 
+import { Mite, MiteStage } from '@/components/shell/mite';
 import { Button } from '@/components/ui/button';
 import type { JobState } from '@/hooks/use-job';
 import { formatBytes } from '@/lib/format';
@@ -132,53 +133,6 @@ const WORKING_LINES = [
   'Almost there, no peeking…',
 ];
 
-/**
- * The filemite mite, mid-chomp. Faces right so it eats its way along a
- * progress bar; crumbs fly out behind it.
- */
-export function Muncher({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 36 32" className={cn('size-8 overflow-visible', className)} aria-hidden>
-      {[
-        { x: '-9px', y: '-8px', d: '0s' },
-        { x: '-12px', y: '2px', d: '0.3s' },
-        { x: '-7px', y: '-13px', d: '0.6s' },
-      ].map((crumb) => (
-        <rect
-          key={crumb.d}
-          className="muncher-crumb fill-primary"
-          x="6"
-          y="20"
-          width="3"
-          height="3"
-          rx="0.6"
-          style={{ '--x': crumb.x, '--y': crumb.y, '--d': crumb.d } as React.CSSProperties}
-        />
-      ))}
-      <g className="muncher-body">
-        <rect x="11" y="27" width="5" height="4" rx="2" className="fill-cobalt" />
-        <rect x="21" y="27" width="5" height="4" rx="2" className="fill-cobalt" />
-        <rect x="6" y="4" width="26" height="24" rx="9" className="fill-card stroke-ink" strokeWidth="2.2" />
-        <g className="mite-eye">
-          <circle cx="17" cy="13" r="3" className="fill-foreground" />
-          <circle cx="18" cy="12" r="0.9" className="fill-card" />
-        </g>
-        <g className="mite-eye">
-          <circle cx="26" cy="13" r="3" className="fill-foreground" />
-          <circle cx="27" cy="12" r="0.9" className="fill-card" />
-        </g>
-        <path d="M19 19h10" className="stroke-ink" strokeWidth="2" strokeLinecap="round" />
-        <path
-          className="muncher-jaw fill-primary stroke-ink"
-          d="M19.5 19.5h9l-1 3.5a2.5 2.5 0 0 1-2.4 1.8h-2.2a2.5 2.5 0 0 1-2.4-1.8Z"
-          strokeWidth="1.6"
-          strokeLinejoin="round"
-        />
-      </g>
-    </svg>
-  );
-}
-
 /** One-shot burst of paper confetti from the centre of its parent. */
 export function Confetti({ pieces = 18 }: { pieces?: number }) {
   const [bits] = useState(() =>
@@ -253,8 +207,8 @@ export function ProgressBar({
           style={determinate ? { width: `${Math.max(8, progress * 100)}%` } : undefined}
         >
           <div className="progress-fill absolute inset-x-0 h-3 rounded-full border-2 border-ink bg-primary" />
-          <div className="relative -mr-4 -mt-3">
-            <Muncher />
+          <div className="relative -mr-5 -mt-5">
+            <Mite mood="work" className="size-9" />
           </div>
         </div>
       </div>
@@ -310,7 +264,10 @@ export function ActionPanel({
         )}
       </Button>
       {running && (
-        <ProgressBar className="mt-2" progress={progress} caption />
+        <div className="mt-3 animate-in fade-in zoom-in-95 duration-300">
+          <MiteStage className="mx-auto max-w-72" />
+          <ProgressBar progress={progress} caption />
+        </div>
       )}
       {disabledReason && !running && (
         <p className="mt-3 text-center text-xs text-muted-foreground">{disabledReason}</p>
@@ -385,9 +342,7 @@ export function ResultPanel({
       <div className="mb-4 flex items-center gap-2.5">
         <span className="relative">
           <Confetti />
-          <span className="animate-pop flex size-8 -rotate-6 items-center justify-center rounded-full border-2 border-ink bg-primary text-primary-foreground">
-            <CheckCircle2 className="size-4" />
-          </span>
+          <Mite mood="happy" className="animate-pop -my-2 size-14" />
         </span>
         <div>
           <h2 className="font-display text-lg leading-tight font-semibold tracking-tight">{title}</h2>
