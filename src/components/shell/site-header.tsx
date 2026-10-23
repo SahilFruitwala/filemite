@@ -24,7 +24,7 @@ export function SiteHeader() {
       <div className="mx-auto grid h-14 w-full max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 sm:px-6 lg:px-8">
         <Link
           to="/"
-          className="flex items-center gap-2 justify-self-start rounded-md"
+          className="group flex items-center gap-2 justify-self-start rounded-md"
           aria-label="Home"
         >
           <LogoMark />

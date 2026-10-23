@@ -3,16 +3,18 @@ import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
 
+// Chunky "sticker" press: ink outline and hard shadow that the button sinks into when pressed.
+const POP =
+  'border-2 border-ink shadow-pop-sm hover:-translate-x-px hover:-translate-y-px hover:shadow-pop active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:shadow-none';
+
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-transparent text-sm font-medium whitespace-nowrap transition-[background-color,border-color,color,box-shadow,transform] outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/35 focus-visible:outline-none active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-transparent text-sm font-medium whitespace-nowrap transition-[background-color,border-color,color,box-shadow,transform] outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/35 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default:
-          'bg-primary text-primary-foreground shadow-sm hover:bg-[color-mix(in_oklch,var(--primary),black_9%)] dark:hover:bg-[color-mix(in_oklch,var(--primary),white_8%)]',
-        ink: 'bg-foreground text-background shadow-sm hover:bg-foreground/88',
-        outline:
-          'border-border-strong bg-card text-foreground shadow-xs hover:border-foreground/30 hover:bg-muted',
+        default: `${POP} bg-primary text-primary-foreground hover:bg-[color-mix(in_oklch,var(--primary),black_6%)] dark:hover:bg-[color-mix(in_oklch,var(--primary),white_8%)]`,
+        ink: `${POP} bg-foreground text-background hover:bg-foreground/88`,
+        outline: `${POP} bg-card text-foreground hover:bg-muted`,
         secondary: 'bg-secondary text-secondary-foreground hover:bg-muted',
         soft: 'bg-primary-soft text-primary hover:bg-[color-mix(in_oklch,var(--primary)_18%,var(--card))]',
         ghost: 'text-muted-foreground hover:bg-muted hover:text-foreground',

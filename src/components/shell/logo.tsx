@@ -11,12 +11,18 @@ export function LogoMark({ className }: { className?: string }) {
         className="fill-background"
       />
       <path d="M37 14v6a4 4 0 0 0 4 4h6L37 14Z" className="fill-tangerine" />
-      <circle cx="25" cy="35" r="3.2" className="fill-foreground" />
-      <circle cx="36" cy="35" r="3.2" className="fill-foreground" />
-      <circle cx="26" cy="34" r="1" className="fill-background" />
-      <circle cx="37" cy="34" r="1" className="fill-background" />
-      <rect x="22" y="43" width="5" height="4" rx="2" className="fill-cobalt" />
-      <rect x="34" y="43" width="5" height="4" rx="2" className="fill-cobalt" />
+      <g className="mite-eye">
+        <circle cx="25" cy="35" r="3.2" className="fill-foreground" />
+        <circle cx="26" cy="34" r="1" className="fill-background" />
+      </g>
+      <g className="mite-eye">
+        <circle cx="36" cy="35" r="3.2" className="fill-foreground" />
+        <circle cx="37" cy="34" r="1" className="fill-background" />
+      </g>
+      <g className="mite-feet">
+        <rect x="22" y="43" width="5" height="4" rx="2" className="fill-cobalt" />
+        <rect x="34" y="43" width="5" height="4" rx="2" className="fill-cobalt" />
+      </g>
     </svg>
   );
 }

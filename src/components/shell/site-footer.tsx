@@ -13,7 +13,7 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-border">
       <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_0.8fr] lg:px-8">
         <div className="space-y-4">
-          <Link to="/" className="inline-flex items-center gap-2">
+          <Link to="/" className="group inline-flex items-center gap-2">
             <LogoMark />
             <Wordmark />
           </Link>

@@ -5,7 +5,6 @@ import {
   Download,
   FileText,
   Info,
-  Loader2,
   RotateCcw,
 } from 'lucide-react';
 
@@ -121,32 +120,102 @@ export function Message({
   );
 }
 
-const SQUISH_LINES = [
-  'Squishing pixels…',
+const WORKING_LINES = [
+  'Chewing on your bytes…',
+  'Om nom nom nom…',
+  'Herding stray pixels…',
+  'Bribing the PDF gremlins…',
+  'Polishing every last byte…',
   'Applying maximum squeeze…',
-  'Sit on it, bytes!',
-  'Vacuum-sealing your file…',
-  'Fitting it into skinny jeans…',
-  'Squeeze harder!',
-  'Nom nom nom…',
-  'Shrinking, not sinking…',
+  'Asking the bytes nicely…',
+  'Tiny mite, mighty bite…',
+  'Almost there, no peeking…',
 ];
 
-/** A tiny file with a face; it squashes and stretches as it rides the progress bar. */
-function Mascot() {
+/**
+ * The filemite mite, mid-chomp. Faces right so it eats its way along a
+ * progress bar; crumbs fly out behind it.
+ */
+export function Muncher({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 28" className="mascot size-6 overflow-visible" aria-hidden>
-      <path
-        d="M5 2h10l6 6v17a1.5 1.5 0 0 1-1.5 1.5h-14A1.5 1.5 0 0 1 4 25V3.5A1.5 1.5 0 0 1 5.5 2Z"
-        fill="var(--card)"
-        stroke="var(--primary)"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      <circle cx="9.5" cy="15" r="1.6" fill="var(--foreground)" />
-      <circle cx="16" cy="15" r="1.6" fill="var(--foreground)" />
-      <path d="M10 20q3 2.6 6 0" fill="none" stroke="var(--foreground)" strokeWidth="1.5" strokeLinecap="round" />
+    <svg viewBox="0 0 36 32" className={cn('size-8 overflow-visible', className)} aria-hidden>
+      {[
+        { x: '-9px', y: '-8px', d: '0s' },
+        { x: '-12px', y: '2px', d: '0.3s' },
+        { x: '-7px', y: '-13px', d: '0.6s' },
+      ].map((crumb) => (
+        <rect
+          key={crumb.d}
+          className="muncher-crumb fill-primary"
+          x="6"
+          y="20"
+          width="3"
+          height="3"
+          rx="0.6"
+          style={{ '--x': crumb.x, '--y': crumb.y, '--d': crumb.d } as React.CSSProperties}
+        />
+      ))}
+      <g className="muncher-body">
+        <rect x="11" y="27" width="5" height="4" rx="2" className="fill-cobalt" />
+        <rect x="21" y="27" width="5" height="4" rx="2" className="fill-cobalt" />
+        <rect x="6" y="4" width="26" height="24" rx="9" className="fill-card stroke-ink" strokeWidth="2.2" />
+        <g className="mite-eye">
+          <circle cx="17" cy="13" r="3" className="fill-foreground" />
+          <circle cx="18" cy="12" r="0.9" className="fill-card" />
+        </g>
+        <g className="mite-eye">
+          <circle cx="26" cy="13" r="3" className="fill-foreground" />
+          <circle cx="27" cy="12" r="0.9" className="fill-card" />
+        </g>
+        <path d="M19 19h10" className="stroke-ink" strokeWidth="2" strokeLinecap="round" />
+        <path
+          className="muncher-jaw fill-primary stroke-ink"
+          d="M19.5 19.5h9l-1 3.5a2.5 2.5 0 0 1-2.4 1.8h-2.2a2.5 2.5 0 0 1-2.4-1.8Z"
+          strokeWidth="1.6"
+          strokeLinejoin="round"
+        />
+      </g>
     </svg>
+  );
+}
+
+/** One-shot burst of paper confetti from the centre of its parent. */
+export function Confetti({ pieces = 18 }: { pieces?: number }) {
+  const [bits] = useState(() =>
+    Array.from({ length: pieces }, (_, i) => {
+      const angle = (i / pieces) * Math.PI * 2 + Math.random() * 0.4;
+      const distance = 50 + Math.random() * 60;
+      return {
+        x: `${Math.cos(angle) * distance}px`,
+        y: `${Math.sin(angle) * distance - 20}px`,
+        r: `${(Math.random() - 0.5) * 900}deg`,
+        d: `${Math.random() * 0.12}s`,
+        color: ['var(--tangerine)', 'var(--cobalt)', 'var(--sun)', 'var(--mint)'][i % 4],
+        round: i % 3 === 0,
+      };
+    }),
+  );
+  return (
+    <span aria-hidden className="pointer-events-none absolute inset-0 z-10">
+      {bits.map((bit, i) => (
+        <span
+          key={i}
+          className="confetti-piece"
+          style={
+            {
+              '--x': bit.x,
+              '--y': bit.y,
+              '--r': bit.r,
+              '--d': bit.d,
+              background: bit.color,
+              borderRadius: bit.round ? '999px' : undefined,
+              width: bit.round ? 8 : undefined,
+              height: bit.round ? 8 : undefined,
+            } as React.CSSProperties
+          }
+        />
+      ))}
+    </span>
   );
 }
 
@@ -164,18 +233,18 @@ export function ProgressBar({
   caption?: boolean;
   className?: string;
 }) {
-  const [index, setIndex] = useState(() => Math.floor(Math.random() * SQUISH_LINES.length));
+  const [index, setIndex] = useState(() => Math.floor(Math.random() * WORKING_LINES.length));
   useEffect(() => {
     if (!caption) return;
-    const timer = setInterval(() => setIndex((value) => (value + 1) % SQUISH_LINES.length), 2400);
+    const timer = setInterval(() => setIndex((value) => (value + 1) % WORKING_LINES.length), 2400);
     return () => clearInterval(timer);
   }, [caption]);
 
   const determinate = progress !== null;
   return (
     <div className={className} aria-hidden>
-      <div className="relative flex h-8 items-center">
-        <div className="progress-stripes h-2.5 w-full overflow-hidden rounded-full bg-muted" />
+      <div className="relative flex h-10 items-center">
+        <div className="progress-stripes h-3 w-full overflow-hidden rounded-full border-2 border-ink bg-muted" />
         <div
           className={cn(
             'absolute inset-y-0 left-0 flex items-center justify-end',
@@ -183,9 +252,9 @@ export function ProgressBar({
           )}
           style={determinate ? { width: `${Math.max(8, progress * 100)}%` } : undefined}
         >
-          <div className="progress-fill absolute inset-x-0 h-2.5 rounded-full bg-primary" />
-          <div className="relative -mr-3">
-            <Mascot />
+          <div className="progress-fill absolute inset-x-0 h-3 rounded-full border-2 border-ink bg-primary" />
+          <div className="relative -mr-4 -mt-3">
+            <Muncher />
           </div>
         </div>
       </div>
@@ -194,7 +263,7 @@ export function ProgressBar({
           key={index}
           className="animate-in fade-in slide-in-from-bottom-1 mt-1 text-center font-mono text-[11px] text-muted-foreground duration-300"
         >
-          {SQUISH_LINES[index]}
+          {WORKING_LINES[index]}
         </p>
       )}
     </div>
@@ -220,12 +289,20 @@ export function ActionPanel({
   const progress = running ? job.progress : null;
 
   return (
-    <Panel>
+    <Panel className="sticker">
       {children && <div className="mb-4 space-y-4">{children}</div>}
       <Button size="xl" block disabled={!!disabledReason || running} onClick={onRun}>
         {running ? (
           <>
-            <Loader2 className="animate-spin" />
+            <span className="flex gap-0.5" aria-hidden>
+              {[0, 1, 2].map((dot) => (
+                <span
+                  key={dot}
+                  className="size-1.5 animate-bounce rounded-full bg-current"
+                  style={{ animationDelay: `${dot * 120}ms` }}
+                />
+              ))}
+            </span>
             {progress === null ? 'Working…' : `Working… ${Math.round(progress * 100)}%`}
           </>
         ) : (
@@ -274,6 +351,19 @@ export function FileRow({
   );
 }
 
+const DONE_LINES = [
+  'Ta-da! Fresh out of the oven.',
+  'Done. The mite is very proud.',
+  'Nailed it. *chef’s kiss*',
+  'All done, crumbs swept up.',
+  'Ding! Your file is ready.',
+];
+
+function useDoneLine() {
+  const [line] = useState(() => DONE_LINES[Math.floor(Math.random() * DONE_LINES.length)]);
+  return line;
+}
+
 export function ResultPanel({
   title,
   children,
@@ -289,13 +379,20 @@ export function ResultPanel({
   onStartOver: () => void;
   startOverLabel?: string;
 }) {
+  const doneLine = useDoneLine();
   return (
-    <Panel className="border-primary-line">
+    <Panel className="sticker animate-in fade-in zoom-in-95 duration-300">
       <div className="mb-4 flex items-center gap-2.5">
-        <span className="flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
-          <CheckCircle2 className="size-4" />
+        <span className="relative">
+          <Confetti />
+          <span className="animate-pop flex size-8 -rotate-6 items-center justify-center rounded-full border-2 border-ink bg-primary text-primary-foreground">
+            <CheckCircle2 className="size-4" />
+          </span>
         </span>
-        <h2 className="font-display text-lg font-semibold tracking-tight">{title}</h2>
+        <div>
+          <h2 className="font-display text-lg leading-tight font-semibold tracking-tight">{title}</h2>
+          <p className="font-mono text-[11px] text-muted-foreground">{doneLine}</p>
+        </div>
       </div>
       <div className="space-y-3">{children}</div>
       {onDownload && (

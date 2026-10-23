@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { Plus, Upload } from 'lucide-react';
 
+import { Muncher } from '@/components/tool/tool-ui';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -85,8 +86,8 @@ export function FileDrop({
     <div
       {...handlers}
       className={cn(
-        'group relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border-strong bg-card px-6 py-16 text-center transition-[border-color,background-color,transform,box-shadow] duration-200 sm:py-24',
-        isDragging && 'scale-[1.01] border-primary bg-primary-soft shadow-lg',
+        'group relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-border-strong bg-card px-6 py-16 text-center transition-[border-color,background-color,transform,box-shadow] duration-200 sm:py-24',
+        isDragging && 'scale-[1.01] -rotate-[0.4deg] border-ink bg-primary-soft shadow-pop-lg',
       )}
     >
       <div
@@ -99,15 +100,18 @@ export function FileDrop({
         )}
         <div
           className={cn(
-            'relative flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md transition-transform duration-300 group-hover:-rotate-3',
-            isDragging ? 'scale-110 -rotate-6' : 'animate-float',
+            'relative flex size-16 -rotate-3 items-center justify-center rounded-2xl border-2 border-ink bg-primary text-primary-foreground shadow-pop transition-transform duration-300 group-hover:rotate-3',
+            isDragging ? 'scale-110 rotate-6' : 'animate-wiggle',
           )}
         >
-          <Icon className="size-6" />
+          <Icon className="size-7" />
         </div>
+        {isDragging && (
+          <Muncher className="absolute -top-5 -right-7 size-10 animate-in zoom-in-50 spin-in-12 duration-300" />
+        )}
       </div>
       <h2 className="relative font-display text-2xl font-semibold tracking-tight">
-        {isDragging ? 'Drop to add' : title}
+        {isDragging ? 'Feed me! 🍪' : title}
       </h2>
       <p className="relative mt-2 max-w-md text-sm leading-6 text-muted-foreground">
         {description}
@@ -138,8 +142,9 @@ export function DropTarget({
     <div {...handlers} className={cn('relative', className)}>
       {children}
       {isDragging && (
-        <div className="pointer-events-none absolute inset-0 z-20 flex animate-in fade-in zoom-in-95 items-center justify-center rounded-2xl border-2 border-dashed border-primary bg-primary-soft/90 font-display text-lg font-semibold backdrop-blur-sm">
-          Drop to add
+        <div className="pointer-events-none absolute inset-0 z-20 flex animate-in fade-in zoom-in-95 items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-ink bg-primary-soft/90 font-display text-lg font-semibold backdrop-blur-sm">
+          <Muncher className="size-10" />
+          Feed me more!
         </div>
       )}
     </div>

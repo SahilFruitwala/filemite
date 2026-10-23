@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowRight, Cloud, Gauge, Laptop, LockKeyhole, UserX } from 'lucide-react';
 
+import { Muncher } from '@/components/tool/tool-ui';
 import { buttonVariants } from '@/components/ui/button';
 import { formatBytes } from '@/lib/format';
 import { IMAGES_PER_HOUR, MAX_IMAGE_BATCH, MAX_IMAGE_BYTES } from '@/lib/limits';
@@ -49,20 +50,45 @@ function HomePage() {
         />
         <div className="relative mx-auto grid w-full max-w-7xl gap-12 px-4 pt-14 pb-16 sm:px-6 sm:pt-20 sm:pb-24 lg:grid-cols-[1.25fr_1fr] lg:items-end lg:px-8">
           <div className="animate-in fade-in slide-in-from-bottom-3 duration-500">
-            <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card/80 py-1 pr-3 pl-1 text-xs text-muted-foreground shadow-xs backdrop-blur">
-              <span className="rounded-full bg-foreground px-2 py-0.5 font-mono text-[11px] text-background">
-                {toolsIn('image').length + toolsIn('pdf').length} tools
-              </span>
-              Free · no sign-up · nothing stored
-            </p>
+            <ul className="mb-7 flex flex-wrap items-center gap-2.5 font-mono text-[11px] font-semibold tracking-wide uppercase">
+              {[
+                { text: `${toolsIn('image').length + toolsIn('pdf').length} tools`, cls: 'bg-foreground text-background -rotate-3' },
+                { text: '100% free', cls: 'bg-sun text-ink rotate-2' },
+                { text: 'no sign-up', cls: 'bg-mint text-ink -rotate-1' },
+                { text: 'nothing stored', cls: 'bg-card text-foreground rotate-3' },
+              ].map((sticker, i) => (
+                <li
+                  key={sticker.text}
+                  style={{ animationDelay: `${200 + i * 90}ms` }}
+                  className={cn(
+                    'animate-pop hover-wiggle rounded-md border-2 border-ink px-2.5 py-1 shadow-pop-sm',
+                    sticker.cls,
+                  )}
+                >
+                  {sticker.text}
+                </li>
+              ))}
+            </ul>
             <h1 className="font-display text-[2.9rem] leading-[0.98] font-bold tracking-tighter sm:text-6xl lg:text-[5.25rem]">
               Tiny tools for
               <br />
-              <span className="text-gradient text-gradient-animated">mighty files.</span>
+              <span className="squiggle">
+                <span className="text-gradient text-gradient-animated">mighty files.</span>
+                <svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden>
+                  <path
+                    d="M3 12 C 30 2, 50 18, 78 10 S 125 2, 152 11 S 205 19, 232 9 S 280 4, 297 10"
+                    fill="none"
+                    stroke="var(--sun)"
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
             </h1>
             <p className="mt-6 max-w-xl animate-in fade-in slide-in-from-bottom-2 text-lg leading-8 text-muted-foreground delay-150 duration-700 fill-mode-both">
-              Compress, convert and mark up images. Merge, sign, redact and shrink PDFs. Focused
-              tools that do one job well — free, private and instant.
+              Compress, convert and mark up images. Merge, sign, redact and shrink PDFs. Small,
+              focused tools that each do one job really well. Free, private, and fast enough that
+              you'll forget to make tea.
             </p>
             <div className="mt-8 flex animate-in fade-in slide-in-from-bottom-2 flex-wrap gap-3 delay-300 duration-700 fill-mode-both">
               <Link
@@ -92,10 +118,16 @@ function HomePage() {
         <SectionGrid section="image" />
         <SectionGrid section="pdf" />
 
-        <section className="reveal grid gap-px overflow-hidden rounded-3xl border border-border bg-border shadow-sm md:grid-cols-3">
-          {PROMISES.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="bg-card p-6 sm:p-8">
-              <span className="flex size-10 items-center justify-center rounded-xl bg-foreground text-background transition-transform duration-300 hover:scale-110 hover:-rotate-6">
+        <section className="reveal grid gap-5 md:grid-cols-3">
+          {PROMISES.map(({ icon: Icon, title, text }, i) => (
+            <div
+              key={title}
+              className={cn(
+                'sticker rounded-2xl p-6 sm:p-8',
+                ['bg-sun/35 md:-rotate-1', 'bg-mint/35 md:rotate-1', 'bg-card md:-rotate-[0.5deg]'][i],
+              )}
+            >
+              <span className="flex size-10 items-center justify-center rounded-xl border-2 border-ink bg-foreground text-background shadow-pop-sm transition-transform duration-300 hover:scale-110 hover:-rotate-12">
                 <Icon className="size-5" />
               </span>
               <h3 className="mt-4 font-display text-lg font-semibold tracking-tight">{title}</h3>
@@ -143,11 +175,16 @@ function SectionGrid({ section }: { section: Section }) {
             <Link
               key={tool.id}
               to={tool.href}
-              style={{ animationDelay: `${index * 60}ms` }}
-              className="group relative animate-in fade-in slide-in-from-bottom-3 fill-mode-both flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-[border-color,box-shadow,transform] duration-200 before:pointer-events-none before:absolute before:-top-16 before:-right-16 before:size-40 before:rounded-full before:bg-primary before:opacity-0 before:blur-3xl before:transition-opacity hover:-translate-y-1 hover:border-primary-line hover:shadow-lg hover:before:opacity-15"
+              style={
+                {
+                  animationDelay: `${index * 60}ms`,
+                  '--tilt': index % 2 ? '0.8deg' : '-0.8deg',
+                } as React.CSSProperties
+              }
+              className="sticker group relative animate-in fade-in slide-in-from-bottom-3 fill-mode-both flex flex-col overflow-hidden rounded-2xl bg-card p-5"
             >
               <div className="flex items-start justify-between">
-                <span className="flex size-11 items-center justify-center rounded-xl bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <span className="flex size-11 items-center justify-center rounded-xl border-2 border-ink bg-primary-soft text-primary transition-[background-color,color,transform] duration-300 group-hover:-rotate-12 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
                   <Icon className="size-5" />
                 </span>
                 <span className="font-mono text-[11px] text-subtle">
@@ -165,7 +202,9 @@ function SectionGrid({ section }: { section: Section }) {
                   <Where className="size-3.5" />
                   {tool.processing === 'browser' ? 'In your browser' : 'In memory'}
                 </span>
-                <ArrowRight className="size-4 -translate-x-1 opacity-0 transition-[opacity,transform] group-hover:translate-x-0 group-hover:opacity-100" />
+                <span className="flex size-7 items-center justify-center rounded-full border-2 border-ink bg-primary text-primary-foreground opacity-0 transition-[opacity,transform] -translate-x-2 group-hover:translate-x-0 group-hover:opacity-100">
+                  <ArrowRight className="size-3.5" />
+                </span>
               </div>
             </Link>
           );
@@ -190,8 +229,14 @@ function HeroSpecimen() {
   return (
     <div
       aria-hidden
-      className="animate-in fade-in slide-in-from-bottom-4 rounded-3xl border border-border bg-card/90 p-2.5 shadow-lg backdrop-blur delay-150 duration-700 fill-mode-both lg:rotate-1"
+      className="sticker relative animate-in fade-in slide-in-from-bottom-4 rounded-3xl bg-card p-2.5 delay-150 duration-700 fill-mode-both lg:rotate-2"
     >
+      <div className="absolute -top-9 right-8 flex items-end gap-1.5">
+        <span className="mb-6 rotate-3 rounded-lg border-2 border-ink bg-card px-2 py-0.5 font-mono text-[10px] font-semibold shadow-pop-sm">
+          nom nom
+        </span>
+        <Muncher className="size-12" />
+      </div>
       <div className="flex items-center justify-between px-3 py-2">
         <span className="eyebrow">filemite.com</span>
         <span className="flex gap-1">
@@ -207,11 +252,11 @@ function HeroSpecimen() {
             <li
               key={row.name}
               data-section={row.section}
-              className="rounded-xl border border-border bg-background p-3"
+              className="rounded-xl border-2 border-border bg-background p-3"
             >
               <div className="flex items-center justify-between gap-3">
                 <span className="truncate font-mono text-xs">{row.name}</span>
-                <span className="shrink-0 rounded-full bg-primary-soft px-2 py-0.5 font-mono text-[11px] font-medium text-primary">
+                <span className="shrink-0 rounded-full border-2 border-ink bg-primary px-2 py-0.5 font-mono text-[11px] font-semibold text-primary-foreground">
                   −{saved}%
                 </span>
               </div>
