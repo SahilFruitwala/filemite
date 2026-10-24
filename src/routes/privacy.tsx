@@ -72,11 +72,17 @@ function PrivacyPage() {
                   device type and screen size.
                 </li>
                 <li>
-                  Tool events such as a compression starting or finishing, the preset used, image
+                  Tool events, for both image and PDF tools, such as a tool starting, finishing or
+                  failing and how long it took. Image tools can also include the settings used
+                  (such as compression level or output format), the number of files, image
                   dimensions, file sizes and how much smaller the file got. Server tools send the
                   same kind of event from our server.
                 </li>
-                <li>Errors raised in the page, to help us fix bugs.</li>
+                <li>
+                  Errors raised in the page, limited to the type of error and which function
+                  failed. The error message is never sent, so it cannot contain a file name. This
+                  helps us fix bugs.
+                </li>
               </ul>
               <p>
                 We never send file contents or file names. There are no session recordings, no
