@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { SITE_URL } from '@/lib/seo';
+import { alternatives } from '@/lib/alternatives';
 import { tools } from '@/lib/tools';
 
 const routes: { path: string; changefreq: string; priority: string }[] = [
@@ -7,6 +8,8 @@ const routes: { path: string; changefreq: string; priority: string }[] = [
   ...tools.map((tool) => ({ path: tool.href, changefreq: 'weekly', priority: '0.9' })),
   { path: '/about', changefreq: 'monthly', priority: '0.4' },
   { path: '/contact', changefreq: 'monthly', priority: '0.4' },
+  { path: '/alternatives', changefreq: 'monthly', priority: '0.5' },
+  ...alternatives.map((alt) => ({ path: `/alternatives/${alt.slug}`, changefreq: 'monthly', priority: '0.6' })),
   { path: '/privacy', changefreq: 'monthly', priority: '0.3' },
   { path: '/terms', changefreq: 'monthly', priority: '0.3' },
 ];

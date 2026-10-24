@@ -52,6 +52,11 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link to="/alternatives" className={linkClass}>
+                Alternatives
+              </Link>
+            </li>
+            <li>
               <Link to="/privacy" className={linkClass}>
                 Privacy
               </Link>
