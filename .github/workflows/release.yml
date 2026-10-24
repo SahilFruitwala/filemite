@@ -1,0 +1,60 @@
+name: Release
+
+# Every PR merged into master bumps the version (https://semver.org):
+#   label `major` -> X.0.0   (breaking change)
+#   label `minor` -> 0.X.0   (new feature, backwards compatible)
+#   no label      -> 0.0.X   (fix or small change)
+#   label `skip-release` -> no new version
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: >-
+      github.event.pull_request.merged == true &&
+      !contains(github.event.pull_request.labels.*.name, 'skip-release')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Bump version
+        id: bump
+        env:
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ' ') }}
+        run: |
+          level=patch
+          case " $LABELS " in
+            *" minor "*) level=minor ;;
+          esac
+          case " $LABELS " in
+            *" major "*) level=major ;;
+          esac
+          echo "version=$(node scripts/bump-version.mjs "$level")" >> "$GITHUB_OUTPUT"
+
+      - name: Commit, tag and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Release v${VERSION}"
+          git tag "v${VERSION}"
+          git push origin master "v${VERSION}"
+          gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes

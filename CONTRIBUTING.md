@@ -42,7 +42,8 @@ Thank you for your interest in contributing to Filemite! We welcome contribution
 1.  Ensure your code follows the project's style and passes linting.
 2.  Provide a clear and descriptive PR title and description.
 3.  Include screenshots or videos for UI changes if applicable.
-4.  Once submitted, wait for a maintainer to review your PR.
+4.  Releases are automatic and follow [semver](https://semver.org). When your PR is merged, the version in `package.json` is bumped, tagged and released: label the PR `major` (breaking change) or `minor` (new feature), or leave it unlabeled for a patch. Use `skip-release` for docs or chores. Don't edit the version by hand.
+5.  Once submitted, wait for a maintainer to review your PR.
 
 ## 🐛 Reporting Issues
 If you find a bug or have a feature request, please [open an issue](https://github.com/SahilFruitwala/filemite/issues) on GitHub. Provide as much detail as possible, including steps to reproduce the bug.

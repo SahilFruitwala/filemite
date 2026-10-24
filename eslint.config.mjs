@@ -45,4 +45,15 @@ export default defineConfig([
       },
     },
   },
+  {
+    // Node scripts run by CI, outside the app bundle.
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+        URL: 'readonly',
+      },
+    },
+  },
 ]);
