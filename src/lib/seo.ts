@@ -168,5 +168,33 @@ export function homeJsonLd() {
   };
 }
 
+/** schema.org graph for a competitor alternative page: the page, its breadcrumb trail and its FAQ. */
+export function alternativeJsonLd(alt: { slug: string; name: string; seoTitle: string; seoDescription: string; faqs: Faq[] }) {
+  const url = `${SITE_URL}/alternatives/${alt.slug}`;
+  return {
+    '@context': CONTEXT,
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${url}#webpage`,
+        url,
+        name: alt.seoTitle,
+        description: alt.seoDescription,
+        publisher: { '@id': ORGANIZATION_ID },
+        isPartOf: { '@type': 'WebSite', name: SITE_NAME, url: SITE_URL },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: SITE_NAME, item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: 'Alternatives', item: `${SITE_URL}/alternatives` },
+          { '@type': 'ListItem', position: 3, name: `${alt.name} alternative`, item: url },
+        ],
+      },
+      faqPage(alt.faqs),
+    ],
+  };
+}
+
 /** Home page title: brand + main product phrasing that matches how people search. */
 export const HOME_TITLE = 'Filemite PDF Tools & Image Tools — Free, Private, No Sign-Up';
