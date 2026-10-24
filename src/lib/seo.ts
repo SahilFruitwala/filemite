@@ -1,5 +1,7 @@
 import {
+  ADDRESS,
   AUTHOR,
+  CONTACT,
   OG_IMAGE,
   OG_IMAGE_ALT,
   SITE_DESCRIPTION,
@@ -67,6 +69,14 @@ export function organizationJsonLd() {
     logo: `${SITE_URL}/pwa-512.png`,
     sameAs: [SOURCE_URL, ...SOCIAL_LINKS.map((link) => link.href)],
     founder: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      url: CONTACT.url,
+      ...(CONTACT.email ? { email: CONTACT.email } : {}),
+      availableLanguage: 'en',
+    },
+    ...(ADDRESS ? { address: { '@type': 'PostalAddress', ...ADDRESS } } : {}),
   };
 }
 
@@ -146,4 +156,4 @@ export function homeJsonLd() {
 }
 
 /** Home page title: names the product and what it does, instead of the bare brand. */
-export const HOME_TITLE = 'Filemite — Free Image & PDF Tools, Private and No Sign-Up';
+export const HOME_TITLE = 'Filemite — Free PDF Tools & Image Tools, Private and No Sign-Up';

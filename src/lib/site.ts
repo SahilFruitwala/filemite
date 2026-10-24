@@ -28,3 +28,23 @@ export const SOCIAL_LINKS = [
   { href: 'https://instagram.com/its_sahilbeingsahil', label: 'Instagram' },
   { href: 'https://youtube.com/@sahilbeingsahil', label: 'YouTube' },
 ] as const;
+
+/**
+ * Public contact details for the Organization markup. Support runs through GitHub issues.
+ * Set `email` to publish a support address as well.
+ */
+export const CONTACT: { url: string; email?: string } = { url: `${SOURCE_URL}/issues` };
+
+/**
+ * Postal address for the Organization markup. Left unset on purpose: it is published as
+ * written, so it needs a real address the owner is happy to make public.
+ */
+export const ADDRESS:
+  | {
+      streetAddress?: string;
+      addressLocality: string;
+      addressRegion?: string;
+      postalCode?: string;
+      addressCountry: string;
+    }
+  | undefined = undefined;
