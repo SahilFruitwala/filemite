@@ -6,13 +6,13 @@ import { SiteFooter } from '@/components/shell/site-footer';
 import { SiteHeader } from '@/components/shell/site-header';
 import { ThemeProvider, themeBootScript } from '@/components/shell/theme';
 import { NotFoundPage } from '@/pages/not-found';
-import { organizationJsonLd } from '@/lib/seo';
+import { organizationJsonLd, personJsonLd } from '@/lib/seo';
 import {
-  AUTHOR,
   OG_IMAGE,
   OG_IMAGE_ALT,
   SITE_DESCRIPTION,
-  SITE_NAME, SITE_TAGLINE,
+  SITE_NAME,
+  SITE_TAGLINE,
   SITE_URL,
 } from '@/lib/site';
 import appCss from '@/styles/app.css?url';
@@ -75,7 +75,7 @@ export const Route = createRootRoute({
           description: SITE_DESCRIPTION,
           inLanguage: 'en',
           publisher: { '@id': organizationJsonLd()['@id'] },
-          author: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
+          author: personJsonLd(),
         }),
       },
       { type: 'application/ld+json', children: JSON.stringify(organizationJsonLd()) },

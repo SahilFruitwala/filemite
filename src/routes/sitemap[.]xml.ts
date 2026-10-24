@@ -5,6 +5,8 @@ import { tools } from '@/lib/tools';
 const routes: { path: string; changefreq: string; priority: string }[] = [
   { path: '', changefreq: 'weekly', priority: '1.0' },
   ...tools.map((tool) => ({ path: tool.href, changefreq: 'weekly', priority: '0.9' })),
+  { path: '/about', changefreq: 'monthly', priority: '0.4' },
+  { path: '/contact', changefreq: 'monthly', priority: '0.4' },
   { path: '/privacy', changefreq: 'monthly', priority: '0.3' },
   { path: '/terms', changefreq: 'monthly', priority: '0.3' },
 ];

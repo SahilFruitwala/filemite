@@ -2,8 +2,16 @@ import { describe, expect, it } from 'vitest';
 
 import { llmsFullTxt, llmsTxt } from '@/routes/llms[.]txt';
 import { robotsTxt } from '@/routes/robots[.]txt';
-import { homeJsonLd, organizationJsonLd, seoHead, toolHead, toolJsonLd } from './seo';
-import { SITE_URL } from './site';
+import {
+  HOME_TITLE,
+  homeJsonLd,
+  organizationJsonLd,
+  personJsonLd,
+  seoHead,
+  toolHead,
+  toolJsonLd,
+} from './seo';
+import { ADDRESS, AUTHOR, SITE_URL } from './site';
 import { siteFaqs, toolContent } from './tool-content';
 import { tools } from './tools';
 
@@ -61,6 +69,12 @@ describe('structured data', () => {
     expect(list.numberOfItems).toBe(tools.length);
     expect(siteFaqs.length).toBeGreaterThan(0);
   });
+
+  it('names Filemite PDF tools on the home WebPage node', () => {
+    const graph = homeJsonLd()['@graph'];
+    const page = graph.find((node) => node['@type'] === 'WebPage') as { name: string };
+    expect(page.name.toLowerCase()).toContain('filemite pdf tools');
+  });
 });
 
 describe('robots.txt', () => {
@@ -78,6 +92,8 @@ describe('llms.txt', () => {
     const text = llmsTxt();
     expect(text.startsWith('# Filemite\n\n> ')).toBe(true);
     for (const tool of tools) expect(text).toContain(`](${SITE_URL}${tool.href})`);
+    expect(text).toContain(`](${SITE_URL}/about)`);
+    expect(text).toContain(`](${SITE_URL}/contact)`);
   });
 });
 
@@ -101,10 +117,42 @@ describe('llms.txt guidance', () => {
 });
 
 describe('organization markup', () => {
-  it('has a contact point and only publishes an address that was configured', () => {
-    const org: ReturnType<typeof organizationJsonLd> & { address?: { '@type': string } } = organizationJsonLd();
-    expect(org.contactPoint).toMatchObject({ '@type': 'ContactPoint', contactType: 'customer support' });
-    expect(org.contactPoint.url).toBeTruthy();
-    if (org.address) expect(org.address['@type']).toBe('PostalAddress');
+  it('publishes a contact point and a PostalAddress', () => {
+    const org = organizationJsonLd();
+    expect(org.contactPoint).toMatchObject({
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      url: `${SITE_URL}/contact`,
+    });
+    expect(org.address).toEqual({
+      '@type': 'PostalAddress',
+      addressLocality: ADDRESS.addressLocality,
+      addressRegion: ADDRESS.addressRegion,
+      addressCountry: ADDRESS.addressCountry,
+    });
+  });
+});
+
+describe('person markup', () => {
+  it('includes description and sameAs, jobTitle and worksFor', () => {
+    const person = personJsonLd();
+    expect(person.name).toBe(AUTHOR.name);
+    expect(person.description.length).toBeGreaterThan(40);
+    expect(person.jobTitle).toBe(AUTHOR.jobTitle);
+    expect(person.sameAs).toEqual([...AUTHOR.sameAs]);
+    expect(person.worksFor).toEqual({ '@id': `${SITE_URL}/#organization` });
+  });
+
+  it('is reused as the Organization founder', () => {
+    expect(organizationJsonLd().founder).toEqual(personJsonLd());
+  });
+});
+
+describe('brand discoverability', () => {
+  it('names Filemite PDF tools in the home title', () => {
+    expect(HOME_TITLE.toLowerCase()).toContain('filemite pdf tools');
+    const title = (seoHead({ title: HOME_TITLE, description: 'x', path: '/' }).meta[0] as { title: string })
+      .title;
+    expect(title.toLowerCase()).toContain('filemite pdf tools');
   });
 });

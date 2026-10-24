@@ -59,6 +59,19 @@ const CONTEXT = 'https://schema.org';
 /** The publisher entity, referenced by id from every page's markup. */
 export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
 
+/** schema.org Person for the site author / Organization founder. */
+export function personJsonLd() {
+  return {
+    '@type': 'Person' as const,
+    name: AUTHOR.name,
+    url: AUTHOR.url,
+    description: AUTHOR.description,
+    jobTitle: AUTHOR.jobTitle,
+    sameAs: [...AUTHOR.sameAs],
+    worksFor: { '@id': ORGANIZATION_ID },
+  };
+}
+
 export function organizationJsonLd() {
   return {
     '@context': CONTEXT,
@@ -68,7 +81,7 @@ export function organizationJsonLd() {
     url: SITE_URL,
     logo: `${SITE_URL}/pwa-512.png`,
     sameAs: [SOURCE_URL, ...SOCIAL_LINKS.map((link) => link.href)],
-    founder: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
+    founder: personJsonLd(),
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer support',
@@ -76,7 +89,7 @@ export function organizationJsonLd() {
       ...(CONTACT.email ? { email: CONTACT.email } : {}),
       availableLanguage: 'en',
     },
-    ...(ADDRESS ? { address: { '@type': 'PostalAddress', ...ADDRESS } } : {}),
+    address: { '@type': 'PostalAddress', ...ADDRESS },
   };
 }
 
@@ -155,5 +168,5 @@ export function homeJsonLd() {
   };
 }
 
-/** Home page title: names the product and what it does, instead of the bare brand. */
-export const HOME_TITLE = 'Filemite — Free PDF Tools & Image Tools, Private and No Sign-Up';
+/** Home page title: brand + main product phrasing that matches how people search. */
+export const HOME_TITLE = 'Filemite PDF Tools & Image Tools — Free, Private, No Sign-Up';

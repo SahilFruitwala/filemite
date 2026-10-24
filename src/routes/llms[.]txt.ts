@@ -45,6 +45,8 @@ export function llmsTxt(): string {
     ].join('\n'),
     [
       '## Other pages',
+      `- [About](${SITE_URL}/about): what Filemite is, who builds it, and why it stays private.`,
+      `- [Contact](${SITE_URL}/contact): how to reach customer support for Filemite PDF tools and image tools.`,
       `- [Privacy](${SITE_URL}/privacy): what happens to files and what little is measured.`,
       `- [Terms](${SITE_URL}/terms): terms of use.`,
       `- [Full text of every tool page](${SITE_URL}/llms-full.txt): summaries, steps and FAQs in one file.`,
