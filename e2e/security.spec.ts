@@ -18,6 +18,8 @@ const PAGES = [
   '/pdf/extract',
   '/pdf/organize',
   '/pdf/compress',
+  '/about',
+  '/contact',
   '/privacy',
   '/terms',
 ];

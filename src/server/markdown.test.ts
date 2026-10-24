@@ -36,10 +36,12 @@ describe('pageMarkdown', () => {
     }
   });
 
-  test('accepts a trailing slash and covers the legal pages', () => {
+  test('accepts a trailing slash and covers the legal and trust pages', () => {
     expect(pageMarkdown('/pdf/merge/')).toBe(pageMarkdown('/pdf/merge'));
     expect(pageMarkdown('/privacy')).toContain('# Privacy');
     expect(pageMarkdown('/terms')).toContain('# Terms');
+    expect(pageMarkdown('/about')).toContain('# About Filemite');
+    expect(pageMarkdown('/contact')).toContain('# Contact');
   });
 
   test('returns null for unknown paths', () => {

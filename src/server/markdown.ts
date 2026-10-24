@@ -7,6 +7,7 @@ import { HOME_TITLE } from '@/lib/seo';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, SOURCE_URL } from '@/lib/site';
 import { siteFaqs, toolContent, type Faq } from '@/lib/tool-content';
 import { SECTIONS, toolsIn, tools, type Section } from '@/lib/tools';
+import { aboutPage, contactPage, type TrustPage } from '@/lib/trust-content';
 
 /** The q-value the client gave a media type, or 0 when it is not listed (wildcards don't count). */
 function preference(accept: string, type: string) {
@@ -71,21 +72,38 @@ function toolMarkdown(href: string): string | null {
   ].join('\n\n');
 }
 
+const TRUST: Record<string, TrustPage> = {
+  '/about': aboutPage,
+  '/contact': contactPage,
+};
+
 const LEGAL: Record<string, { title: string; summary: string }> = {
   '/privacy': {
     title: 'Privacy',
-    summary: `Your files are yours. PDF tools and most image tools run entirely on your device. The compress, convert, resize, metadata-removal and favicon image tools process images in memory on the server and never store them. ${SITE_NAME} uses cookieless, anonymous usage analytics.`,
+    summary: `Your files are yours. PDF tools and most image tools run entirely on your device. The compress, convert, resize, metadata-removal and favicon image tools process images in memory on the server and never store them. ${SITE_NAME} uses cookieless, anonymous usage analytics. Server tools process images in memory with Sharp and stream the result back without writing to disk. Browser tools never upload files. Abuse protection counts requests per IP in memory only. Analytics via PostHog are cookieless and anonymous: page views, tool events and errors, never file contents or names.`,
   },
   '/terms': {
     title: 'Terms',
-    summary: `The terms of use for ${SITE_NAME}.`,
+    summary: `The terms of use for ${SITE_NAME}. By using the service you agree the tools are provided free, as is and as available, without warranties. You are responsible for the files you process and must not use the tools for illegal content. Server-side tools are rate limited; automated bulk use that degrades the service is not allowed. To the fullest extent permitted by law, ${SITE_NAME} and its creator are not liable for indirect or consequential damages or loss of data. Keep your originals. Terms may be updated on this page with a new revision date.`,
   },
 };
+
+function trustMarkdown(page: TrustPage): string {
+  return [
+    `# ${page.title} — ${SITE_NAME}`,
+    page.intro,
+    ...page.sections.map((section) => `## ${section.heading}\n\n${section.body}`),
+    `Last updated ${page.updated}`,
+    footer,
+  ].join('\n\n');
+}
 
 /** Markdown for a page that exists, or null when the path is not a known page. */
 export function pageMarkdown(pathname: string): string | null {
   const path = pathname.replace(/\/$/, '') || '/';
   if (path === '/') return homeMarkdown();
+  const trust = TRUST[path];
+  if (trust) return trustMarkdown(trust);
   const legal = LEGAL[path];
   if (legal) {
     return [

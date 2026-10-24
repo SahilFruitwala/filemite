@@ -19,6 +19,9 @@ export const Route = createFileRoute('/')({
       title: HOME_TITLE,
       description: SITE_DESCRIPTION,
       keywords: [
+        'Filemite PDF tools',
+        'Filemite',
+        'PDF tools',
         'image compressor',
         'merge pdf',
         'compress pdf',
@@ -82,10 +85,10 @@ function HomePage() {
               ))}
             </ul>
             <h1 className="font-display text-[2.9rem] leading-[0.98] font-bold tracking-tighter sm:text-6xl lg:text-[5.25rem]">
-              Tiny tools for
+              Filemite PDF tools
               <br />
               <span className="squiggle">
-                <span className="text-gradient text-gradient-animated">mighty files.</span>
+                <span className="text-gradient text-gradient-animated">& image tools.</span>
                 <svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden>
                   <path
                     d="M3 12 C 30 2, 50 18, 78 10 S 125 2, 152 11 S 205 19, 232 9 S 280 4, 297 10"
