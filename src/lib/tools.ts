@@ -111,7 +111,7 @@ export const tools: Tool[] = [
     description: 'Shrink PNG, JPEG, WebP and HEIC files without visible quality loss.',
     seoTitle: 'Compress Images Online — PNG, JPEG, WebP, HEIC',
     seoDescription:
-      'Compress up to 20 images at once. Smart presets for PNG, JPEG and WebP, HEIC input supported. Processed in memory and never stored.',
+      'Compress up to 10 images at once. Smart presets for PNG, JPEG and WebP, HEIC input supported. Processed in memory and never stored.',
     keywords: [
       'image compressor',
       'compress png',

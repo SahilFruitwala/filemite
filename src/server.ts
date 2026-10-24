@@ -46,6 +46,8 @@ export default createServerEntry({
       for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
         if (!response.headers.has(name)) response.headers.set(name, value);
       }
+      // The 404 page shares the root layout's `index, follow` meta, so keep it out of the index by header.
+      if (response.status === 404) response.headers.set('X-Robots-Tag', 'noindex');
       return response;
     } catch {
       // Immutable headers (e.g. a proxied response) — return it untouched.

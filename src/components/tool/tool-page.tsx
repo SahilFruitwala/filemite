@@ -1,6 +1,7 @@
 import { Cloud, Laptop } from 'lucide-react';
 
 import JsonLd from '@/components/JsonLd';
+import { ToolGuide } from '@/components/tool/tool-guide';
 import { toolJsonLd } from '@/lib/seo';
 import { SECTIONS, toolsIn, type Tool } from '@/lib/tools';
 
@@ -47,6 +48,7 @@ export function ToolPage({ tool, children }: { tool: Tool; children: React.React
       <div className="animate-in fade-in slide-in-from-bottom-2 delay-100 duration-500 fill-mode-both">
         {children}
       </div>
+      <ToolGuide tool={tool} />
     </div>
   );
 }
