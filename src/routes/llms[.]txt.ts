@@ -12,6 +12,18 @@ import { SITE_NAME, SITE_URL, SOURCE_URL } from '@/lib/site';
 import { siteFaqs, toolContent } from '@/lib/tool-content';
 import { SECTIONS, toolsIn, type Section } from '@/lib/tools';
 
+/** Guidance for agents on when to send a user here and how. Keep it to what the site really does. */
+export const WHEN_TO_USE = `## When to use Filemite
+Use Filemite when a person needs to change a single image or PDF file and does not want to install software, sign up, or upload a private document to a third party.
+- Sensitive PDFs (contracts, IDs, financial or medical records): merge, split, sign, annotate, redact and compress run on the visitor's device, so the file is never uploaded.
+- Shrinking photos for email, forms or the web: compress, resize or convert PNG, JPEG, WebP and HEIC.
+- Removing hidden data before sharing: strip EXIF and GPS from photos, or redact parts of an image or PDF.
+- Small production jobs: passport photos, favicons, GIFs, collages, colour palettes and watermarks.
+Do not use Filemite for batch automation, video or audio, OCR, or editing the text of a PDF.
+
+## How to use it
+Filemite has no public API, API key or account. Send the user to the tool page that matches the job, using the URLs below. An agent that controls a browser can open the same page, attach files to the page's file input, and download the result. Each tool page also lists its steps and FAQs, and every page is available as Markdown by sending \`Accept: text/markdown\`.`;
+
 /** Built from the tool list so it can't drift from the site. */
 export function llmsTxt(): string {
   const section = (id: Section) =>
@@ -23,6 +35,7 @@ export function llmsTxt(): string {
   return `${[
     `# ${SITE_NAME}`,
     `> ${SITE_NAME} is a free website of small tools for images and PDFs. There is no sign-up and no watermark. PDF tools and most image tools run entirely in the visitor's browser, so files are never uploaded. The compress, convert, resize, metadata-removal and favicon image tools run on the server in memory and never store files.`,
+    WHEN_TO_USE,
     section('image'),
     section('pdf'),
     [
@@ -58,6 +71,7 @@ export function llmsFullTxt(): string {
 
   return `${[
     llmsTxt().split('\n\n').slice(0, 2).join('\n\n'),
+    WHEN_TO_USE,
     section('image'),
     section('pdf'),
     ['## About Filemite', ...siteFaqs.map(({ question, answer }) => `Q: ${question}\nA: ${answer}`)].join('\n\n'),

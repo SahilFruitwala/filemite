@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { llmsFullTxt, llmsTxt } from '@/routes/llms[.]txt';
 import { robotsTxt } from '@/routes/robots[.]txt';
-import { homeJsonLd, seoHead, toolHead, toolJsonLd } from './seo';
+import { homeJsonLd, organizationJsonLd, seoHead, toolHead, toolJsonLd } from './seo';
 import { SITE_URL } from './site';
 import { siteFaqs, toolContent } from './tool-content';
 import { tools } from './tools';
@@ -88,5 +88,23 @@ describe('llms-full.txt', () => {
       expect(text).toContain(`URL: ${SITE_URL}${tool.href}`);
       expect(text).toContain(toolContent[tool.id].faqs[0].answer);
     }
+  });
+});
+
+describe('llms.txt guidance', () => {
+  it('tells agents when to use the site, in both files', () => {
+    for (const text of [llmsTxt(), llmsFullTxt()]) {
+      expect(text).toContain('## When to use Filemite');
+      expect(text).toContain('## How to use it');
+    }
+  });
+});
+
+describe('organization markup', () => {
+  it('has a contact point and only publishes an address that was configured', () => {
+    const org: ReturnType<typeof organizationJsonLd> & { address?: { '@type': string } } = organizationJsonLd();
+    expect(org.contactPoint).toMatchObject({ '@type': 'ContactPoint', contactType: 'customer support' });
+    expect(org.contactPoint.url).toBeTruthy();
+    if (org.address) expect(org.address['@type']).toBe('PostalAddress');
   });
 });
