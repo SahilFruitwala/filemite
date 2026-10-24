@@ -10,7 +10,7 @@ Small, fast tools for images and PDFs — one app, one design system.
 
 | Image tools (server, in memory, unless marked *browser*) | PDF tools (in the browser) |
 | --- | --- |
-| **Compress** — PNG, JPEG, WebP, HEIC; batch of 10; Best / Balanced / Smallest | **Merge** — drag to reorder; links, forms and bookmarks kept |
+| **Compress** — PNG, JPEG, WebP, HEIC; batch of 10; Best / Balanced / Smallest | **Merge** — drag to reorder; bookmarks kept |
 | **Convert** — HEIC, PNG, JPEG, WebP to JPG, PNG or WebP at full size | **Split** — every N pages, custom ranges, or click to cut |
 | **Resize** — exact pixels or presets; cover / contain / fit / stretch | **Extract** — keep or remove pages; `1-3, 8, 10-z` ranges |
 | **Smart crop** — content-aware crops for social formats *(browser)* | **Compress** — by quality or to a target size; text stays sharp |

@@ -272,7 +272,7 @@ export const toolContent: Record<ToolId, ToolContent> = {
   },
   'pdf-merge': {
     summary:
-      'Filemite merges PDFs into one file, in any order you choose. Links and bookmarks are kept, and you can add a bookmark for each file. Files are processed on your device and never uploaded.',
+      'Filemite merges PDFs into one file, in any order you choose. Each file's bookmarks are kept, and you can add a bookmark for each file. Links and form fields inside the PDFs are not carried over. Files are processed on your device and never uploaded.',
     steps: [
       'Add the PDFs you want to combine.',
       'Drag them into the order you need.',
@@ -282,6 +282,10 @@ export const toolContent: Record<ToolId, ToolContent> = {
       {
         question: 'How do I combine PDF files for free?',
         answer: 'Add the PDFs, drag them into order, and download one merged file. There is no sign-up and no watermark.',
+      },
+      {
+        question: 'Does merging keep links and form fields?',
+        answer: 'Merging keeps each file’s bookmarks, but links and fillable form fields inside the PDFs are not carried over to the merged file. If you need them, fill in or link the merged PDF afterwards.',
       },
       {
         question: 'Are my PDFs uploaded when I merge them?',
@@ -319,7 +323,7 @@ export const toolContent: Record<ToolId, ToolContent> = {
   },
   'pdf-organize': {
     summary:
-      'Filemite rotates individual PDF pages or the whole document and lets you drag pages into a new order. Links and bookmarks are kept. It runs in your browser, so your document is never uploaded.',
+      'Filemite rotates individual PDF pages or the whole document and lets you drag pages into a new order. Links and form fields are kept. It runs in your browser, so your document is never uploaded.',
     steps: ['Add the PDF.', 'Rotate pages and drag them into the order you want.', 'Download the reorganized PDF.'],
     faqs: [
       {
