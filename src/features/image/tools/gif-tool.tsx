@@ -48,7 +48,7 @@ export function GifTool() {
   const [fit, setFit] = useState<Fit>('fill');
   const [background, setBackground] = useState('#ffffff');
   const [result, setResult] = useState<Result | null>(null);
-  const job = useJob<Result>();
+  const job = useJob<Result>('gif_create');
 
   const discard = () =>
     setResult((current) => {

@@ -59,7 +59,7 @@ export function PassportTool() {
   const [background, setBackground] = useState('#ffffff');
   const [framing, setFraming] = useState<Framing>(START);
   const [guides, setGuides] = useState(true);
-  const job = useJob<void>();
+  const job = useJob<void>('passport_photo');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sheetRef = useRef<HTMLCanvasElement>(null);
   const drag = useRef<{ x: number; y: number; framing: Framing } | null>(null);

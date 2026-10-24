@@ -40,7 +40,7 @@ export function FromImagesTool() {
   const [images, setImages] = useState<SortableImage[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
   const [options, setOptions] = useState<ImagePageOptions>(DEFAULT_IMAGE_PAGE_OPTIONS);
-  const job = useJob<OutputFile & { pageCount: number }>();
+  const job = useJob<OutputFile & { pageCount: number }>('pdf_from_images');
 
   const add = (files: File[]) => {
     const { accepted, notice: problem } = partitionImages(files, "browser");

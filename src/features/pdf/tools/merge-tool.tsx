@@ -56,7 +56,7 @@ export function MergeTool() {
   const documents = usePdfDocuments({ multiple: true });
   const { documents: docs, setDocuments } = documents;
   const [bookmarks, setBookmarks] = useState(true);
-  const job = useJob<MergeResult>();
+  const job = useJob<MergeResult>('pdf_merge');
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),

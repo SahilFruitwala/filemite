@@ -85,7 +85,7 @@ export function RedactTool() {
   const [mode, setMode] = useState<RedactMode>('blackout');
   const [strength, setStrength] = useState(STRENGTH_DEFAULT);
   const [draft, setDraft] = useState<{ start: Point; current: Point } | null>(null);
-  const job = useJob<void>();
+  const job = useJob<void>('image_redact');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const boxRefs = useRef<(HTMLDivElement | null)[]>([]);
   // Which box to move keyboard focus to once it has rendered (a new box, or the next after a delete).

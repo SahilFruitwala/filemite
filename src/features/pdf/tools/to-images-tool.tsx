@@ -43,7 +43,7 @@ type Result = { files: { name: string; bytes: Uint8Array }[]; format: Format; zi
 
 export function ToImagesTool() {
   const documents = usePdfDocuments({ multiple: false });
-  const job = useJob<Result>();
+  const job = useJob<Result>('pdf_to_images');
   const [format, setFormat] = useState<Format>("png");
   const [dpi, setDpi] = useState<number>(150);
   const [quality, setQuality] = useState(90);

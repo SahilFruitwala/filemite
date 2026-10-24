@@ -37,7 +37,7 @@ const STYLE: ToolStyle = {
 export function RedactTool() {
   const documents = usePdfDocuments({ multiple: false });
   const editor = useEditorItems();
-  const job = useJob<OutputFile & { pageCount: number }>();
+  const job = useJob<OutputFile & { pageCount: number }>('pdf_redact');
   const [current, setCurrent] = useState<EditorTool>("redact");
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);

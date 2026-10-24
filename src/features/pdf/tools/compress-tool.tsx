@@ -77,7 +77,7 @@ function describeWork(stats: CompressStats): string[] {
 
 export function CompressTool() {
   const documents = usePdfDocuments({ multiple: false });
-  const job = useJob<CompressResult>();
+  const job = useJob<CompressResult>('pdf_compress');
   const [mode, setMode] = useState<Mode>("quality");
   const [level, setLevel] = useState<CompressLevel>("balanced");
   const [grayscale, setGrayscale] = useState(false);

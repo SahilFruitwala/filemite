@@ -70,7 +70,7 @@ const DEFAULT_STYLE = {
 export function AnnotateTool() {
   const documents = usePdfDocuments({ multiple: false });
   const editor = useEditorItems();
-  const job = useJob<OutputFile & { pageCount: number }>();
+  const job = useJob<OutputFile & { pageCount: number }>('pdf_annotate');
   const [current, setCurrent] = useState<EditorTool>("text");
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);

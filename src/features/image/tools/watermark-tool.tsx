@@ -75,7 +75,7 @@ export function WatermarkTool() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoNotice, setLogoNotice] = useState<string | null>(null);
   const [settings, setSettings] = useState<WatermarkSettings>(DEFAULT_SETTINGS);
-  const job = useJob<void>();
+  const job = useJob<void>('image_watermark');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const previewUrl = useObjectUrl(file);

@@ -48,7 +48,7 @@ function outputName(base: string, group: number[]) {
 
 export function SplitTool() {
   const documents = usePdfDocuments({ multiple: false });
-  const job = useJob<{ files: (OutputFile & { pageCount: number })[]; zipName: string }>();
+  const job = useJob<{ files: (OutputFile & { pageCount: number })[]; zipName: string }>('pdf_split');
   const [mode, setMode] = useState<Mode>("every");
   const [chunkSize, setChunkSize] = useState(1);
   const [rangeText, setRangeText] = useState("");

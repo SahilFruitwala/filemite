@@ -71,7 +71,7 @@ export function AnnotateImageTool() {
   const [file, setFile] = useState<File | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const editor = useEditorItems();
-  const job = useJob<void>();
+  const job = useJob<void>('image_annotate');
   const [current, setCurrent] = useState<EditorTool>('arrow');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
