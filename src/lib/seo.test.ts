@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { llmsTxt } from '@/routes/llms[.]txt';
+import { llmsFullTxt, llmsTxt } from '@/routes/llms[.]txt';
 import { robotsTxt } from '@/routes/robots[.]txt';
 import { homeJsonLd, seoHead, toolHead, toolJsonLd } from './seo';
 import { SITE_URL } from './site';
@@ -78,5 +78,15 @@ describe('llms.txt', () => {
     const text = llmsTxt();
     expect(text.startsWith('# Filemite\n\n> ')).toBe(true);
     for (const tool of tools) expect(text).toContain(`](${SITE_URL}${tool.href})`);
+  });
+});
+
+describe('llms-full.txt', () => {
+  it('includes the steps and FAQs of every tool', () => {
+    const text = llmsFullTxt();
+    for (const tool of tools) {
+      expect(text).toContain(`URL: ${SITE_URL}${tool.href}`);
+      expect(text).toContain(toolContent[tool.id].faqs[0].answer);
+    }
   });
 });
