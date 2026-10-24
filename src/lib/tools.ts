@@ -111,7 +111,7 @@ export const tools: Tool[] = [
     description: 'Shrink PNG, JPEG, WebP and HEIC files without visible quality loss.',
     seoTitle: 'Compress Images Online — PNG, JPEG, WebP, HEIC',
     seoDescription:
-      'Compress up to 20 images at once. Smart presets for PNG, JPEG and WebP, HEIC input supported. Processed in memory and never stored.',
+      'Compress up to 10 images at once. Smart presets for PNG, JPEG and WebP, HEIC input supported. Processed in memory and never stored.',
     keywords: [
       'image compressor',
       'compress png',
@@ -229,7 +229,7 @@ export const tools: Tool[] = [
     description: 'Pull the dominant colors out of any image as HEX codes.',
     seoTitle: 'Extract a Color Palette From an Image',
     seoDescription:
-      'Find the dominant colors in any image and copy them as HEX, RGB or CSS variables. Runs in your browser.',
+      'Find the dominant colors in any image and copy them as HEX, RGB or HSL, or as CSS variables. Runs in your browser.',
     keywords: ['color palette from image', 'color picker', 'extract colors', 'hex codes'],
     emptyTitle: 'Choose an image',
     emptyDescription: 'Its dominant colors appear instantly — click one to copy.',
@@ -354,10 +354,10 @@ export const tools: Tool[] = [
     href: '/pdf/merge',
     title: 'Merge PDF',
     shortTitle: 'Merge',
-    description: 'Combine PDFs into one file, in any order. Bookmarks and links are kept.',
+    description: 'Combine PDFs into one file, in any order. Bookmarks are kept.',
     seoTitle: 'Merge PDF Files — Free, Private, In Your Browser',
     seoDescription:
-      'Combine PDFs in any order with drag and drop. Links, form fields and bookmarks are kept. Files never leave your device.',
+      'Combine PDFs in any order with drag and drop. Bookmarks are kept, and you can add one per file. Files never leave your device.',
     keywords: ['merge pdf', 'combine pdf', 'join pdf files'],
     emptyTitle: 'Choose PDFs to merge',
     emptyDescription: 'Add two or more files, then drag them into the order you want.',

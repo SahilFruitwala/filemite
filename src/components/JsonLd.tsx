@@ -5,7 +5,7 @@ type JsonLdProps = {
 };
 
 export default function JsonLd({ data }: JsonLdProps) {
-  return (
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
-  );
+  // "<" is escaped so no string in the data can close the script tag early.
+  const json = JSON.stringify(data).replace(/</g, '\\u003c');
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: json }} />;
 }

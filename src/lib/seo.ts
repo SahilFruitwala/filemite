@@ -1,5 +1,15 @@
-import { OG_IMAGE, OG_IMAGE_ALT, SITE_NAME, SITE_URL } from './site';
-import type { Tool } from './tools';
+import {
+  AUTHOR,
+  OG_IMAGE,
+  OG_IMAGE_ALT,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SOCIAL_LINKS,
+  SOURCE_URL,
+  SITE_URL,
+} from './site';
+import { siteFaqs, toolContent, type Faq } from './tool-content';
+import { SECTIONS, tools, type Tool } from './tools';
 
 export { SITE_URL };
 
@@ -13,7 +23,7 @@ interface SeoOptions {
 
 /** Builds a TanStack Router `head()` result with title, description, OG/Twitter tags and canonical link. */
 export function seoHead({ title, description, keywords, path }: SeoOptions) {
-  const fullTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
+  const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
   const canonical = path !== undefined ? `${SITE_URL}${path === '/' ? '' : path}` : undefined;
   return {
     meta: [
@@ -42,16 +52,98 @@ export function toolHead(tool: Tool) {
   });
 }
 
-/** schema.org SoftwareApplication payload for a tool page. */
-export function toolJsonLd(tool: Tool) {
+const CONTEXT = 'https://schema.org';
+
+/** The publisher entity, referenced by id from every page's markup. */
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+
+export function organizationJsonLd() {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: `${tool.title} — ${SITE_NAME}`,
-    url: `${SITE_URL}${tool.href}`,
-    applicationCategory: tool.section === 'pdf' ? 'BusinessApplication' : 'MultimediaApplication',
-    operatingSystem: 'Web',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-    description: tool.seoDescription,
+    '@context': CONTEXT,
+    '@type': 'Organization',
+    '@id': ORGANIZATION_ID,
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/pwa-512.png`,
+    sameAs: [SOURCE_URL, ...SOCIAL_LINKS.map((link) => link.href)],
+    founder: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
   };
 }
+
+function faqPage(faqs: Faq[]) {
+  return {
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(({ question, answer }) => ({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: { '@type': 'Answer', text: answer },
+    })),
+  };
+}
+
+/** schema.org graph for a tool page: the app, its breadcrumb trail and its FAQ. */
+export function toolJsonLd(tool: Tool) {
+  const url = `${SITE_URL}${tool.href}`;
+  const section = SECTIONS[tool.section];
+  return {
+    '@context': CONTEXT,
+    '@graph': [
+      {
+        '@type': 'WebApplication',
+        '@id': `${url}#app`,
+        name: `${tool.title} — ${SITE_NAME}`,
+        url,
+        description: tool.seoDescription,
+        applicationCategory: tool.section === 'pdf' ? 'BusinessApplication' : 'MultimediaApplication',
+        operatingSystem: 'Any (web browser)',
+        browserRequirements: 'Requires JavaScript',
+        isAccessibleForFree: true,
+        inLanguage: 'en',
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@id': ORGANIZATION_ID },
+        isPartOf: { '@type': 'WebSite', name: SITE_NAME, url: SITE_URL },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: SITE_NAME, item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: section.title, item: `${SITE_URL}${section.href}` },
+          { '@type': 'ListItem', position: 3, name: tool.title, item: url },
+        ],
+      },
+      faqPage(toolContent[tool.id].faqs),
+    ],
+  };
+}
+
+/** schema.org graph for the home page: the tool catalogue and the site FAQ. */
+export function homeJsonLd() {
+  return {
+    '@context': CONTEXT,
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${SITE_URL}/#webpage`,
+        url: SITE_URL,
+        name: HOME_TITLE,
+        description: SITE_DESCRIPTION,
+        isPartOf: { '@type': 'WebSite', name: SITE_NAME, url: SITE_URL },
+      },
+      {
+        '@type': 'ItemList',
+        name: `${SITE_NAME} tools`,
+        numberOfItems: tools.length,
+        itemListElement: tools.map((tool, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: tool.title,
+          url: `${SITE_URL}${tool.href}`,
+        })),
+      },
+      faqPage(siteFaqs),
+    ],
+  };
+}
+
+/** Home page title: names the product and what it does, instead of the bare brand. */
+export const HOME_TITLE = 'Filemite — Free Image & PDF Tools, Private and No Sign-Up';

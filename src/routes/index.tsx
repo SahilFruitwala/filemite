@@ -2,20 +2,31 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowRight, Cloud, Gauge, Laptop, LockKeyhole, UserX } from 'lucide-react';
 
 import { HeroDemo } from '@/components/home/hero-demo';
+import JsonLd from '@/components/JsonLd';
+import { FaqList } from '@/components/tool/faq-list';
 import { buttonVariants } from '@/components/ui/button';
 import { formatBytes } from '@/lib/format';
 import { IMAGES_PER_HOUR, MAX_IMAGE_BATCH, MAX_IMAGE_BYTES } from '@/lib/limits';
-import { seoHead } from '@/lib/seo';
-import { SITE_DESCRIPTION, SITE_NAME } from '@/lib/site';
+import { HOME_TITLE, homeJsonLd, seoHead } from '@/lib/seo';
+import { SITE_DESCRIPTION } from '@/lib/site';
+import { siteFaqs } from '@/lib/tool-content';
 import { SECTIONS, toolsIn, type Section } from '@/lib/tools';
 import { cn } from '@/lib/utils';
 
 export const Route = createFileRoute('/')({
   head: () =>
     seoHead({
-      title: SITE_NAME,
+      title: HOME_TITLE,
       description: SITE_DESCRIPTION,
-      keywords: ['image compressor', 'merge pdf', 'compress pdf', 'resize image', 'remove exif'],
+      keywords: [
+        'image compressor',
+        'merge pdf',
+        'compress pdf',
+        'resize image',
+        'remove exif',
+        'private pdf tools',
+        'free image tools',
+      ],
       path: '/',
     }),
   component: HomePage,
@@ -42,6 +53,7 @@ const PROMISES = [
 function HomePage() {
   return (
     <>
+      <JsonLd data={homeJsonLd()} />
       <section className="relative overflow-hidden border-b border-border">
         <div aria-hidden className="bg-glow animate-drift absolute -inset-[5%]" />
         <div
@@ -134,6 +146,16 @@ function HomePage() {
               <p className="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
             </div>
           ))}
+        </section>
+
+        <section aria-labelledby="faq-heading" className="reveal mx-auto max-w-3xl pb-4">
+          <h2
+            id="faq-heading"
+            className="mb-6 font-display text-3xl font-bold tracking-tight sm:text-4xl"
+          >
+            Questions, answered
+          </h2>
+          <FaqList faqs={siteFaqs} />
         </section>
       </div>
     </>

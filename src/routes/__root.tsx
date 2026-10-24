@@ -6,6 +6,7 @@ import { SiteFooter } from '@/components/shell/site-footer';
 import { SiteHeader } from '@/components/shell/site-header';
 import { ThemeProvider, themeBootScript } from '@/components/shell/theme';
 import { NotFoundPage } from '@/pages/not-found';
+import { organizationJsonLd } from '@/lib/seo';
 import {
   AUTHOR,
   OG_IMAGE,
@@ -38,12 +39,15 @@ export const Route = createRootRoute({
       { property: 'og:url', content: SITE_URL },
       { property: 'og:site_name', content: SITE_NAME },
       { property: 'og:type', content: 'website' },
+      { property: 'og:locale', content: 'en_US' },
       { property: 'og:image', content: OG_IMAGE },
       { property: 'og:image:type', content: 'image/png' },
       { property: 'og:image:width', content: '1200' },
       { property: 'og:image:height', content: '630' },
       { property: 'og:image:alt', content: OG_IMAGE_ALT },
       { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:site', content: '@sahilbeingsahil' },
+      { name: 'twitter:creator', content: '@sahilbeingsahil' },
       { name: 'twitter:title', content: TITLE },
       { name: 'twitter:description', content: SITE_DESCRIPTION },
       { name: 'twitter:image', content: OG_IMAGE },
@@ -66,9 +70,12 @@ export const Route = createRootRoute({
           name: SITE_NAME,
           url: SITE_URL,
           description: SITE_DESCRIPTION,
+          inLanguage: 'en',
+          publisher: { '@id': organizationJsonLd()['@id'] },
           author: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
         }),
       },
+      { type: 'application/ld+json', children: JSON.stringify(organizationJsonLd()) },
     ],
   }),
   shellComponent: RootDocument,
