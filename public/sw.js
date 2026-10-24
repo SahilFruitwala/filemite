@@ -1,10 +1,10 @@
 /* Filemite service worker: caches the app shell and static assets only.
  * Never touches /api or /ingest, so tool requests and analytics always go to the network. */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const STATIC_CACHE = `filemite-static-${VERSION}`;
 const PAGE_CACHE = `filemite-pages-${VERSION}`;
 const OFFLINE_URL = '/offline.html';
-const PRECACHE = [OFFLINE_URL, '/logo.svg', '/pwa-192.png', '/pwa-512.png'];
+const PRECACHE = [OFFLINE_URL, '/logo.png', '/pwa-192.png', '/pwa-512.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE)));
