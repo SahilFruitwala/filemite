@@ -30,7 +30,7 @@ type Action = "keep" | "remove";
 
 export function ExtractTool() {
   const documents = usePdfDocuments({ multiple: false });
-  const job = useJob<OutputFile & { pageCount: number }>();
+  const job = useJob<OutputFile & { pageCount: number }>('pdf_extract');
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [rangeText, setRangeText] = useState("");
   const [rangeError, setRangeError] = useState<string | null>(null);

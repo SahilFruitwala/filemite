@@ -58,7 +58,7 @@ export function RotateTool() {
   const [file, setFile] = useState<File | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [orientation, setOrientation] = useState<Orientation>(IDENTITY);
-  const job = useJob<void>();
+  const job = useJob<void>('image_rotate');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const previewUrl = useObjectUrl(file);

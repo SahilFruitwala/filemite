@@ -54,7 +54,7 @@ const tool = getTool("pdf-organize");
 
 export function OrganizeTool() {
   const documents = usePdfDocuments({ multiple: false });
-  const job = useJob<OutputFile & { pageCount: number }>();
+  const job = useJob<OutputFile & { pageCount: number }>('pdf_organize');
   // Edits belong to one document; opening another starts from its own page order.
   const [edit, setEdit] = useState<{ docId: string; slots: PageSlot[] } | null>(null);
 

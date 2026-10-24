@@ -59,7 +59,7 @@ export function CollageTool() {
   const [background, setBackground] = useState('#ffffff');
   const [fit, setFit] = useState<Fit>('fill');
   const [format, setFormat] = useState<Format>('jpeg');
-  const job = useJob<void>();
+  const job = useJob<void>('image_collage');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const { images, errors, ready } = useDecodedImages(photos);

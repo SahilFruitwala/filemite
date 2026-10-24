@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router';
 import posthog from 'posthog-js';
+import { sanitizeEvent } from '@/lib/analytics';
 
 import { SiteFooter } from '@/components/shell/site-footer';
 import { SiteHeader } from '@/components/shell/site-header';
@@ -127,7 +128,9 @@ function RootLayout() {
         capture_heatmaps: false,
         capture_dead_clicks: false,
         capture_performance: false,
+        // Error reports carry the failing function and a generic message only.
         capture_exceptions: true,
+        before_send: sanitizeEvent,
         debug: import.meta.env.DEV,
       });
     }

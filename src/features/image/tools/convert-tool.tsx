@@ -1,3 +1,4 @@
+import posthog from 'posthog-js';
 import { useState } from 'react';
 import { Download, FileImage, ImageUp, Loader2, Trash2, X } from 'lucide-react';
 
@@ -107,6 +108,7 @@ export function ConvertTool() {
     setConvertedTo(null);
     setItems((current) => current.map((item) => ({ ...item, status: 'queued', result: undefined, error: undefined })));
 
+    posthog.capture('image_convert_started', { file_count: batch.length, output_format: target });
     let quotaMessage: string | null = null;
     const skipped = await runQueue(batch, async (item, _index, stop) => {
       patch(item.id, { status: 'working' });
@@ -127,7 +129,13 @@ export function ConvertTool() {
           status: 'done',
           result: { blob, name: `${stem(item.file.name)}.${extensionFor(blob.type || `image/${target}`)}` },
         });
+        posthog.capture('image_convert_completed', {
+          output_format: target,
+          original_size_bytes: item.file.size,
+          converted_size_bytes: blob.size,
+        });
       } catch (error) {
+        posthog.capture('image_convert_failed', { output_format: target });
         if (isQuotaError(error)) {
           quotaMessage = error.message;
           stop();

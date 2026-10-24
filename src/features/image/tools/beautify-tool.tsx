@@ -49,7 +49,7 @@ export function BeautifyTool() {
   const [custom, setCustom] = useState<string | null>(null);
   const [aspectId, setAspectId] = useState('auto');
   const [format, setFormat] = useState<Format>('png');
-  const job = useJob<void>();
+  const job = useJob<void>('image_beautify');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const previewUrl = useObjectUrl(file);
