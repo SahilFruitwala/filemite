@@ -229,7 +229,7 @@ export const tools: Tool[] = [
     description: 'Pull the dominant colors out of any image as HEX codes.',
     seoTitle: 'Extract a Color Palette From an Image',
     seoDescription:
-      'Find the dominant colors in any image and copy them as HEX, RGB or CSS variables. Runs in your browser.',
+      'Find the dominant colors in any image and copy them as HEX, RGB or HSL, or as CSS variables. Runs in your browser.',
     keywords: ['color palette from image', 'color picker', 'extract colors', 'hex codes'],
     emptyTitle: 'Choose an image',
     emptyDescription: 'Its dominant colors appear instantly — click one to copy.',

@@ -22,41 +22,41 @@ const IN_MEMORY = `Images are processed in memory on the server and discarded as
 
 export const toolContent: Record<ToolId, ToolContent> = {
   'image-compress': {
-    summary: `Filemite compresses PNG, JPEG, WebP and HEIC images for free, with no sign-up and no watermark. Pick a preset, drop in up to ${MAX_IMAGE_BATCH} images, and download smaller files that look the same. Images are processed in memory and never stored.`,
+    summary: `Filemite compresses PNG, JPEG, WebP and HEIC images for free, with no sign-up and no watermark. Pick Best, Balanced or Smallest, drop in up to ${MAX_IMAGE_BATCH} images, and download smaller files that look the same. Images are processed in memory and never stored.`,
     steps: [
       'Drop your images onto the page, or choose them from your device.',
-      'Pick a compression preset and check the before and after size.',
+      'Pick Best, Balanced or Smallest, choose an output format if you want to change it, and check the before and after size.',
       'Download each compressed image, or all of them together.',
     ],
     faqs: [
       {
         question: 'How do I reduce the size of an image without losing quality?',
         answer:
-          'Use a preset that keeps the same format, such as a balanced JPEG or WebP setting. Filemite shows the original and compressed sizes side by side so you can pick the smallest file that still looks right.',
+          'Start with the Balanced level and keep the original format, or switch to WebP for smaller files. Filemite shows the original and compressed sizes so you can pick the smallest file that still looks right.',
       },
       {
         question: 'Does Filemite store my images?',
-        answer: IN_MEMORY,
+        answer: `Images up to ${formatBytes(MAX_IMAGE_BYTES)} are processed in memory on the server and discarded as soon as you have the result. They are never written to disk or kept. Larger images are compressed in your browser instead and never uploaded, though the result can be a bit larger. You can add up to ${MAX_IMAGE_BATCH} images per batch.`,
       },
       {
         question: 'Can I compress HEIC photos from my iPhone?',
-        answer: 'Yes. HEIC and HEIF files are accepted as input and can be saved as JPEG, PNG or WebP.',
+        answer: 'Yes. HEIC and HEIF files are accepted as input. With the original format kept they come out as JPEG, or you can choose WebP, JPEG or PNG.',
       },
     ],
   },
   'image-resize': {
     summary:
-      'Filemite resizes images to exact pixel dimensions or to ready-made social media presets, for free. Choose cover, contain, fill or fit-inside, and download the result. Images are processed in memory and never stored.',
+      'Filemite resizes images to exact pixel dimensions or to ready-made social media presets, for free. Choose Cover, Contain, Fit or Stretch, and download the result. Images are processed in memory and never stored.',
     steps: [
       'Add the image you want to resize.',
-      'Enter a width and height, or pick a preset for social media or the web.',
+      'Enter a width and height, or pick a preset such as Square, Story, Full HD, Link preview, Thumbnail or Half size.',
       'Choose how the image should fit, then download the resized file.',
     ],
     faqs: [
       {
         question: 'How do I resize an image to an exact size in pixels?',
         answer:
-          'Enter the width and height you need and choose a fit mode. Cover fills the frame and crops the overflow, contain fits the whole image inside it, fill stretches it, and fit-inside shrinks it to stay within the size.',
+          'Enter the width and height you need and choose a fit mode. Cover fills the frame and trims the edges, Contain shows the whole image inside the frame with transparent padding, Stretch fills the exact size and ignores the original shape, and Fit shrinks the image to stay within the size without padding.',
       },
       {
         question: 'Does resizing upload my image?',
@@ -66,17 +66,17 @@ export const toolContent: Record<ToolId, ToolContent> = {
   },
   'image-crop': {
     summary:
-      'Filemite finds the subject of a photo and suggests a crop for square posts, stories and link previews. You can adjust the crop before you save. It runs in your browser, so the photo is never uploaded.',
+      'Filemite finds the subject of a photo and crops it for square posts, portrait posts, stories, link previews and widescreen in one go. It runs in your browser, so the photo is never uploaded.',
     steps: [
       'Add a photo.',
-      'Pick a target shape such as square, story or link preview.',
-      'Accept the suggested crop or adjust it, then download the cropped image.',
+      'Tick the formats you need: square, portrait, story or reel, link preview or widescreen.',
+      'Download the crops one by one, or all of them as a ZIP.',
     ],
     faqs: [
       {
         question: 'How does smart crop decide what to keep?',
         answer:
-          'It looks for the most important part of the picture, such as faces, edges and detail, and centers the crop on it. You can always move or resize the crop yourself.',
+          'It detects the subject from skin tones, edges and saturation, then centers each crop on it. Crops never upscale past the resolution of the original photo.',
       },
       { question: 'Is my photo uploaded when I crop it?', answer: NO_UPLOAD },
     ],
@@ -95,7 +95,7 @@ export const toolContent: Record<ToolId, ToolContent> = {
         answer:
           'Add the photo, rotate it in 90 degree steps until it is upright, and save it. The saved file is rotated for real, so it looks right in every app.',
       },
-      { question: 'Does rotating lower the quality of my photo?', answer: 'The result is saved at full resolution. ' + NO_UPLOAD },
+      { question: 'Does rotating lower the quality of my photo?', answer: `Saved at full resolution in the original format (GIF and AVIF become PNG). ${NO_UPLOAD}` },
     ],
   },
   'image-redact': {
@@ -153,8 +153,8 @@ export const toolContent: Record<ToolId, ToolContent> = {
   },
   'image-palette': {
     summary:
-      'Filemite finds the dominant colors in any image and lets you copy them as HEX, RGB or CSS variables. It runs in your browser, so the image is never uploaded.',
-    steps: ['Add an image.', 'Review the extracted colors.', 'Copy the format you need: HEX, RGB or CSS variables.'],
+      'Filemite finds the dominant colors in any image and lets you copy them as HEX, RGB or HSL values, or as CSS variables. It runs in your browser, so the image is never uploaded.',
+    steps: ['Add an image.', 'Review the extracted colors.', 'Choose HEX, RGB or HSL and copy a single color or the whole palette as CSS variables.'],
     faqs: [
       {
         question: 'How do I get the HEX codes of the colors in a picture?',
@@ -207,20 +207,20 @@ export const toolContent: Record<ToolId, ToolContent> = {
   },
   'image-collage': {
     summary:
-      'Filemite combines photos into a single image using grid layouts, with spacing, rounded corners and a background color you choose. It runs in your browser, so nothing is uploaded.',
-    steps: ['Add your photos.', 'Pick a grid layout and adjust spacing, corners and background.', 'Download the collage.'],
+      'Filemite combines photos into a single image using a grid, feature, row or column layout, with spacing, rounded corners and a background color you choose. It runs in your browser, so nothing is uploaded.',
+    steps: ['Add your photos.', 'Pick a layout and adjust spacing, corners and background.', 'Download the collage.'],
     faqs: [
       {
         question: 'How do I put several photos into one image?',
-        answer: 'Add the photos, choose a grid layout, and download the combined image.',
+        answer: 'Add the photos, choose a grid, feature, row or column layout, and download the combined image.',
       },
       { question: 'Are my photos uploaded to make a collage?', answer: NO_UPLOAD },
     ],
   },
   'image-gif': {
     summary:
-      'Filemite makes an animated GIF from a set of images. Reorder the frames, set the speed and size, and choose whether it loops. It runs in your browser, so nothing is uploaded.',
-    steps: ['Add the images that will be your frames.', 'Reorder them and set the speed, size and looping.', 'Download the GIF.'],
+      'Filemite makes an animated GIF from a set of images. Drag the frames into order, set the speed and size, and choose whether it loops or bounces back and forth. You can use 2 to 40 images. It runs in your browser, so nothing is uploaded.',
+    steps: ['Add the images that will be your frames.', 'Drag them into order and set the delay, size (240, 480 or 720 pixels) and looping.', 'Download the GIF.'],
     faqs: [
       {
         question: 'How do I make a GIF from photos?',
@@ -231,11 +231,11 @@ export const toolContent: Record<ToolId, ToolContent> = {
   },
   'image-passport': {
     summary:
-      'Filemite crops a photo to passport and ID sizes for the US, EU, UK, India and other places at 300 dpi, then lays out a 4×6 or A4 sheet ready to print. It runs in your browser, so your photo is never uploaded.',
+      'Filemite crops a photo to passport and ID sizes for the US, EU, UK, India, Canada, Australia, China and Japan, or a custom size, at 300 dpi, then lays out a 4×6, 5×7 or A4 sheet ready to print. It runs in your browser, so your photo is never uploaded.',
     steps: [
       'Add a portrait photo.',
-      'Choose the country or ID size and position your face in the guide.',
-      'Download the single photo or a print-ready 4×6 or A4 sheet.',
+      'Choose the country or ID size, then drag and zoom the photo to center your face in the guide.',
+      'Download the single photo or a print-ready 4×6, 5×7 or A4 sheet.',
     ],
     faqs: [
       {
@@ -272,7 +272,7 @@ export const toolContent: Record<ToolId, ToolContent> = {
   },
   'pdf-merge': {
     summary:
-      'Filemite merges PDFs into one file, in any order you choose. Links, form fields and bookmarks are kept. Files are processed on your device and never uploaded.',
+      'Filemite merges PDFs into one file, in any order you choose. Links and bookmarks are kept, and you can add a bookmark for each file. Files are processed on your device and never uploaded.',
     steps: [
       'Add the PDFs you want to combine.',
       'Drag them into the order you need.',
@@ -319,7 +319,7 @@ export const toolContent: Record<ToolId, ToolContent> = {
   },
   'pdf-organize': {
     summary:
-      'Filemite rotates individual PDF pages or the whole document and lets you drag pages into a new order. Links, forms and bookmarks are kept. It runs in your browser, so your document is never uploaded.',
+      'Filemite rotates individual PDF pages or the whole document and lets you drag pages into a new order. Links and bookmarks are kept. It runs in your browser, so your document is never uploaded.',
     steps: ['Add the PDF.', 'Rotate pages and drag them into the order you want.', 'Download the reorganized PDF.'],
     faqs: [
       {
@@ -331,16 +331,16 @@ export const toolContent: Record<ToolId, ToolContent> = {
   },
   'pdf-compress': {
     summary:
-      'Filemite makes PDFs smaller by quality level or to a target size, while keeping text sharp and searchable. It runs in your browser, so your document is never uploaded.',
+      'Filemite makes PDFs smaller by compression level or to a target size, while keeping text sharp and searchable. It runs in your browser, so your document is never uploaded.',
     steps: [
       'Add the PDF.',
-      'Pick a quality level or a target size.',
+      'Pick Light, Balanced or Strong, or enter a target size.',
       'Download the smaller PDF and check the size saved.',
     ],
     faqs: [
       {
         question: 'How do I reduce the size of a PDF?',
-        answer: 'Add the PDF and choose a quality level or a target size. Filemite shrinks the images inside and keeps the text sharp and searchable.',
+        answer: 'Add the PDF and choose Light, Balanced or Strong, or enter a target size. Filemite recompresses the images inside and keeps text and vector graphics sharp and searchable.',
       },
       {
         question: 'Is it safe to compress a confidential PDF here?',
@@ -350,7 +350,7 @@ export const toolContent: Record<ToolId, ToolContent> = {
   },
   'pdf-from-images': {
     summary:
-      'Filemite turns JPG, PNG, WebP and other images into a single PDF. Reorder the pages, pick A4, Letter or fit-to-image, and set margins. It runs in your browser, so your files are never uploaded.',
+      'Filemite turns JPG, PNG, WebP and other images into a single PDF. Reorder the pages, pick A4, Letter or fit-to-image, and set margins. You can add up to 50 images. It runs in your browser, so your files are never uploaded.',
     steps: ['Add your images or scans.', 'Reorder them and choose the page size and margins.', 'Download the PDF.'],
     faqs: [
       {
@@ -362,12 +362,12 @@ export const toolContent: Record<ToolId, ToolContent> = {
   },
   'pdf-to-images': {
     summary:
-      'Filemite saves PDF pages as PNG or JPG images at up to 300 dpi. Export every page or a range, delivered as a ZIP. It runs in your browser, so your document is never uploaded.',
-    steps: ['Add the PDF.', 'Choose PNG or JPG, the resolution, and which pages to export.', 'Download the images as a ZIP.'],
+      'Filemite saves PDF pages as PNG or JPG images at up to 300 dpi. Export every page or a range; several pages arrive as a ZIP. It runs in your browser, so your document is never uploaded.',
+    steps: ['Add the PDF.', 'Choose PNG or JPG, the resolution (72, 150 or 300 dpi), and which pages to export.', 'Download the image, or a ZIP when you export several pages.'],
     faqs: [
       {
         question: 'How do I convert a PDF to JPG?',
-        answer: 'Add the PDF, choose JPG, pick the pages and resolution, and download the images as a ZIP.',
+        answer: 'Add the PDF, choose JPG, pick the pages and resolution, and download the images. Several pages come as a ZIP.',
       },
       { question: 'Is my PDF uploaded?', answer: 'No. This runs in your browser and the PDF never leaves your device.' },
     ],
@@ -448,7 +448,7 @@ export const siteFaqs: Faq[] = [
   },
   {
     question: 'Is there a file size limit?',
-    answer: `PDFs can be up to 250 MB each. Images that go through the server are limited to ${MAX_IMAGE_BATCH} per batch, ${formatBytes(MAX_IMAGE_BYTES)} each and ${IMAGES_PER_HOUR} per hour, to keep the service fast for everyone.`,
+    answer: `PDFs can be up to 250 MB each. Image tools that run on the server take ${MAX_IMAGE_BATCH} images per batch and ${formatBytes(MAX_IMAGE_BYTES)} per image, and each visitor can process ${IMAGES_PER_HOUR} per hour, to keep the service fast for everyone. The compress tool handles larger images in your browser instead.`,
   },
   {
     question: 'Is the source code available?',
