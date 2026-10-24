@@ -6,7 +6,13 @@
  */
 
 import { formatBytes } from './format';
-import { IMAGES_PER_HOUR, MAX_IMAGE_BATCH, MAX_IMAGE_BYTES, MAX_PDF_BYTES } from './limits';
+import {
+  IMAGES_PER_HOUR,
+  MAX_BROWSER_IMAGE_BYTES,
+  MAX_IMAGE_BATCH,
+  MAX_IMAGE_BYTES,
+  MAX_PDF_BYTES,
+} from './limits';
 import type { Faq } from './tool-content';
 import type { ToolId } from './tools';
 
@@ -38,6 +44,7 @@ export type Alternative = {
 
 const PDF_LIMIT = formatBytes(MAX_PDF_BYTES);
 const IMAGE_LIMIT = formatBytes(MAX_IMAGE_BYTES);
+const BROWSER_IMAGE_LIMIT = formatBytes(MAX_BROWSER_IMAGE_BYTES);
 
 const SHARED_ROWS = {
   account: { label: 'Account needed', filemite: 'No' },
@@ -62,15 +69,15 @@ export const alternatives: Alternative[] = [
       'ilovepdf free alternative',
       'ilovepdf without limits',
     ],
-    tldr: 'iLovePDF has more tools, including Office conversion, OCR and desktop and mobile apps. Its free plan caps batch sizes and file sizes per task, and files are processed on its servers. Filemite covers the everyday jobs (merge, split, compress, sign, redact) for free, with no account, and PDFs never leave your device.',
+    tldr: 'iLovePDF has more tools, including Office conversion, OCR and desktop and mobile apps. Its free plan caps batch sizes and file sizes per task, and the web tools process files on its servers. Filemite covers the everyday jobs (merge, split, compress, sign, redact) for free, with no account, and PDFs never leave your device.',
     reasons: [
       {
         title: 'Free-plan caps per task',
-        text: 'On the free Basic plan, iLovePDF lists 2 files per Compress PDF task, 1 per Redact and 3 per Sign, with file-size caps per tool. Premium removes most of these.',
+        text: 'On the free Basic plan, iLovePDF lists 2 files per Compress PDF task, 1 per Redact and 3 per Sign, with file-size caps per tool. Premium raises most of these caps, though Redact stays at 1 file per task.',
       },
       {
         title: 'Files go to a server',
-        text: 'iLovePDF processes documents on its servers (it advertises encryption, GDPR compliance and ISO 27001). Filemite’s PDF tools run on your device, so there is nothing to upload.',
+        text: 'The iLovePDF website processes documents on its servers and deletes them within 2 hours (it advertises encryption, GDPR compliance and ISO 27001). Its Premium desktop app can work offline. Filemite’s PDF tools run on your device in the browser, so there is nothing to upload.',
       },
       {
         title: 'Ads on the free plan',
@@ -83,7 +90,7 @@ export const alternatives: Alternative[] = [
       {
         label: 'Where PDFs are processed',
         filemite: 'In your browser — never uploaded',
-        them: 'On iLovePDF servers',
+        them: 'On iLovePDF servers (web tools)',
       },
       { label: 'Compress PDF batch (free)', filemite: 'No daily cap', them: '2 files per task' },
       { label: 'Merge PDF (free)', filemite: '20 files per merge', them: '25 files per task' },
@@ -126,7 +133,7 @@ export const alternatives: Alternative[] = [
   {
     slug: 'smallpdf',
     name: 'Smallpdf',
-    kind: 'online PDF suite with a free plan and paid Pro and Team plans',
+    kind: 'online PDF suite with a free plan and paid Pro, Team and Business plans',
     site: 'https://smallpdf.com',
     pricingUrl: 'https://smallpdf.com/pricing',
     seoTitle: 'Free Smallpdf Alternative — No Download Limits, No Account',
@@ -139,41 +146,41 @@ export const alternatives: Alternative[] = [
       'sites like smallpdf',
       'smallpdf limit',
     ],
-    tldr: 'Smallpdf offers 30+ tools, AI features and e-signatures, but its free plan lists limited and daily-capped downloads and basic compression only. Filemite is free with no account and no daily limit, and PDFs are processed on your own device.',
+    tldr: 'Smallpdf offers 30+ tools, Office conversion, OCR and AI features, but its free plan lists daily download and task limits and basic compression only. Filemite is free with no account and no daily limit, and PDFs are processed on your own device.',
     reasons: [
       {
         title: 'Daily download limits',
-        text: 'Smallpdf’s pricing page lists “limited document downloads” and a “daily download limit” on the free plan.',
+        text: 'Smallpdf’s pricing page lists “limited document downloads”, a “daily download limit” and a “daily task limit” on the free plan.',
       },
       {
         title: 'Basic compression only on free',
-        text: 'Free Smallpdf lists “Basic Compression”; stronger compression is a paid feature. Filemite offers quality presets or a target file size for free.',
+        text: 'Free Smallpdf lists “Basic Compression”; paid plans list “Strong Compression”. Filemite offers quality presets or a target file size for free.',
       },
       {
         title: 'Files go to a server',
-        text: 'Smallpdf processes files in the cloud. Filemite’s PDF tools run on your device.',
+        text: 'Smallpdf processes files on its servers and says it deletes them within one hour for most tools. Filemite’s PDF tools run on your device.',
       },
     ],
     rows: [
-      { ...SHARED_ROWS.price, them: 'Free plan with limits; paid Pro and Team plans' },
+      { ...SHARED_ROWS.price, them: 'Free plan with limits; paid Pro, Team and Business plans' },
       { ...SHARED_ROWS.account, them: 'Needed for some features, such as sharing' },
       {
         label: 'Where PDFs are processed',
         filemite: 'In your browser — never uploaded',
         them: 'On Smallpdf servers',
       },
-      { label: 'Downloads (free)', filemite: 'Unlimited', them: 'Daily download limit' },
-      { label: 'PDF compression (free)', filemite: 'Quality presets or target size', them: 'Basic compression' },
+      { label: 'Downloads and tasks (free)', filemite: 'No daily limit', them: 'Daily download and task limits' },
+      { label: 'PDF compression (free)', filemite: 'Quality presets or target size', them: 'Basic (Strong on paid plans)' },
       { label: 'Max PDF size (free)', filemite: PDF_LIMIT, them: 'Listed as “Limited”' },
       { label: 'AI tools (chat, summarize, translate)', filemite: 'Not available', them: 'Yes, limited on free' },
-      { label: 'Office ↔ PDF conversion', filemite: 'Not available', them: 'Yes' },
+      { label: 'Office ↔ PDF conversion, OCR', filemite: 'Not available', them: 'Yes' },
       { label: 'True redaction', filemite: 'Yes — content under the box is deleted', them: 'Not listed on their pricing page' },
       { ...SHARED_ROWS.source, them: 'No' },
     ],
     chooseThem: [
       'You want AI summaries, translation or chat with a PDF.',
-      'You convert Office files to and from PDF often.',
-      'You need a team workspace and e-signature requests.',
+      'You convert Office files to and from PDF often, or need OCR.',
+      'You want a shared Team or Business plan for several people.',
     ],
     chooseUs: [
       'You hit the free download limit and only need a few quick tasks.',
@@ -191,7 +198,7 @@ export const alternatives: Alternative[] = [
       {
         question: 'Can I compress a PDF to a specific size?',
         answer:
-          'Yes. Filemite’s Compress PDF tool can aim for a target size, or you can pick a quality level. Text stays sharp because only images are recompressed.',
+          'Yes. Filemite’s Compress PDF tool can aim for a target size, or you can pick a quality level. Text and vector graphics stay sharp; the savings come mostly from resampling and re-encoding images.',
       },
       {
         question: 'Is Filemite as safe as Smallpdf?',
@@ -216,7 +223,7 @@ export const alternatives: Alternative[] = [
       'tinypng limit',
       'compress png like tinypng',
     ],
-    tldr: 'TinyPNG is an excellent compressor with an API, a WordPress plugin and AVIF support. Its free web tool lists 20 compressions per session and 5 MB per image. Filemite compresses PNG, JPEG, WebP and HEIC for free, and sits next to resize, convert, crop and metadata tools in the same app.',
+    tldr: 'TinyPNG is an excellent compressor with an API, a WordPress plugin and AVIF and JPEG XL support. Its free web tool lists 20 compressions per session and 5 MB per image. Filemite compresses PNG, JPEG, WebP and HEIC for free, and sits next to resize, convert, crop and metadata tools in the same app.',
     reasons: [
       {
         title: 'Session and size caps',
@@ -233,23 +240,23 @@ export const alternatives: Alternative[] = [
     ],
     rows: [
       { ...SHARED_ROWS.price, them: 'Free web tool; Web Pro from $3.25/month and Ultra from $12.42/month, billed yearly' },
-      { ...SHARED_ROWS.account, them: 'Not for the free web tool' },
+      { ...SHARED_ROWS.account, them: 'None mentioned for the free web tool' },
       {
         label: 'Free compressions',
-        filemite: `${MAX_IMAGE_BATCH} per batch, ${IMAGES_PER_HOUR} an hour`,
+        filemite: `${MAX_IMAGE_BATCH} per batch, ${IMAGES_PER_HOUR} an hour on the server`,
         them: '20 per session',
       },
-      { label: 'Max image size (free)', filemite: `${IMAGE_LIMIT} on the server, larger files compress in your browser`, them: '5 MB' },
-      { label: 'Formats', filemite: 'PNG, JPEG, WebP, HEIC', them: 'AVIF, WebP, PNG, JPEG' },
+      { label: 'Max image size (free)', filemite: `${IMAGE_LIMIT} on the server; up to ${BROWSER_IMAGE_LIMIT} in your browser (not HEIC)`, them: '5 MB' },
+      { label: 'Formats', filemite: 'PNG, JPEG, WebP, HEIC', them: 'AVIF, JPEG XL, WebP, PNG (incl. animated), JPEG' },
       { label: 'HEIC (iPhone photos)', filemite: 'Yes', them: 'Not listed on their pricing page' },
       { label: 'Resize, crop, strip metadata', filemite: 'Yes, separate tools', them: 'Resize via the API' },
       { label: 'Developer API & WordPress plugin', filemite: 'Not available', them: 'Yes' },
-      { label: 'Ads', filemite: 'None', them: 'Removed on paid web plans' },
+      { label: 'Ads', filemite: 'None', them: 'Ad-free listed as a paid web plan feature' },
       { ...SHARED_ROWS.source, them: 'No' },
     ],
     chooseThem: [
       'You need an API or WordPress plugin to compress images automatically.',
-      'You want AVIF output.',
+      'You want AVIF or JPEG XL output.',
       'You compress very large images (up to 75–150 MB) on a paid plan.',
     ],
     chooseUs: [
@@ -262,11 +269,11 @@ export const alternatives: Alternative[] = [
       {
         question: 'Does Filemite compress PNG as well as TinyPNG?',
         answer:
-          'Filemite uses Sharp with quantised palettes for PNG and mozjpeg for JPEG, and offers Best, Balanced and Smallest presets. Results are comparable for most images; try both with your own files.',
+          'Filemite uses Sharp with quantised palettes for PNG and mozjpeg for JPEG, and offers Best, Balanced and Smallest presets. Results vary by image, so try both with your own files.',
       },
       {
         question: 'Is there a limit on how many images I can compress?',
-        answer: `Up to ${MAX_IMAGE_BATCH} images per batch and ${IMAGES_PER_HOUR} an hour, which keeps the free server fast for everyone. There is no per-session cap.`,
+        answer: `Up to ${MAX_IMAGE_BATCH} images per batch and ${IMAGES_PER_HOUR} an hour for images processed on the server, which keeps the free server fast for everyone. There is no per-session cap.`,
       },
       {
         question: 'Are my images stored?',
