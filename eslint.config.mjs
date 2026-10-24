@@ -45,7 +45,6 @@ export default defineConfig([
       },
     },
   },
-]
   {
     // Node scripts run by CI, outside the app bundle.
     files: ['scripts/**/*.mjs'],
