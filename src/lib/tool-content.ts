@@ -272,7 +272,7 @@ export const toolContent: Record<ToolId, ToolContent> = {
   },
   'pdf-merge': {
     summary:
-      'Filemite merges PDFs into one file, in any order you choose. Each file's bookmarks are kept, and you can add a bookmark for each file. Links and form fields inside the PDFs are not carried over. Files are processed on your device and never uploaded.',
+      'Filemite merges PDFs into one file, in any order you choose. Bookmarks are kept, and you can add a bookmark for each file. Links and form fields inside the PDFs are not carried over. Files are processed on your device and never uploaded.',
     steps: [
       'Add the PDFs you want to combine.',
       'Drag them into the order you need.',

@@ -357,7 +357,7 @@ export const tools: Tool[] = [
     description: 'Combine PDFs into one file, in any order. Bookmarks are kept.',
     seoTitle: 'Merge PDF Files — Free, Private, In Your Browser',
     seoDescription:
-      'Combine PDFs in any order with drag and drop. Each file's bookmarks are kept, and you can add one per file. Files never leave your device.',
+      'Combine PDFs in any order with drag and drop. Bookmarks are kept, and you can add one per file. Files never leave your device.',
     keywords: ['merge pdf', 'combine pdf', 'join pdf files'],
     emptyTitle: 'Choose PDFs to merge',
     emptyDescription: 'Add two or more files, then drag them into the order you want.',
