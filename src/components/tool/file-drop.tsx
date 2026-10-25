@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Plus, Upload } from 'lucide-react';
 
 import { Mite } from '@/components/shell/mite';
 import { Button } from '@/components/ui/button';
+import { takeHandoff } from '@/lib/handoff';
 import { cn } from '@/lib/utils';
 
 type Accept = { accept: string; multiple: boolean; onFiles: (files: File[]) => void };
@@ -81,6 +82,14 @@ export function FileDrop({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const { isDragging, handlers } = useFileDrop(onFiles);
+
+  // Pick up files chosen on the home page before navigating here.
+  useEffect(() => {
+    const files = takeHandoff();
+    if (files?.length) onFiles(multiple ? files : files.slice(0, 1));
+    // Only on mount: the handoff is consumed once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div

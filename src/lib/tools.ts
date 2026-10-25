@@ -520,6 +520,38 @@ export function toolsIn(section: Section): Tool[] {
   return tools.filter((tool) => tool.section === section);
 }
 
+/** Tools that take several files at once. */
+const BATCH_TOOLS: ToolId[] = [
+  'image-compress',
+  'image-convert',
+  'image-collage',
+  'image-gif',
+  'pdf-from-images',
+  'pdf-merge',
+];
+
+/** Tools that need several files, so one file isn't enough. */
+const MULTI_ONLY_TOOLS: ToolId[] = ['image-collage', 'image-gif', 'pdf-merge'];
+
+export type FileKind = 'image' | 'pdf';
+
+/** Whether a file is an image or a PDF, or null for anything else. */
+export function fileKind(file: File): FileKind | null {
+  const name = file.name.toLowerCase();
+  if (file.type === 'application/pdf' || name.endsWith('.pdf')) return 'pdf';
+  if (file.type.startsWith('image/') || /\.(heic|heif)$/.test(name)) return 'image';
+  return null;
+}
+
+/** The tools that can open this many files of this kind. */
+export function toolsForFiles(kind: FileKind, count: number): Tool[] {
+  return tools.filter((tool) => {
+    const takes: FileKind = tool.id === 'pdf-from-images' ? 'image' : tool.section;
+    if (takes !== kind) return false;
+    return count > 1 ? BATCH_TOOLS.includes(tool.id) : !MULTI_ONLY_TOOLS.includes(tool.id);
+  });
+}
+
 export function sectionForPath(pathname: string): Section | null {
   if (pathname.startsWith('/image')) return 'image';
   if (pathname.startsWith('/pdf')) return 'pdf';

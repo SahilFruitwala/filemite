@@ -72,15 +72,21 @@ function HomePage() {
                 { text: 'no sign-up', cls: 'bg-mint text-ink -rotate-1' },
                 { text: 'nothing stored', cls: 'bg-card text-foreground rotate-3' },
               ].map((sticker, i) => (
+                // Pop and wiggle sit on separate elements: if hover swapped the
+                // pop animation out, it would replay from scale 0 on mouse-out.
                 <li
                   key={sticker.text}
                   style={{ animationDelay: `${200 + i * 90}ms` }}
-                  className={cn(
-                    'animate-pop hover-wiggle rounded-md border-2 border-ink px-2.5 py-1 shadow-pop-sm',
-                    sticker.cls,
-                  )}
+                  className="animate-pop"
                 >
-                  {sticker.text}
+                  <span
+                    className={cn(
+                      'hover-wiggle block rounded-md border-2 border-ink px-2.5 py-1 shadow-pop-sm',
+                      sticker.cls,
+                    )}
+                  >
+                    {sticker.text}
+                  </span>
                 </li>
               ))}
             </ul>
