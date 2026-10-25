@@ -6,13 +6,15 @@ import { ActionPanel, Panel, ResultPanel, ToolLayout } from '@/components/tool/t
 import { Button } from '@/components/ui/button';
 import { SingleImageWorkspace } from '@/features/image/components/image-workspace';
 import { postImageForm } from '@/features/image/lib/api';
+import { faviconsInBrowser } from '@/features/image/lib/browser-image';
+import { useImageSize, useObjectUrl } from '@/features/image/lib/files';
 import {
-  ACCEPTED_IMAGE_TYPES,
-  SERVER_IMAGE_HINT,
-  partitionImages,
-  useImageSize,
-  useObjectUrl,
-} from '@/features/image/lib/files';
+  ProcessingModeField,
+  acceptFor,
+  hintFor,
+  partitionForMode,
+  useProcessingMode,
+} from '@/features/image/lib/processing-mode';
 import { useJob } from '@/hooks/use-job';
 import { downloadBlob } from '@/lib/download';
 import { formatBytes } from '@/lib/format';
@@ -27,7 +29,7 @@ const HTML_SNIPPET = `<link rel="icon" href="/favicon.ico" sizes="48x48">
 
 type Asset = { name: string; size: number; url: string; px: number | null };
 
-/** Unpacks the ZIP the server returns so each icon can be previewed. */
+/** Unpacks the icon ZIP so each icon can be previewed. */
 async function unpack(zip: Blob): Promise<Asset[]> {
   const { unzipSync } = await import('fflate');
   const entries = unzipSync(new Uint8Array(await zip.arrayBuffer()));
@@ -49,6 +51,7 @@ export function FaviconTool() {
   const [file, setFile] = useState<File | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [mode, setMode] = useProcessingMode();
   const job = useJob<{ zip: Blob; assets: Asset[] }>();
   const previewUrl = useObjectUrl(file);
   const natural = useImageSize(previewUrl);
@@ -60,7 +63,7 @@ export function FaviconTool() {
   );
 
   const add = (files: File[]) => {
-    const { accepted, notice: problem } = partitionImages(files.slice(0, 1), 'server');
+    const { accepted, notice: problem } = partitionForMode(files.slice(0, 1), mode);
     setNotice(problem);
     if (!accepted[0]) return;
     job.reset();
@@ -76,16 +79,19 @@ export function FaviconTool() {
   const run = () => {
     if (!file) return;
     void job.run(async () => {
-      const zip = await postImageForm(
-        '/api/image/favicon',
-        () => {
-          const form = new FormData();
-          form.append('file', file);
-          return form;
-        },
-        'Favicon generation failed',
-      );
-      posthog.capture('favicons_generated', { original_size_bytes: file.size });
+      const zip =
+        mode === 'browser'
+          ? await faviconsInBrowser(file)
+          : await postImageForm(
+              '/api/image/favicon',
+              () => {
+                const form = new FormData();
+                form.append('file', file);
+                return form;
+              },
+              'Favicon generation failed',
+            );
+      posthog.capture('favicons_generated', { processing: mode, original_size_bytes: file.size });
       return { zip, assets: await unpack(zip) };
     });
   };
@@ -100,8 +106,8 @@ export function FaviconTool() {
       file={file}
       previewUrl={previewUrl}
       dimensions={natural}
-      accept={ACCEPTED_IMAGE_TYPES}
-      hint={SERVER_IMAGE_HINT}
+      accept={acceptFor(mode)}
+      hint={hintFor(mode)}
       notice={notice}
       onFiles={add}
       onClear={clear}
@@ -224,6 +230,13 @@ export function FaviconTool() {
           <li>180px Apple touch icon on white</li>
         </ul>
       </ActionPanel>
+      <Panel>
+        <ProcessingModeField
+          mode={mode}
+          onChange={setMode}
+          disabled={job.state.status === 'running'}
+        />
+      </Panel>
       {notSquare && (
         <p className="px-1 text-xs leading-5 text-muted-foreground">
           This image isn’t square, so it will be centered with transparent padding.

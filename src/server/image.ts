@@ -4,7 +4,7 @@
  */
 import sharp, { type FitEnum, type SharpOptions } from 'sharp';
 import { MAX_INPUT_PIXELS } from '@/lib/limits';
-import { pngsToIco } from './ico';
+import { pngsToIco } from '@/lib/ico';
 
 // Each request decodes a fresh upload, so libvips' operation cache only costs memory.
 sharp.cache(false);

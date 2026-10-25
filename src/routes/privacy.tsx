@@ -27,7 +27,7 @@ function PrivacyPage() {
       eyebrow="Legal"
       title="Privacy"
       intro="Your files are yours. Here is exactly what happens to them."
-      updated="October 19, 2026"
+      updated="October 25, 2026"
       sections={[
         {
           heading: 'Server tools process in memory',
@@ -35,7 +35,9 @@ function PrivacyPage() {
             <p>
               {names('server')} upload your image to our server, where it is processed in memory
               with Sharp and streamed straight back. Images are never written to disk or object
-              storage, and nothing is kept once the request finishes.
+              storage, and nothing is kept once the request finishes. Each of these tools also
+              has a “This device” processing option that does the same work in your browser, so
+              the image is never uploaded at all.
             </p>
           ),
         },
@@ -98,8 +100,9 @@ function PrivacyPage() {
             <p>
               Analytics are cookieless: the random ID PostHog uses is kept in your browser’s memory
               only and is gone when you close or reload the tab, so it cannot follow you between
-              visits. The only things we store on your device are your light or dark theme choice in
-              local storage and the offline cache for the installable app. Because no tracking
+              visits. The only things we store on your device are your light or dark theme choice and
+              whether image tools process on the server or on your device, both in local storage,
+              and the offline cache for the installable app. Because no tracking
               cookies are set, there is no cookie banner.
             </p>
           ),
