@@ -14,14 +14,15 @@ import {
 } from '@/components/tool/tool-ui';
 import { Button } from '@/components/ui/button';
 import { isQuotaError, postImageForm, runQueue } from '@/features/image/lib/api';
+import { processInBrowser } from '@/features/image/lib/browser-image';
+import { extensionFor, stem, useObjectUrl } from '@/features/image/lib/files';
 import {
-  ACCEPTED_IMAGE_TYPES,
-  SERVER_IMAGE_HINT,
-  extensionFor,
-  partitionImages,
-  stem,
-} from '@/features/image/lib/files';
-import { useObjectUrl } from '@/features/image/lib/files';
+  ProcessingModeField,
+  acceptFor,
+  hintFor,
+  partitionForMode,
+  useProcessingMode,
+} from '@/features/image/lib/processing-mode';
 import { downloadBlob, downloadBlobsAsZip } from '@/lib/download';
 import { formatBytes, plural } from '@/lib/format';
 import { IMAGES_PER_HOUR, MAX_IMAGE_BATCH } from '@/lib/limits';
@@ -67,6 +68,7 @@ export function ConvertTool() {
   const [items, setItems] = useState<Item[]>([]);
   const [format, setFormat] = useState<Format>('jpeg');
   const [quality, setQuality] = useState<Quality>('best');
+  const [mode, setMode] = useProcessingMode();
   const [notice, setNotice] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
   const [zipping, setZipping] = useState(false);
@@ -77,7 +79,7 @@ export function ConvertTool() {
     setItems((current) => current.map((item) => (item.id === id ? { ...item, ...update } : item)));
 
   const add = (files: File[]) => {
-    const { accepted, notice: problems } = partitionImages(files, 'server');
+    const { accepted, notice: problems } = partitionForMode(files, mode);
     const room = Math.max(0, MAX_IMAGE_BATCH - items.length);
     const taken = accepted.slice(0, room);
     const overflow = accepted.length - taken.length;
@@ -102,29 +104,33 @@ export function ConvertTool() {
 
   const convert = async () => {
     const target = format;
+    const level = target === 'png' ? 'lossless' : quality;
     const batch = items;
     setRunning(true);
     setNotice(null);
     setConvertedTo(null);
     setItems((current) => current.map((item) => ({ ...item, status: 'queued', result: undefined, error: undefined })));
 
-    posthog.capture('image_convert_started', { file_count: batch.length, output_format: target });
+    posthog.capture('image_convert_started', { processing: mode, file_count: batch.length, output_format: target });
     let quotaMessage: string | null = null;
     const skipped = await runQueue(batch, async (item, _index, stop) => {
       patch(item.id, { status: 'working' });
       try {
-        const blob = await postImageForm(
-          '/api/image/compress',
-          () => {
-            const form = new FormData();
-            form.append('file', item.file);
-            form.append('format', target);
-            form.append('level', target === 'png' ? 'lossless' : quality);
-            form.append('keepSize', '1');
-            return form;
-          },
-          'Conversion failed',
-        );
+        const blob =
+          mode === 'browser'
+            ? await processInBrowser(item.file, { format: target, level, keepSize: true })
+            : await postImageForm(
+                '/api/image/compress',
+                () => {
+                  const form = new FormData();
+                  form.append('file', item.file);
+                  form.append('format', target);
+                  form.append('level', level);
+                  form.append('keepSize', '1');
+                  return form;
+                },
+                'Conversion failed',
+              );
         patch(item.id, {
           status: 'done',
           result: { blob, name: `${stem(item.file.name)}.${extensionFor(blob.type || `image/${target}`)}` },
@@ -191,13 +197,13 @@ export function ConvertTool() {
     items.length === 0 ? (
       <div className="space-y-3">
         <FileDrop
-          accept={ACCEPTED_IMAGE_TYPES}
+          accept={acceptFor(mode)}
           multiple
           onFiles={add}
           title={tool.emptyTitle}
           description={tool.emptyDescription}
           buttonLabel="Choose images"
-          hint={SERVER_IMAGE_HINT}
+          hint={hintFor(mode)}
           icon={ImageUp}
         />
         {notice && <Message tone="error">{notice}</Message>}
@@ -224,7 +230,7 @@ export function ConvertTool() {
             Clear
           </Button>
           {items.length < MAX_IMAGE_BATCH && (
-            <AddFilesButton accept={ACCEPTED_IMAGE_TYPES} multiple onFiles={add} label="Add images" />
+            <AddFilesButton accept={acceptFor(mode)} multiple onFiles={add} label="Add images" />
           )}
         </div>
         {notice && <Message tone="error">{notice}</Message>}
@@ -324,6 +330,7 @@ export function ConvertTool() {
               />
             </Field>
           )}
+          <ProcessingModeField mode={mode} onChange={setMode} disabled={running} />
         </div>
       </Panel>
       <ActionPanel
@@ -333,7 +340,9 @@ export function ConvertTool() {
         onRun={() => void convert()}
       />
       <p className="px-1 text-xs leading-5 text-muted-foreground">
-        Images are processed in memory and never stored. Up to {IMAGES_PER_HOUR} images an hour.
+        {mode === 'browser'
+          ? 'Images are converted on your device and never uploaded.'
+          : `Images are processed in memory and never stored. Up to ${IMAGES_PER_HOUR} images an hour.`}
       </p>
     </>
   );

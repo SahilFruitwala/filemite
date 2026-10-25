@@ -6,14 +6,15 @@ import { Message, Panel, ResultPanel, ToolLayout } from '@/components/tool/tool-
 import { Button } from '@/components/ui/button';
 import { ImagePreview, SingleImageWorkspace } from '@/features/image/components/image-workspace';
 import { postImageForm } from '@/features/image/lib/api';
+import { scrubInBrowser } from '@/features/image/lib/browser-image';
+import { extensionFor, stem, useObjectUrl } from '@/features/image/lib/files';
 import {
-  ACCEPTED_IMAGE_TYPES,
-  SERVER_IMAGE_HINT,
-  extensionFor,
-  partitionImages,
-  stem,
-  useObjectUrl,
-} from '@/features/image/lib/files';
+  ProcessingModeField,
+  acceptFor,
+  hintFor,
+  partitionForMode,
+  useProcessingMode,
+} from '@/features/image/lib/processing-mode';
 import { useJob } from '@/hooks/use-job';
 import { downloadBlob } from '@/lib/download';
 import { formatBytes } from '@/lib/format';
@@ -63,22 +64,27 @@ export function ScrubTool() {
   const [file, setFile] = useState<File | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [inspected, setInspected] = useState<{ file: File; findings: Finding[] } | null>(null);
+  const [mode, setMode] = useProcessingMode();
   const job = useJob<Blob>();
   const previewUrl = useObjectUrl(file);
   const result = job.state.status === 'done' ? job.state.result : null;
 
   const scrub = (target: File) =>
     job.run(async () => {
-      const blob = await postImageForm(
-        '/api/image/scrub',
-        () => {
-          const form = new FormData();
-          form.append('file', target);
-          return form;
-        },
-        'Scrubbing failed',
-      );
+      const blob =
+        mode === 'browser'
+          ? await scrubInBrowser(target)
+          : await postImageForm(
+              '/api/image/scrub',
+              () => {
+                const form = new FormData();
+                form.append('file', target);
+                return form;
+              },
+              'Scrubbing failed',
+            );
       posthog.capture('metadata_scrubbed', {
+        processing: mode,
         file_format: target.type,
         original_size_bytes: target.size,
         scrubbed_size_bytes: blob.size,
@@ -96,7 +102,7 @@ export function ScrubTool() {
   }, [file]);
 
   const add = (files: File[]) => {
-    const { accepted, notice: problem } = partitionImages(files.slice(0, 1), 'server');
+    const { accepted, notice: problem } = partitionForMode(files.slice(0, 1), mode);
     setNotice(problem);
     if (!accepted[0]) return;
     setFile(accepted[0]);
@@ -121,8 +127,8 @@ export function ScrubTool() {
       tool={tool}
       file={file}
       previewUrl={previewUrl}
-      accept={ACCEPTED_IMAGE_TYPES}
-      hint={SERVER_IMAGE_HINT}
+      accept={acceptFor(mode)}
+      hint={hintFor(mode)}
       notice={notice}
       onFiles={add}
       onClear={clear}
@@ -197,6 +203,15 @@ export function ScrubTool() {
         )
       )}
       {findingsPanel}
+      {!result && (
+        <Panel>
+          <ProcessingModeField
+            mode={mode}
+            onChange={setMode}
+            disabled={job.state.status === 'running'}
+          />
+        </Panel>
+      )}
       {!file && (
         <p className="px-1 text-xs leading-5 text-muted-foreground">
           Photos carry hidden details — where they were taken, the device, sometimes your name. We

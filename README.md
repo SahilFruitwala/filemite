@@ -26,7 +26,7 @@ Small, fast tools for images and PDFs — one app, one design system.
 | **Screenshot beautifier** — gradient backdrop, padding, shadow, window bar *(browser)* | |
 | **Annotate** — arrows, boxes, text, highlights, freehand and numbered steps *(browser)* | |
 
-Images sent to the server are processed in memory with [Sharp](https://sharp.pixelplumbing.com/) and never stored. PDFs never leave the device: they're handled by [MuPDF](https://mupdf.com) compiled to WebAssembly, running in Web Workers.
+Images sent to the server are processed in memory with [Sharp](https://sharp.pixelplumbing.com/) and never stored. Each server tool also has a **Processing: This device** option that runs the same job in a Web Worker instead (`src/features/image/lib/browser-image.worker.ts`: mozjpeg for JPEG, the browser's encoders for PNG and WebP), so nothing is uploaded; it can't open HEIC, and PNGs come out larger because there's no palette quantisation. PDFs never leave the device: they're handled by [MuPDF](https://mupdf.com) compiled to WebAssembly, running in Web Workers.
 
 ## Project layout
 

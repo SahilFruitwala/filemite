@@ -13,15 +13,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { ImagePreview, SingleImageWorkspace } from '@/features/image/components/image-workspace';
 import { postImageForm } from '@/features/image/lib/api';
+import { processInBrowser } from '@/features/image/lib/browser-image';
+import { extensionFor, stem, useImageSize, useObjectUrl } from '@/features/image/lib/files';
 import {
-  ACCEPTED_IMAGE_TYPES,
-  SERVER_IMAGE_HINT,
-  extensionFor,
-  partitionImages,
-  stem,
-  useImageSize,
-  useObjectUrl,
-} from '@/features/image/lib/files';
+  ProcessingModeField,
+  acceptFor,
+  hintFor,
+  partitionForMode,
+  useProcessingMode,
+} from '@/features/image/lib/processing-mode';
 import { useJob } from '@/hooks/use-job';
 import { downloadBlob } from '@/lib/download';
 import { formatBytes } from '@/lib/format';
@@ -66,6 +66,7 @@ export function ResizeTool() {
   const [heightInput, setHeight] = useState<string | null>(null);
   const [locked, setLocked] = useState(true);
   const [fit, setFit] = useState<Fit>('cover');
+  const [mode, setMode] = useProcessingMode();
   const job = useJob<ResizeResult>();
 
   const previewUrl = useObjectUrl(file);
@@ -83,7 +84,7 @@ export function ResizeTool() {
   const upscaling = !!natural && valid && (w > natural.width || h > natural.height);
 
   const add = (files: File[]) => {
-    const { accepted, notice: problem } = partitionImages(files.slice(0, 1), 'server');
+    const { accepted, notice: problem } = partitionForMode(files.slice(0, 1), mode);
     setNotice(problem);
     if (!accepted[0]) return;
     job.reset();
@@ -129,21 +130,24 @@ export function ResizeTool() {
 
   const run = () => {
     if (!file || !valid) return;
-    posthog.capture('image_resize_started', { fit, width: w, height: h });
+    posthog.capture('image_resize_started', { fit, width: w, height: h, processing: mode });
     void job.run(async () => {
-      const blob = await postImageForm(
-        '/api/image/compress',
-        () => {
-          const form = new FormData();
-          form.append('file', file);
-          form.append('level', 'lossless');
-          form.append('width', String(w));
-          form.append('height', String(h));
-          form.append('fit', fit);
-          return form;
-        },
-        'Resize failed',
-      );
+      const blob =
+        mode === 'browser'
+          ? await processInBrowser(file, { level: 'lossless', width: w, height: h, fit })
+          : await postImageForm(
+              '/api/image/compress',
+              () => {
+                const form = new FormData();
+                form.append('file', file);
+                form.append('level', 'lossless');
+                form.append('width', String(w));
+                form.append('height', String(h));
+                form.append('fit', fit);
+                return form;
+              },
+              'Resize failed',
+            );
       const size = await new Promise<{ width: number; height: number }>((resolve) => {
         const img = new Image();
         const url = URL.createObjectURL(blob);
@@ -174,8 +178,8 @@ export function ResizeTool() {
       file={file}
       previewUrl={previewUrl}
       dimensions={natural}
-      accept={ACCEPTED_IMAGE_TYPES}
-      hint={SERVER_IMAGE_HINT}
+      accept={acceptFor(mode)}
+      hint={hintFor(mode)}
       notice={notice}
       onFiles={add}
       onClear={clear}
@@ -287,6 +291,15 @@ export function ResizeTool() {
             options={FITS}
           />
         </Field>
+
+        <ProcessingModeField
+          mode={mode}
+          onChange={(next) => {
+            setMode(next);
+            job.reset();
+          }}
+          disabled={job.state.status === 'running'}
+        />
       </div>
     </Panel>
   );

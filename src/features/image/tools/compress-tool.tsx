@@ -25,25 +25,32 @@ import {
 } from "@/components/tool/tool-ui";
 import { Button } from "@/components/ui/button";
 import ImageCompare from "@/features/image/components/ImageCompare";
-import { compressInBrowser } from "@/features/image/lib/browser-compress";
+import { processInBrowser } from "@/features/image/lib/browser-image";
 import {
   isQuotaError,
   postImageForm,
   runQueue,
 } from "@/features/image/lib/api";
 import {
-  ACCEPTED_IMAGE_TYPES,
   LARGE_IMAGE_HINT,
   extensionFor,
   isLargeImage,
-  partitionImages,
   stem,
 } from "@/features/image/lib/files";
+import {
+  ProcessingModeField,
+  acceptFor,
+  hintFor,
+  partitionForMode,
+  useProcessingMode,
+  type ProcessingMode,
+} from "@/features/image/lib/processing-mode";
 import { downloadBlob, downloadBlobsAsZip } from "@/lib/download";
 import { formatBytes, plural } from "@/lib/format";
 import {
   IMAGE_UPLOAD_CONCURRENCY,
   IMAGES_PER_HOUR,
+  MAX_BROWSER_IMAGE_BYTES,
   MAX_IMAGE_BATCH,
   MAX_IMAGE_BYTES,
 } from "@/lib/limits";
@@ -99,10 +106,15 @@ export function CompressTool() {
   const [items, setItems] = useState<Item[]>([]);
   const [level, setLevel] = useState<Level>("mid");
   const [format, setFormat] = useState<OutputFormat>("original");
+  const [mode, setMode] = useProcessingMode();
   const [notice, setNotice] = useState<string | null>(null);
   const [zipping, setZipping] = useState(false);
   // Settings used for the current results, to offer a re-run when they change.
-  const [appliedSettings, setAppliedSettings] = useState({ level, format });
+  const [appliedSettings, setAppliedSettings] = useState<{
+    level: Level;
+    format: OutputFormat;
+    mode: ProcessingMode;
+  }>({ level, format, mode: "server" });
 
   // Revoke every object URL when leaving the page.
   const itemsRef = useRef(items);
@@ -125,9 +137,13 @@ export function CompressTool() {
   }, []);
 
   const process = useCallback(
-    async (batch: Item[], settings: { level: Level; format: OutputFormat }) => {
+    async (
+      batch: Item[],
+      settings: { level: Level; format: OutputFormat; mode: ProcessingMode },
+    ) => {
       setAppliedSettings(settings);
       posthog.capture("image_compression_started", {
+        processing: settings.mode,
         file_count: batch.length,
         compression_level: settings.level,
         output_format: settings.format,
@@ -138,9 +154,10 @@ export function CompressTool() {
         patch(item.id, { status: "working", error: undefined });
         const started = performance.now();
         try {
-          // Too big to upload (Vercel's body limit), so compress it in the browser.
-          const blob = isLargeImage(item.file)
-            ? await compressInBrowser(item.file, {
+          // Files too big to upload (Vercel's body limit) are always compressed in the browser.
+          const blob =
+            settings.mode === "browser" || isLargeImage(item.file)
+            ? await processInBrowser(item.file, {
                 level: settings.level,
                 format:
                   settings.format === "original" ? undefined : settings.format,
@@ -213,7 +230,7 @@ export function CompressTool() {
   );
 
   const add = (files: File[]) => {
-    const { accepted, notice: problems } = partitionImages(files, "server", {
+    const { accepted, notice: problems } = partitionForMode(files, mode, {
       large: true,
     });
     const slots = MAX_IMAGE_BATCH - items.length;
@@ -238,7 +255,7 @@ export function CompressTool() {
       status: "queued",
     }));
     setItems((current) => [...current, ...fresh]);
-    void process(fresh, { level, format });
+    void process(fresh, { level, format, mode });
   };
 
   const remove = (id: string) => {
@@ -273,12 +290,14 @@ export function CompressTool() {
   );
   const settingsChanged =
     items.length > 0 &&
-    (appliedSettings.level !== level || appliedSettings.format !== format);
+    (appliedSettings.level !== level ||
+      appliedSettings.format !== format ||
+      appliedSettings.mode !== mode);
 
   const rerunAll = () => {
     const batch = items.map((item) => ({ ...item, status: "queued" as const }));
     setItems(batch);
-    void process(batch, { level, format });
+    void process(batch, { level, format, mode });
   };
 
   const downloadAll = async () => {
@@ -301,13 +320,13 @@ export function CompressTool() {
     items.length === 0 ? (
       <div className="space-y-3">
         <FileDrop
-          accept={ACCEPTED_IMAGE_TYPES}
+          accept={acceptFor(mode)}
           multiple
           onFiles={add}
           title={tool.emptyTitle}
           description={tool.emptyDescription}
           buttonLabel="Choose images"
-          hint={`Up to ${MAX_IMAGE_BATCH} images · ${LARGE_IMAGE_HINT} each`}
+          hint={`Up to ${MAX_IMAGE_BATCH} images · ${mode === "server" ? LARGE_IMAGE_HINT : hintFor(mode)} each`}
           icon={ImageUp}
         />
         {notice && <Message tone="error">{notice}</Message>}
@@ -327,7 +346,7 @@ export function CompressTool() {
           </Button>
           {items.length < MAX_IMAGE_BATCH && (
             <AddFilesButton
-              accept={ACCEPTED_IMAGE_TYPES}
+              accept={acceptFor(mode)}
               multiple
               onFiles={add}
               label="Add images"
@@ -345,7 +364,7 @@ export function CompressTool() {
               key={item.id}
               item={item}
               onRemove={() => remove(item.id)}
-              onRetry={() => void process([item], { level, format })}
+              onRetry={() => void process([item], { level, format, mode })}
             />
           ))}
         </ul>
@@ -372,6 +391,7 @@ export function CompressTool() {
               options={FORMATS}
             />
           </Field>
+          <ProcessingModeField mode={mode} onChange={setMode} disabled={busy} />
           {settingsChanged && (
             <Button variant="soft" block disabled={busy} onClick={rerunAll}>
               <RotateCcw />
@@ -444,13 +464,19 @@ export function CompressTool() {
         </Panel>
       )}
 
-      <p className="px-1 text-xs leading-5 text-muted-foreground">
-        {`Fair use: up to ${MAX_IMAGE_BATCH} images per batch, `}
-        {`${IMAGE_UPLOAD_CONCURRENCY} processed at a time, ${IMAGES_PER_HOUR} per hour. `}
-        {`Images over ${formatBytes(MAX_IMAGE_BYTES)} are compressed in your browser and never uploaded; results can be a bit larger. `}
-        Smaller images are processed in memory on the server and discarded as
-        soon as the result is sent back.
-      </p>
+      {mode === "browser" ? (
+        <p className="px-1 text-xs leading-5 text-muted-foreground">
+          {`Images are compressed on your device and never uploaded. Up to ${MAX_IMAGE_BATCH} images per batch, ${formatBytes(MAX_BROWSER_IMAGE_BYTES)} each.`}
+        </p>
+      ) : (
+        <p className="px-1 text-xs leading-5 text-muted-foreground">
+          {`Fair use: up to ${MAX_IMAGE_BATCH} images per batch, `}
+          {`${IMAGE_UPLOAD_CONCURRENCY} processed at a time, ${IMAGES_PER_HOUR} per hour. `}
+          {`Images over ${formatBytes(MAX_IMAGE_BYTES)} are compressed in your browser and never uploaded; results can be a bit larger. `}
+          Smaller images are processed in memory on the server and discarded as
+          soon as the result is sent back.
+        </p>
+      )}
     </>
   );
 
