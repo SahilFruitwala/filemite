@@ -26,6 +26,7 @@ import {
 import { Button } from "@/components/ui/button";
 import ImageCompare from "@/features/image/components/ImageCompare";
 import { processInBrowser } from "@/features/image/lib/browser-image";
+import { suggestForResults } from "@/features/image/lib/compress-suggestion";
 import {
   isQuotaError,
   postImageForm,
@@ -294,6 +295,42 @@ export function CompressTool() {
       appliedSettings.format !== format ||
       appliedSettings.mode !== mode);
 
+  // Only once the batch has settled, so the advice doesn't flicker mid-run.
+  const suggestion = busy
+    ? null
+    : suggestForResults(
+        done.map((item) => ({
+          id: item.id,
+          originalSize: item.file.size,
+          outputSize: item.result!.blob.size,
+          outputType: item.result!.blob.type,
+        })),
+        appliedSettings.level,
+      );
+
+  /** Switches the settings and re-runs just the images that barely shrank. */
+  const applySuggestion = (next: { level: Level; format: OutputFormat }) => {
+    if (!suggestion) return;
+    const ids = new Set(suggestion.ids);
+    setLevel(next.level);
+    setFormat(next.format);
+    posthog.capture("image_compression_suggestion_applied", {
+      suggestion: suggestion.kind,
+      compression_level: next.level,
+      output_format: next.format,
+      file_count: ids.size,
+    });
+    const batch = items
+      .filter((item) => ids.has(item.id))
+      .map((item) => ({ ...item, status: "queued" as const }));
+    setItems((current) =>
+      current.map((item) =>
+        ids.has(item.id) ? { ...item, status: "queued" } : item,
+      ),
+    );
+    void process(batch, { ...next, mode });
+  };
+
   const rerunAll = () => {
     const batch = items.map((item) => ({ ...item, status: "queued" as const }));
     setItems(batch);
@@ -448,6 +485,56 @@ export function CompressTool() {
                   <Download />
                   Download
                 </Button>
+              )}
+              {suggestion && (
+                <Message tone="info">
+                  <p>
+                    {suggestion.ids.length === done.length
+                      ? done.length === 1
+                        ? "This image didn’t get much smaller"
+                        : "These images didn’t get much smaller"
+                      : `${plural(suggestion.ids.length, "image")} didn’t get much smaller`}
+                    {suggestion.kind === "level"
+                      ? ". Smallest quality can squeeze out more, though fine detail may soften."
+                      : suggestion.formats.includes("jpeg")
+                        ? " in this format. WebP is usually much smaller and keeps transparency; JPEG suits photos but fills transparent areas with white."
+                        : " as JPEG. WebP is usually much smaller at the same quality."}
+                  </p>
+                  <div className="mt-2.5 flex flex-wrap gap-2">
+                    {suggestion.kind === "format" ? (
+                      suggestion.formats.map((target) => (
+                        <Button
+                          key={target}
+                          size="sm"
+                          variant={target === "webp" ? "soft" : "outline"}
+                          onClick={() =>
+                            applySuggestion({
+                              level: appliedSettings.level,
+                              format: target,
+                            })
+                          }
+                        >
+                          <RotateCcw />
+                          Try {target === "webp" ? "WebP" : "JPEG"}
+                        </Button>
+                      ))
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="soft"
+                        onClick={() =>
+                          applySuggestion({
+                            level: "low",
+                            format: appliedSettings.format,
+                          })
+                        }
+                      >
+                        <RotateCcw />
+                        Try Smallest
+                      </Button>
+                    )}
+                  </div>
+                </Message>
               )}
             </div>
           ) : (
