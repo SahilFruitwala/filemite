@@ -183,3 +183,24 @@ export function makePng(width: number, height: number, color: [number, number, n
   }
   return png;
 }
+
+/** A one-page PDF whose only annotation is a link with no /AP appearance dictionary. */
+export function makePdfWithBareAnnotation(): Uint8Array {
+  const doc = new mupdf.PDFDocument();
+  try {
+    const page = doc.addPage([0, 0, 100, 200], 0, doc.addObject(doc.newDictionary()), "");
+    const annot = doc.newDictionary();
+    annot.put("Type", doc.newName("Annot"));
+    annot.put("Subtype", doc.newName("Link"));
+    const rect = doc.newArray();
+    for (const n of [0, 0, 10, 10]) rect.push(n);
+    annot.put("Rect", rect);
+    const annots = doc.newArray();
+    annots.push(doc.addObject(annot));
+    page.put("Annots", annots);
+    doc.insertPage(-1, page);
+    return doc.saveToBuffer("").asUint8Array().slice();
+  } finally {
+    doc.destroy();
+  }
+}
