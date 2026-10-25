@@ -1,6 +1,6 @@
 {
   "name": "filemite",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
   "description": "Image and PDF tools: compress, resize, crop, scrub, merge, split and more.",
