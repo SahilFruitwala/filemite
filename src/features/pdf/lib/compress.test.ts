@@ -4,7 +4,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 
 import { compressPdf, compressToTarget } from "./compress";
 import { COMPRESS_PRESETS } from "./compress-presets";
-import { makePdf, makePdfWithImage, pageWidths } from "./test-pdf";
+import { makePdf, makePdfWithBareAnnotation, makePdfWithImage, pageWidths } from "./test-pdf";
 
 let imagePdf: Uint8Array;
 
@@ -46,6 +46,14 @@ describe("compressPdf", () => {
     );
     expect(stats.imagesFound).toBe(0);
     expect(pageWidths(bytes)).toEqual([100, 101, 102]);
+  });
+
+  test("handles an annotation without an /AP appearance dictionary", () => {
+    const { bytes } = compressPdf(
+      { bytes: makePdfWithBareAnnotation() },
+      { ...COMPRESS_PRESETS.balanced, grayscale: false }
+    );
+    expect(pageWidths(bytes)).toEqual([100]);
   });
 
   test("rejects a damaged PDF with a readable error", () => {

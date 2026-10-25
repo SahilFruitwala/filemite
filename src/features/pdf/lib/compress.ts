@@ -180,7 +180,7 @@ function pageImages(page: mupdf.PDFPage) {
 
   const annots = obj.get("Annots");
   for (let i = 0; i < (annots.isArray() ? annots.length : 0); i++) {
-    const normal = annots.get(i).get("AP").get("N");
+    const normal = annots.get(i, "AP", "N");
     // /N is either an appearance stream or a dictionary of them per state.
     const streams = normal.isStream() ? [normal] : [];
     if (!normal.isStream() && normal.isDictionary()) normal.forEach((value) => streams.push(value));
