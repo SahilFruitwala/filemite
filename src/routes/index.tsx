@@ -64,7 +64,9 @@ function HomePage() {
           className="bg-dots absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
         />
         <div className="relative mx-auto grid w-full max-w-7xl gap-12 px-4 pt-14 pb-16 sm:px-6 sm:pt-20 sm:pb-24 lg:grid-cols-[1.25fr_1fr] lg:items-end lg:px-8">
-          <div className="animate-in fade-in slide-in-from-bottom-3 duration-500">
+          {/* No entrance fade on the hero copy: animating the LCP element's opacity
+              delays its paint. The content below still animates in. */}
+          <div>
             <ul className="mb-7 flex flex-wrap items-center gap-2.5 font-mono text-[11px] font-semibold tracking-wide uppercase">
               {[
                 { text: `${toolsIn('image').length + toolsIn('pdf').length} tools`, cls: 'bg-foreground text-background -rotate-3' },
@@ -106,12 +108,12 @@ function HomePage() {
                 </svg>
               </span>
             </h1>
-            <p className="mt-6 max-w-xl animate-in fade-in slide-in-from-bottom-2 text-lg leading-8 text-muted-foreground delay-150 duration-700 fill-mode-both">
+            <p className="mt-6 max-w-xl animate-in slide-in-from-bottom-2 text-lg leading-8 text-muted-foreground delay-150 duration-700 fill-mode-both">
               Compress, convert and mark up images. Merge, sign, redact and shrink PDFs. Small,
               focused tools that each do one job really well. Free, private, and fast enough that
               you'll forget to make tea.
             </p>
-            <div className="mt-8 flex animate-in fade-in slide-in-from-bottom-2 flex-wrap gap-3 delay-300 duration-700 fill-mode-both">
+            <div className="mt-8 flex animate-in slide-in-from-bottom-2 flex-wrap gap-3 delay-300 duration-700 fill-mode-both">
               <Link
                 to={SECTIONS.image.href}
                 data-section="image"

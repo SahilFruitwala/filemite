@@ -1,4 +1,4 @@
-import posthog from 'posthog-js';
+import { capture } from '@/lib/capture';
 import { useEffect, useState } from 'react';
 import ColorThief from 'colorthief';
 import { Check, Copy } from 'lucide-react';
@@ -70,7 +70,7 @@ export function PaletteTool() {
         if (cancelled) return;
         const palette = new ColorThief().getPalette(img, Number(count)) as Rgb[] | null;
         setColors(palette ?? []);
-        if (palette) posthog.capture('palette_extracted', { color_count: palette.length });
+        if (palette) capture('palette_extracted', { color_count: palette.length });
         setError(palette ? null : 'Couldn’t find distinct colors in this image.');
       })
       .catch((reason: unknown) => {
@@ -98,7 +98,7 @@ export function PaletteTool() {
   const copy = async (text: string, key: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      posthog.capture('palette_copied', { target: key.startsWith('swatch') ? 'swatch' : key });
+      capture('palette_copied', { target: key.startsWith('swatch') ? 'swatch' : key });
       setCopied(key);
       setTimeout(() => setCopied((current) => (current === key ? null : current)), 1500);
     } catch {

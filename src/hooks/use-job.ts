@@ -1,4 +1,4 @@
-import posthog from 'posthog-js';
+import { capture } from '@/lib/capture';
 import { useCallback, useRef, useState } from 'react';
 
 export type JobState<T> =
@@ -22,17 +22,17 @@ export function useJob<T>(tool?: string) {
     const id = ++runId.current;
     setState({ status: 'running', progress: null });
     const startedAt = performance.now();
-    if (tool) posthog.capture(`${tool}_started`);
+    if (tool) capture(`${tool}_started`);
     try {
       const result = await job((done, total) => {
         if (id === runId.current && total > 0) {
           setState({ status: 'running', progress: done / total });
         }
       });
-      if (tool) posthog.capture(`${tool}_completed`, { time_ms: Math.round(performance.now() - startedAt) });
+      if (tool) capture(`${tool}_completed`, { time_ms: Math.round(performance.now() - startedAt) });
       if (id === runId.current) setState({ status: 'done', result });
     } catch (error) {
-      if (tool) posthog.capture(`${tool}_failed`, { time_ms: Math.round(performance.now() - startedAt) });
+      if (tool) capture(`${tool}_failed`, { time_ms: Math.round(performance.now() - startedAt) });
       if (id === runId.current) {
         setState({
           status: 'error',

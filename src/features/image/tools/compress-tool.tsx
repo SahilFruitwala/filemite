@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import posthog from "posthog-js";
+import { capture } from '@/lib/capture';
 import {
   ChevronDown,
   Download,
@@ -143,7 +143,7 @@ export function CompressTool() {
       settings: { level: Level; format: OutputFormat; mode: ProcessingMode },
     ) => {
       setAppliedSettings(settings);
-      posthog.capture("image_compression_started", {
+      capture("image_compression_started", {
         processing: settings.mode,
         file_count: batch.length,
         compression_level: settings.level,
@@ -187,7 +187,7 @@ export function CompressTool() {
               };
             }),
           );
-          posthog.capture("image_compression_completed", {
+          capture("image_compression_completed", {
             compression_level: settings.level,
             output_format: settings.format,
             original_size_bytes: item.file.size,
@@ -198,7 +198,7 @@ export function CompressTool() {
             time_ms: Math.round(ms),
           });
         } catch (error) {
-          posthog.capture("image_compression_failed", {
+          capture("image_compression_failed", {
             compression_level: settings.level,
           });
           // Out of quota: the rest of the batch would fail the same way, so don't send it.
@@ -314,7 +314,7 @@ export function CompressTool() {
     const ids = new Set(suggestion.ids);
     setLevel(next.level);
     setFormat(next.format);
-    posthog.capture("image_compression_suggestion_applied", {
+    capture("image_compression_suggestion_applied", {
       suggestion: suggestion.kind,
       compression_level: next.level,
       output_format: next.format,
@@ -339,7 +339,7 @@ export function CompressTool() {
 
   const downloadAll = async () => {
     setZipping(true);
-    posthog.capture("zip_download_clicked", { file_count: done.length });
+    capture("zip_download_clicked", { file_count: done.length });
     try {
       await downloadBlobsAsZip(
         done.map((item) => ({

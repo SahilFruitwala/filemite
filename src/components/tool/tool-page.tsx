@@ -23,7 +23,7 @@ export function ToolPage({ tool, children }: { tool: Tool; children: React.React
       className="mx-auto w-full max-w-7xl px-4 pt-8 pb-8 sm:px-6 sm:pt-12 lg:px-8"
     >
       <JsonLd data={toolJsonLd(tool)} />
-      <header className="mb-8 flex animate-in fade-in slide-in-from-bottom-2 flex-col duration-500 gap-5 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
+      <header className="mb-8 flex animate-in slide-in-from-bottom-2 flex-col duration-500 gap-5 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex items-start gap-4">
           <div className="flex size-12 shrink-0 animate-in zoom-in-50 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md sm:size-14">
             <Icon className="size-6 sm:size-7" />
@@ -45,7 +45,7 @@ export function ToolPage({ tool, children }: { tool: Tool; children: React.React
           {processing.label}
         </p>
       </header>
-      <div className="animate-in fade-in slide-in-from-bottom-2 delay-100 duration-500 fill-mode-both">
+      <div className="animate-in slide-in-from-bottom-2 delay-100 duration-500 fill-mode-both">
         {children}
       </div>
       <ToolGuide tool={tool} />

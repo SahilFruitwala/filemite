@@ -1,4 +1,5 @@
 import handler, { createServerEntry } from '@tanstack/react-start/server-entry';
+import { brotliCompressSync, constants, gzipSync } from 'node:zlib';
 
 import { SITE_URL } from '@/lib/site';
 import { markdownResponse, notFoundMarkdown, pageMarkdown, wantsMarkdown } from '@/server/markdown';
@@ -21,6 +22,41 @@ const REDIRECTS: Record<string, string> = {
 };
 
 const SECURITY_HEADERS = securityHeaders(import.meta.env.PROD);
+
+const COMPRESSIBLE = /^(text\/(html|plain|markdown)|application\/(json|xml|ld\+json))/;
+
+/**
+ * Compresses server-rendered documents. Static assets are pre-compressed at build
+ * time (`compressPublicAssets` in vite.config.ts); this covers the HTML and API
+ * responses that Nitro's Node server would otherwise send uncompressed.
+ */
+async function compressResponse(response: Response, request: Request): Promise<Response> {
+  if (request.method === 'HEAD' || response.body === null) return response;
+  if (response.headers.has('content-encoding')) return response;
+  if (!COMPRESSIBLE.test(response.headers.get('content-type') ?? '')) return response;
+
+  const accept = request.headers.get('accept-encoding') ?? '';
+  const encoding = /\bbr\b/.test(accept) ? 'br' : /\bgzip\b/.test(accept) ? 'gzip' : null;
+  if (!encoding) return response;
+
+  const body = Buffer.from(await response.arrayBuffer());
+  if (body.length < 1024) return response;
+
+  const headers = new Headers(response.headers);
+  headers.delete('content-length');
+  headers.set('content-encoding', encoding);
+  headers.append('Vary', 'Accept-Encoding');
+  const compressed =
+    encoding === 'br'
+      ? brotliCompressSync(body, { params: { [constants.BROTLI_PARAM_QUALITY]: 5 } })
+      : gzipSync(body, { level: 6 });
+
+  return new Response(compressed, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
 
 /** Hosts that used to serve the app; they permanently redirect to the canonical origin. */
 const LEGACY_HOSTS = new Set(['micropng.sahilfruitwala.com']);
@@ -53,6 +89,7 @@ export default createServerEntry({
     if (markdown && pageLike && (response.status === 404 || response.status === 406)) {
       response = markdownResponse(notFoundMarkdown(url.pathname), 404, headOnly);
     }
+    response = await compressResponse(response, request);
     try {
       // Pages differ by Accept (HTML vs Markdown), so caches must key on it.
       if (response.headers.get('content-type')?.includes('text/html')) response.headers.append('Vary', 'Accept');

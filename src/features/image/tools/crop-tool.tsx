@@ -1,4 +1,4 @@
-import posthog from 'posthog-js';
+import { capture } from '@/lib/capture';
 import { useEffect, useState } from 'react';
 import smartcrop from 'smartcrop';
 import { Download, Loader2 } from 'lucide-react';
@@ -103,11 +103,11 @@ export function CropTool() {
       (next) => {
         if (cancelled) return next.forEach((crop) => URL.revokeObjectURL(crop.url));
         setOutput({ key, crops: next, error: null });
-        posthog.capture('image_crop_completed', { target_count: next.length });
+        capture('image_crop_completed', { target_count: next.length });
       },
       (reason: unknown) => {
         if (cancelled) return;
-        posthog.capture('image_crop_failed');
+        capture('image_crop_failed');
         setOutput({
           key,
           crops: [],
@@ -222,7 +222,7 @@ export function CropTool() {
             block
             disabled={status === 'working'}
             onClick={() => {
-              posthog.capture('image_crop_download_clicked', { file_count: crops.length });
+              capture('image_crop_download_clicked', { file_count: crops.length });
               void downloadBlobsAsZip(
                 crops.map((crop) => ({ name: fileName(crop), blob: crop.blob })),
                 `${stem(file.name)}-crops.zip`,
