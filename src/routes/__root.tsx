@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router';
-import posthog from 'posthog-js';
-import { sanitizeEvent } from '@/lib/analytics';
+import bricolageFont from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
+import geistFont from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import { initAnalytics } from '@/lib/capture';
 
 import { SiteFooter } from '@/components/shell/site-footer';
 import { SiteHeader } from '@/components/shell/site-header';
@@ -55,6 +56,8 @@ export const Route = createRootRoute({
       { name: 'twitter:image:alt', content: OG_IMAGE_ALT },
     ],
     links: [
+      { rel: 'preload', href: bricolageFont, as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' },
+      { rel: 'preload', href: geistFont, as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' },
       { rel: 'stylesheet', href: appCss },
       { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
       { rel: 'icon', href: '/favicon-48x48.png', type: 'image/png', sizes: '48x48' },
@@ -109,31 +112,7 @@ function RootLayout() {
   }, []);
 
   useEffect(() => {
-    const key = import.meta.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN;
-    if (key && !posthog.__loaded) {
-      posthog.init(key, {
-        api_host: '/ingest',
-        ui_host: 'https://us.posthog.com',
-        defaults: '2026-01-30',
-        // Only the explicit events (counts, sizes, settings) are sent. Autocapture
-        // and recordings could pick up file names shown on the page.
-        autocapture: false,
-        disable_session_recording: true,
-        mask_all_text: true,
-        mask_all_element_attributes: true,
-        person_profiles: 'identified_only',
-        // Cookieless: the anonymous ID lives in memory only, so nothing is written to
-        // cookies or localStorage and no consent banner is needed. See /privacy.
-        persistence: 'memory',
-        capture_heatmaps: false,
-        capture_dead_clicks: false,
-        capture_performance: false,
-        // Error reports carry the failing function and a generic message only.
-        capture_exceptions: true,
-        before_send: sanitizeEvent,
-        debug: import.meta.env.DEV,
-      });
-    }
+    initAnalytics();
   }, []);
 
   return (

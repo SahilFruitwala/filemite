@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import posthog from 'posthog-js';
+import { capture } from '@/lib/capture';
 import { Check, Copy, Download } from 'lucide-react';
 
 import { ActionPanel, Panel, ResultPanel, ToolLayout } from '@/components/tool/tool-ui';
@@ -91,7 +91,7 @@ export function FaviconTool() {
               },
               'Favicon generation failed',
             );
-      posthog.capture('favicons_generated', { processing: mode, original_size_bytes: file.size });
+      capture('favicons_generated', { processing: mode, original_size_bytes: file.size });
       return { zip, assets: await unpack(zip) };
     });
   };

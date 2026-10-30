@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import posthog from 'posthog-js';
+import { capture } from '@/lib/capture';
 import { AlertTriangle, Link2, Unlink2 } from 'lucide-react';
 
 import {
@@ -130,7 +130,7 @@ export function ResizeTool() {
 
   const run = () => {
     if (!file || !valid) return;
-    posthog.capture('image_resize_started', { fit, width: w, height: h, processing: mode });
+    capture('image_resize_started', { fit, width: w, height: h, processing: mode });
     void job.run(async () => {
       const blob =
         mode === 'browser'
@@ -161,7 +161,7 @@ export function ResizeTool() {
         };
         img.src = url;
       });
-      posthog.capture('image_resize_completed', { fit, width: w, height: h, size: blob.size });
+      capture('image_resize_completed', { fit, width: w, height: h, size: blob.size });
       return { blob, ...size };
     });
   };

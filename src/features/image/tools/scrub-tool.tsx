@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import posthog from 'posthog-js';
+import { capture } from '@/lib/capture';
 import { Camera, Clock, Loader2, MapPin, ShieldCheck, Tag, UserRound } from 'lucide-react';
 
 import { Message, Panel, ResultPanel, ToolLayout } from '@/components/tool/tool-ui';
@@ -83,7 +83,7 @@ export function ScrubTool() {
               },
               'Scrubbing failed',
             );
-      posthog.capture('metadata_scrubbed', {
+      capture('metadata_scrubbed', {
         processing: mode,
         file_format: target.type,
         original_size_bytes: target.size,

@@ -1,6 +1,6 @@
 /* Filemite service worker: caches the app shell and static assets only.
  * Never touches /api or /ingest, so tool requests and analytics always go to the network. */
-const VERSION = 'v2';
+const VERSION = 'v3';
 const STATIC_CACHE = `filemite-static-${VERSION}`;
 const PAGE_CACHE = `filemite-pages-${VERSION}`;
 const OFFLINE_URL = '/offline.html';
@@ -31,7 +31,7 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin || isBypassed(url)) return;
 
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirstPage(request));
+    event.respondWith(staleWhileRevalidatePage(event, request));
   } else if (url.pathname.startsWith('/assets/')) {
     // Fingerprinted build output never changes, so cache-first is safe.
     event.respondWith(cacheFirst(request));
@@ -40,15 +40,19 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
-async function networkFirstPage(request) {
+async function staleWhileRevalidatePage(event, request) {
   const cache = await caches.open(PAGE_CACHE);
-  try {
-    const response = await fetch(request);
-    if (response.ok) cache.put(request, response.clone());
-    return response;
-  } catch {
-    return (await cache.match(request)) || (await caches.match(OFFLINE_URL)) || Response.error();
-  }
+  const cached = await cache.match(request);
+  const network = fetch(request)
+    .then((response) => {
+      if (response.ok) cache.put(request, response.clone());
+      return response;
+    })
+    .catch(() => undefined);
+  // Keep the refresh alive even if this navigation is served from cache.
+  event.waitUntil(network);
+  if (cached) return cached;
+  return (await network) || (await caches.match(OFFLINE_URL)) || Response.error();
 }
 
 async function cacheFirst(request) {

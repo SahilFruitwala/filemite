@@ -115,7 +115,7 @@ export function HeroDemo() {
   const desk = DESK.filter((file) => !eaten.includes(file.name));
 
   return (
-    <div className="relative animate-in fade-in slide-in-from-bottom-4 delay-150 duration-700 fill-mode-both">
+    <div className="relative animate-in slide-in-from-bottom-4 delay-150 duration-700 fill-mode-both">
       <div {...dropHandlers} className="sticker relative rounded-3xl bg-card p-2.5 lg:rotate-2">
         <div className="flex items-center justify-between px-3 py-2">
           <span className="eyebrow">
