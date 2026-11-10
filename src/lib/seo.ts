@@ -21,12 +21,20 @@ interface SeoOptions {
   keywords?: string[];
   /** Path portion of the canonical URL, e.g. "/image/crop". */
   path?: string;
+  /** Social card image, absolute or site-relative. Defaults to the site card. */
+  image?: string;
+  imageAlt?: string;
+  /** Open Graph type; articles also get published-time tags. */
+  type?: 'website' | 'article';
+  publishedTime?: string;
 }
 
 /** Builds a TanStack Router `head()` result with title, description, OG/Twitter tags and canonical link. */
-export function seoHead({ title, description, keywords, path }: SeoOptions) {
+export function seoHead({ title, description, keywords, path, image, imageAlt, type, publishedTime }: SeoOptions) {
   const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
   const canonical = path !== undefined ? `${SITE_URL}${path === '/' ? '' : path}` : undefined;
+  const ogImage = image ? (image.startsWith('http') ? image : `${SITE_URL}${image}`) : OG_IMAGE;
+  const ogImageAlt = image ? (imageAlt ?? title) : OG_IMAGE_ALT;
   return {
     meta: [
       { title: fullTitle },
@@ -35,11 +43,13 @@ export function seoHead({ title, description, keywords, path }: SeoOptions) {
       { property: 'og:title', content: fullTitle },
       { property: 'og:description', content: description },
       ...(canonical ? [{ property: 'og:url', content: canonical }] : []),
-      { property: 'og:image', content: OG_IMAGE },
-      { property: 'og:image:alt', content: OG_IMAGE_ALT },
+      { property: 'og:image', content: ogImage },
+      { property: 'og:image:alt', content: ogImageAlt },
+      ...(type ? [{ property: 'og:type', content: type }] : []),
+      ...(publishedTime ? [{ property: 'article:published_time', content: publishedTime }] : []),
       { name: 'twitter:title', content: fullTitle },
       { name: 'twitter:description', content: description },
-      { name: 'twitter:image', content: OG_IMAGE },
+      { name: 'twitter:image', content: ogImage },
     ],
     links: canonical ? [{ rel: 'canonical', href: canonical }] : [],
   };
@@ -192,6 +202,45 @@ export function alternativeJsonLd(alt: { slug: string; name: string; seoTitle: s
         ],
       },
       faqPage(alt.faqs),
+    ],
+  };
+}
+
+/** schema.org graph for a blog post: the article and its breadcrumb trail. */
+export function blogPostJsonLd(post: {
+  slug: string;
+  title: string;
+  description: string;
+  date: string;
+  tags: string[];
+  image?: string;
+}) {
+  const url = `${SITE_URL}/blog/${post.slug}`;
+  return {
+    '@context': CONTEXT,
+    '@graph': [
+      {
+        '@type': 'BlogPosting',
+        '@id': `${url}#article`,
+        url,
+        mainEntityOfPage: url,
+        headline: post.title,
+        description: post.description,
+        datePublished: post.date,
+        keywords: post.tags.join(', '),
+        image: post.image ? `${SITE_URL}${post.image}` : OG_IMAGE,
+        author: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
+        publisher: { '@id': ORGANIZATION_ID },
+        isPartOf: { '@type': 'Blog', name: `${SITE_NAME} Blog`, url: `${SITE_URL}/blog` },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: SITE_NAME, item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+          { '@type': 'ListItem', position: 3, name: post.title, item: url },
+        ],
+      },
     ],
   };
 }

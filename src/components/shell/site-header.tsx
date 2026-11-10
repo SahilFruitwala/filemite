@@ -6,6 +6,7 @@ import {
   FileText,
   Image as ImageIcon,
   LayoutGrid,
+  Menu,
   X,
   type LucideIcon,
 } from 'lucide-react';
@@ -29,45 +30,127 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70">
-      <div className="mx-auto grid h-14 w-full max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto grid h-14 w-full max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 sm:px-6 lg:px-8">
         <Link
           to="/"
           className="group flex items-center gap-2 justify-self-start rounded-md"
           aria-label="Home"
         >
           <LogoMark />
-          <Wordmark />
+          <span className="max-[359px]:hidden">
+            <Wordmark />
+          </span>
         </Link>
 
-        <nav aria-label="Sections" className="flex items-center gap-0.5 rounded-lg bg-muted p-0.5">
-          {SECTION_ORDER.map((id) => {
-            const active = section === id;
-            const SectionIcon = SECTION_ICONS[id];
-            return (
-              <Link
-                key={id}
-                to={SECTIONS[id].href}
-                data-section={id}
-                aria-current={active ? 'true' : undefined}
-                className={cn(
-                  'flex h-8 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground',
-                  active && 'bg-background text-foreground shadow-sm ring-1 ring-border',
-                )}
-              >
-                <SectionIcon aria-hidden className={cn('size-4', active && 'text-primary')} />
-                {SECTIONS[id].label}
-              </Link>
-            );
-          })}
-        </nav>
+        <SiteNav section={section} pathname={pathname} />
 
-        <div className="flex items-center justify-self-end gap-2">
+        <div className="flex items-center justify-self-end">
           <ThemeSwitch />
         </div>
       </div>
 
       {section && <ToolTabs section={section} pathname={pathname} />}
     </header>
+  );
+}
+
+const PAGE_LINKS = [
+  { to: '/blog', label: 'Blog' },
+  { to: '/alternatives', label: 'Compare' },
+  { to: '/about', label: 'About' },
+] as const;
+
+/** One item style for every entry in the header nav, so tools and pages read as one control. */
+const navItem = (active: boolean) =>
+  cn(
+    'flex h-8 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground',
+    active && 'bg-background text-foreground shadow-sm ring-1 ring-border',
+  );
+
+/**
+ * The header's single nav: tool sections, a divider, then reading pages.
+ * Below md the pages fold into a "More" item inside the same pill.
+ */
+function SiteNav({ section, pathname }: { section: Section | null; pathname: string }) {
+  const [open, setOpen] = useState(false);
+  const isActive = (to: string) => pathname === to || pathname.startsWith(`${to}/`);
+  const pageActive = PAGE_LINKS.some(({ to }) => isActive(to));
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => event.key === 'Escape' && setOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  return (
+    <nav aria-label="Main" className="relative flex items-center gap-0.5 rounded-lg bg-muted p-0.5">
+      {SECTION_ORDER.map((id) => {
+        const active = section === id;
+        const SectionIcon = SECTION_ICONS[id];
+        return (
+          <Link
+            key={id}
+            to={SECTIONS[id].href}
+            data-section={id}
+            aria-current={active ? 'true' : undefined}
+            className={navItem(active)}
+          >
+            <SectionIcon aria-hidden className={cn('size-4 max-sm:hidden', active && 'text-primary')} />
+            {SECTIONS[id].label}
+          </Link>
+        );
+      })}
+
+      <span aria-hidden className="mx-1 h-4 w-px bg-border" />
+
+      {PAGE_LINKS.map(({ to, label }) => (
+        <Link
+          key={to}
+          to={to}
+          aria-current={isActive(to) ? 'page' : undefined}
+          className={cn(navItem(isActive(to)), 'max-md:hidden')}
+        >
+          {label}
+        </Link>
+      ))}
+
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls="page-menu"
+        onClick={() => setOpen((value) => !value)}
+        className={cn(navItem(pageActive || open), 'md:hidden')}
+      >
+        {open ? <X aria-hidden className="size-4" /> : <Menu aria-hidden className="size-4" />}
+        <span className="max-[400px]:sr-only">More</span>
+      </button>
+
+      {open && (
+        <>
+          <div aria-hidden className="fixed inset-0 z-40 md:hidden" onClick={() => setOpen(false)} />
+          <div
+            id="page-menu"
+            className="sticker animate-in fade-in slide-in-from-top-1 absolute right-0 top-full z-50 mt-2 w-44 rounded-xl bg-card p-1.5 duration-150 md:hidden"
+          >
+            {PAGE_LINKS.map(({ to, label }) => (
+              <Link
+                key={to}
+                to={to}
+                onClick={() => setOpen(false)}
+                aria-current={isActive(to) ? 'page' : undefined}
+                className={cn(
+                  'flex h-10 items-center rounded-lg px-3 text-sm font-medium transition-colors hover:bg-muted',
+                  isActive(to) && 'bg-muted',
+                )}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+    </nav>
   );
 }
 
