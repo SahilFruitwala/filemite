@@ -29,7 +29,7 @@ export const SOCIAL_LINKS = [
 
 export const AUTHOR = {
   name: 'Sahil Fruitwala',
-  url: 'https://github.com/SahilFruitwala',
+  url: 'https://sahilfruitwala.com/',
   description:
     'Software engineer and creator of Filemite, a free site of private PDF tools and image tools that run in the browser or process files in memory without storing them.',
   jobTitle: 'Software Engineer',

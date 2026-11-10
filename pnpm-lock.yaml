@@ -196,6 +196,9 @@ importers:
       '@jsquash/jpeg':
         specifier: ^1.6.0
         version: 1.6.0
+      '@tanstack/markdown':
+        specifier: ^1.2.0
+        version: 1.2.0(react@19.2.3)
       '@tanstack/react-router':
         specifier: ^1.170.17
         version: 1.170.45(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -1000,6 +1003,17 @@ packages:
   '@tanstack/history@1.162.5':
     resolution: {integrity: sha512-w1+YvwmTkwt5n8yUqEH3IWZ9DsmorCZW/EQ3KYHnqEgIkOZpH54NvW6/Epq3Dzb8H0ifIeYX8PExvrNLIH5FIA==}
     engines: {node: '>=20.19'}
+
+  '@tanstack/markdown@1.2.0':
+    resolution: {integrity: sha512-8ZaMDLvp7iUuo7R5Ot+yvX/h1ZN8Cq2p38iL+X9uOkIKVFw3IjgP62dXT6+dp/Nk522qsuSDCJNdt2F4fZvVXQ==}
+    peerDependencies:
+      octane: '>=0.1.12'
+      react: '>=18'
+    peerDependenciesMeta:
+      octane:
+        optional: true
+      react:
+        optional: true
 
   '@tanstack/react-router@1.170.45':
     resolution: {integrity: sha512-6tuiIAFb82zsk/YxveJRyGjbsm6kIfgUuoH7qCp2R2aSHveW6W0t/6j+Sn4m1iIlA2lLU4cvooqks08/YMOThw==}
@@ -3025,6 +3039,10 @@ snapshots:
       vite: 8.3.4(@types/node@20.19.43)(jiti@2.7.0)
 
   '@tanstack/history@1.162.5': {}
+
+  '@tanstack/markdown@1.2.0(react@19.2.3)':
+    optionalDependencies:
+      react: 19.2.3
 
   '@tanstack/react-router@1.170.45(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:

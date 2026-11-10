@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import { alternatives } from '@/lib/alternatives';
+import { posts } from '@/lib/blog';
 import { formatBytes } from '@/lib/format';
 import {
   IMAGES_PER_HOUR,
@@ -51,6 +52,8 @@ export function llmsTxt(): string {
       ...alternatives.map(
         (alt) => `- [${alt.name} alternative](${SITE_URL}/alternatives/${alt.slug}): how ${SITE_NAME} compares with ${alt.name}.`,
       ),
+      `- [Blog](${SITE_URL}/blog): guides and tool round-ups.`,
+      ...posts.map((post) => `- [${post.title}](${SITE_URL}/blog/${post.slug}): ${post.description}`),
       `- [Privacy](${SITE_URL}/privacy): what happens to files and what little is measured.`,
       `- [Terms](${SITE_URL}/terms): terms of use.`,
       `- [Full text of every tool page](${SITE_URL}/llms-full.txt): summaries, steps and FAQs in one file.`,
